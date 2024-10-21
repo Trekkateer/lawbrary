@@ -1,0 +1,130 @@
+body {background-color: lightgrey;}
+
+h1, h2, h3, h4, h5, h6 {
+    color: brown;
+}
+
+#topdiv {
+    text-align: center;
+    position: fixed;
+    left: 50%; top: 0%;
+    width: 100%; height: 80px;
+    transform: translate(-50%, 0%);
+    background-color: silver;
+} #logo {
+    position: absolute;
+    left: 1%; top: 45%;
+    transform: translate(0%, -50%);
+} #language-div {
+    position: absolute;
+    left: 5%; top: 50%;
+    transform: translate(0%, -50%);
+} #language-flag {
+    position: absolute;
+    left: 0%; top: 50%;
+    transform: translate(0%, -50%);
+} #language-selector {
+    position: absolute;
+    height: 32px;
+    left: 41px; top: 50%;
+    transform: translate(0%, -50%);
+    border: 5px double brown;
+    font-size: 14px;
+} #title {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+} #search-form {
+    position: absolute;
+    width: 310px; height: 20px;
+    left: 86%; top: 50%;
+    transform: translate(-50%, -50%);
+} #searchbar {
+    position: absolute;
+    width: 175px; height: 32px;
+    left: 0%; top: 50%;
+    transform: translate(0%, -50%);
+    border: 5px double brown;
+    font-size: 14px;
+}/* #searchbar::-webkit-search-cancel-button {
+    position:relative;
+    right:20px;
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius:10px;
+    background: url(images/search.png);
+}*/ #type-selector {
+    position: absolute;
+    width: 80px; height: 32px;
+    left: 180px; top: 50%;
+    transform: translate(0%, -50%);
+    border: 5px double brown;
+    font-size: 12px;
+} #country-selector {
+    position: absolute;
+    width: 45px; height: 32px;
+    right: 0%; top: 50%;
+    transform: translate(0%, -50%);
+    border: 5px double brown;
+    font-size: 12px;
+} #navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: light-gray;
+    /*width: 100%;*/
+    position: relative;
+    left: 50%; top: 80px;
+    transform: translate(-50%);
+}
+
+#leftdiv {
+    position: absolute;
+    left: 14%; top: 150px;
+    transform: translate(-50%, 0%);
+} #mapImg {
+    border: 5px solid brown;
+} #disputeDisclaimer {
+    width: 294px;
+    word-wrap: normal;
+}
+
+#centerdiv {
+    text-align: center;
+    position: absolute;
+    left: 50%; top: 125px;
+    transform: translate(-50%, 0%);
+} li {
+    float: left;
+} .navlink {
+    display: block;
+    color: brown;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+} li a:hover {background-color: silver;}
+#lastUpdated {
+    color: brown;
+}
+#contentdiv {
+    position: relative;
+    top: 10px;
+    width: 500px;
+} .lawlink {word-wrap: normal;}
+
+#rightdiv {
+    position: absolute;
+    left: 86%; top: 150px;
+    transform: translate(-50%, 0%);
+} #flag {
+    position: relative;
+    left: 50%; top: 0px;
+    transform: translate(-50%, 0%);
+    border: 5px brown;
+} #country-type {
+    color: brown;
+    font-family: garamond, serif;
+    text-align: center;
+}

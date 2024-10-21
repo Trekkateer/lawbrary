@@ -1,0 +1,712 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>&ltMap&gt Editor</title>
+    <link rel="icon" type="image/x-icon" href="/images/favico.ico">
+    <style type="text/css">
+        html, body {background-color: LightGrey; overflow: hidden;}
+
+        #heading, #disclaimer {
+            color: brown;
+            font-family: garamond, serif;
+            text-align: center;
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+
+        #mapDiv, #mapIMG, #SVGCanvas {/*Map*/
+            position: absolute;
+            transform: translate(-50%, -50%);
+            stroke: black;
+        }
+
+        polygon {/*SVG Elements*/
+            opacity:0.5;
+            fill: white;
+            stroke: black;
+        } circle {
+            opacity: 1;
+            fill: blue;
+            stroke: black;
+            cursor: move;
+        }
+
+        #input, #output {
+            color: brown;
+            font-family: garamond, serif;
+            text-align: center;
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <!--map-->
+    <div id="mapDiv" style="left: 50%; top: 50%; width: 840px; height: 500px; outline: 1000px solid LightGrey; border: 5px solid brown;" onmousewheel="zoom(-Math.sign(window.event.deltaY));">
+        <!--Map img-->
+        <img id="mapIMG" width="840" height="500" style="left: 420px; top: 250px; z-index: -1;" onload="generatePolys(840/getImg.naturalWidth, 500/getImg.naturalHeight, Number); generateAreas(1, 1, Number);" usemap="#Map"/>
+        <!--Actual map-->
+        <map name="Map"></map>
+        <!--Polygons-->
+        <svg id="SVGCanvas" width="840" height="500" style="left: 420px; top: 250px; z-index: -1; stroke: transparent; cursor: move;" onmousedown="onMouseDownMap()"></svg>
+        <!--Scale buttons-->
+        <div id="Scalers" style="position: fixed; right:1.5%; top:2%;">
+            <button id="minimizer" onclick="zoom(-1);"><img width="20" src="images/minimizer.png"></button>
+            <button id="magnifier" onclick="zoom(1);"><img width="20" src="images/magnifier.png"></button>
+        </div>
+        <!--Add new polygon button-->
+        <button id="addPoly" onclick="generateAreas(1, 1, Number); createNewPoly(); generatePolys(1, 1, Number);" style="position: fixed; left:1.5%; bottom:2%;"><img width="20" src="images/addNewPoly.png"></button>
+    </div>
+
+    <h1 id="heading" style="left:50%; top:2.5%;">Convert &ltsvg&gt tags to &ltmap&gt tags!!!</h1>
+
+    <h2 id="disclaimer" style="left:50%; bottom:-6%;">&#x26A0; This tool is useful for editing the coordinates of map tags, but you may still need to edit some HTML to add links, IDs, etc. &#x26A0;</h2>
+
+    <!--Input-->
+    <div id="input" style="top:47.5%; left:9.5%;">
+        <h2>Input</h2>
+        <input type="url" id="imgsrc" placeholder="Paste img src URL" value="https://ontheworldmap.com/world-map-max.jpg"></input>
+        <button onClick="getImg.src=document.getElementById('imgsrc').value;">Submit</button><br><br>
+        <textarea id="inputBox" placeholder="Paste <map> or <SVG> tags" style="height:350px; width:200px;" onclick="select();"><map name="Map">
+            <area shape="poly" coords="484,144, 496,138, 515,136, 503,167, 492,166" href="country.php?id=af&doc=laws" alt="Afghanistan map">
+            <area shape="poly" coords="23,29, 71,12, 94,23, 62,47, 4,58" href="division.php?id=us-as&doc=laws" alt="Alaska map">
+            <area shape="poly" coords="306,170, 325,160, 324,148, 349,143, 353,165, 361,192, 338,210, 313,187, 305,179" href="country.php?id=dz&doc=laws" alt="Algeria map">
+            <area shape="poly" coords="365,309, 377,310, 379,318, 390,316, 394,330, 390,356, 362,355" href="country.php?id=ao&doc=laws" alt="Angola map">
+            <area shape="poly" coords="143,376, 154,375, 170,385, 172,395, 183,388, 175,406, 183,430, 171,447, 178,486, 163,476, 144,409" href="country.php?id=ar&doc=laws" alt="Argentina map">
+            <area shape="poly" coords="437,127, 442,126, 449,134, 439,133" href="country.php?id=am&doc=laws" alt="Armenia map">
+            <area shape="poly" coords="699,336, 729,331, 734,405, 668,470, 668,433, 622,429, 638,378" href="country.php?id=au&doc=laws" alt="Australia map">
+            <area shape="poly" coords="442,126, 444,121, 451,128, 449,134" href="country.php?id=az&doc=laws" alt="Azerbaijan map">
+            <area shape="poly" coords="568,179, 582,186, 588,206, 566,206, 573,194" href="country.php?id=bd&doc=laws" alt="Bangladesh map">
+            <area shape="poly" coords="386,78, 391,75, 398,82, 403,88, 382,90, 381,84" href="country.php?id=by&doc=laws" alt="Belarus map">
+            <area shape="poly" coords="329,243, 339,236, 334,262" href="country.php?id=bj&doc=laws" alt="Benin map">
+            <area shape="poly" coords="561,165, 578,167, 568,179, 564,173" href="country.php?id=bt&doc=laws" alt="Bhutan map">
+            <area shape="poly" coords="139,325, 155,343, 166,366, 155,365, 154,375, 143,376, 131,360, 130,331" href="country.php?id=bo&doc=laws" alt="Bolivia map">
+            <area shape="poly" coords="390,356, 401,358, 408,374, 398,387, 383,390" href="country.php?id=bw&doc=laws" alt="Botswana map">
+            <area shape="poly" coords="143,278, 142,269, 152,265, 155,280, 164,278, 170,275, 175,279, 179,269, 230,310, 216,374, 190,413, 175,406, 183,388, 166,366, 155,343, 139,325, 130,331, 116,314, 126,300, 133,278" href="country.php?id=br&doc=laws" alt="Brazil map">
+            <area shape="poly" coords="384,117, 396,117, 397,122, 392,127, 384,125" href="country.php?id=bg&doc=laws" alt="Bulgaria map">
+            <area shape="poly" coords="312,242, 323,226, 329,227, 339,236, 329,243, 321,246" href="country.php?id=bf&doc=laws" alt="Burkina Faso map">
+            <area shape="poly" coords="582,186, 587,170, 603,197, 601,213, 609,243, 594,219, 588,206" href="country.php?id=mm&doc=laws" alt="Burma map">
+            <area shape="poly" coords="412,297, 419,295, 414,306" href="country.php?id=bi&doc=laws" alt="Burundi map">
+            <area shape="poly" coords="628,226, 625,243, 616,235, 617,227, 624,226" href="country.php?id=kh&doc=laws" alt="Cambodia map">
+            <area shape="poly" coords="354,266, 369,243, 374,257, 372,276, 358,276, 353,273" href="country.php?id=cm&doc=laws" alt="Cameroon map">
+            <area shape="poly" coords="171,7, 94,23, 62,47, 52,87, 114,91, 134,103, 130,119, 169,103, 169,112, 208,106, 219,68, 226,39, 210,22, 234,14" href="country.php?id=ca&doc=laws" alt="Canada map">
+            <area shape="poly" coords="374,257, 395,248, 406,263, 385,268, 372,276" href="country.php?id=cf&doc=laws" alt="Central African Republic map">
+            <area shape="poly" coords="370,196, 396,206, 397,221, 390,233, 395,248, 374,257, 369,243, 364,231" href="country.php?id=td&doc=laws" alt="Chad map">
+            <area shape="poly" coords="131,360, 143,376, 144,409, 163,476, 178,486, 180,495, 160,478, 143,436" href="country.php?id=cl&doc=laws" alt="Chile map">
+            <area shape="poly" coords="581,119, 542,108, 524,92, 520,115, 527,121, 513,129, 515,136, 524,145, 541,162, 564,173, 561,165, 578,167, 587,170, 603,197, 608,193, 614,189, 623,195, 631,212, 646,187, 647,162, 630,122, 635,108, 627,89, 581,74, 579,87, 599,96" href="country.php?id=china&doc=laws" alt="China map">
+            <area shape="poly" coords="122,235, 111,242, 107,250, 105,257, 99,278, 112,286, 126,300, 133,278, 133,260, 120,255" href="country.php?id=co&doc=laws" alt="Colombia map">
+            <area shape="poly" coords="360,299, 370,295, 372,276, 385,268, 375,302, 365,309" href="country.php?id=cg&doc=laws" alt="Congalese Republic map">
+            <area shape="poly" coords="305,242, 312,242, 321,246, 319,263, 306,268, 303,253" href="country.php?id=ci&doc=laws" alt="Cote d'Ivoire map">
+            <area shape="poly" coords="407,150, 417,144, 415,152" href="country.php?id=cy&doc=laws" alt="Cyprus map">
+            <area shape="poly" coords="385,268, 406,263, 417,272, 415,290, 412,297, 414,306, 414,320, 410,337, 394,330, 390,316, 379,318, 377,310, 365,309, 375,302" href="country.php?id=democratic-republic-of-the-congo&doc=laws" alt="Democratic Republic of the Congo map">
+            <area shape="poly" coords="340,73, 350,66, 356,81, 342,84" href="country.php?id=dk&doc=laws" alt="Denmark map">
+            <area shape="poly" coords="450,234, 471,234, 476,241, 448,241" href="country.php?id=dj&doc=laws" alt="Djibouti map">
+            <area shape="poly" coords="64,279, 99,278, 112,286, 101,304, 95,303, 63,291" href="country.php?id=ec&doc=laws" alt="Ecuador map">
+            <area shape="poly" coords="394,161, 405,162, 421,164, 421,173, 430,198, 398,198" href="country.php?id=eg&doc=laws" alt="Egypt map">
+            <area shape="poly" coords="321,273, 353,273, 358,276, 361,280, 321,279" href="country.php?id=gq&doc=laws" alt="Equatorial Guinea map">
+            <area shape="poly" coords="436,214, 439,222, 450,234, 448,241, 438,226, 431,228, 431,220" href="country.php?id=er&doc=laws" alt="Eritrea map">
+            <area shape="poly" coords="375,65, 386,63, 396,69, 387,71, 377,70" href="country.php?id=ee&doc=laws" alt="Estonia map">
+            <area shape="poly" coords="413,388, 419,392, 437,393, 438,399, 413,399" href="country.php?id=sz&doc=laws" alt="eSwatini map">
+            <area shape="poly" coords="431,228, 438,226, 448,241, 466,252, 448,270, 427,269, 427,246" href="country.php?id=et&doc=laws" alt="Ethiopia map">
+            <area shape="poly" coords="186,476, 208,476, 206,488, 190,488" href="division.php?id=fk&doc=laws" alt="Falkland Islands map">
+            <area shape="poly" coords="794,344, 807,344, 806,355, 795,356" href="country.php?id=fi&doc=laws" alt="Fiji Map">
+            <area shape="poly" coords="369,42, 380,40, 388,55, 386,63, 375,65, 366,58, 373,48" href="country.php?id=fi&doc=laws" alt="Finland map">
+            <area shape="poly" coords="319,103, 333,92, 341,95, 346,100, 346,108, 344,118, 335,125, 325,118" href="country.php?id=fr&doc=laws" alt="France map">
+            <area shape="poly" coords="170,275, 171,262, 197,262, 204,267, 179,269, 175,279" href="division.php?id=gf&doc=laws" alt="French Guiana map">
+            <area shape="poly" coords="352,291, 361,280, 358,276, 372,276, 370,295, 360,299" href="country.php?id=ga&doc=laws" alt="Gabon map">
+            <area shape="poly" coords="423,117, 444,121, 442,126, 437,127, 431,126" href="country.php?id=ge&doc=laws" alt="Georgia map">
+            <area shape="poly" coords="342,84, 356,81, 360,85, 361,92, 356,96, 361,101, 357,107, 346,108, 346,100, 341,95, 341,95" href="country.php?id=de&doc=laws" alt="Germany map">
+            <area shape="poly" coords="329,243, 334,262, 335,268, 328,268" href="country.php?id=gh&doc=laws" alt="Ghana map">
+            <area shape="poly" coords="384,125, 392,127, 401,144, 402,150, 386,147, 378,132" href="country.php?id=gr&doc=laws" alt="Greece map">
+            <area shape="poly" coords="234,14, 309,16, 291,42, 279,49, 242,65, 219,68, 226,39, 210,22" href="division.php?id=gl&doc=laws" alt="Greenland map">
+            <area shape="poly" coords="253,238, 279,238, 280,235, 288,236, 282,244, 253,244" href="country.php?id=gw&doc=laws" alt="Guinea-Bissau map">
+            <area shape="poly" coords="155,251, 162,260, 164,278, 155,280, 152,265" href="country.php?id=gy&doc=laws" alt="Guyana map">
+            <area shape="poly" coords="805,137, 834,135, 830,155, 814,154" href="division.php/?id=us-hi&doc=laws" alt="Hawaii map">
+            <area shape="poly" coords="291,42, 304,48, 301,62, 283,62, 279,49" href="country.php?id=is&doc=laws" alt="Iceland map">
+            <area shape="poly" coords="524,145, 541,162, 543,170, 568,179, 578,167, 587,170, 582,186, 568,179, 573,194, 566,206, 551,254, 516,189" href="country.php?id=in&doc=laws" alt="India map">
+            <area shape="poly" coords="626,280, 645,283, 656,279, 657,269, 667,265, 692,272, 726,298, 724,324, 705,322, 680,321, 684,330, 675,334, 624,311, 602,264, 608,264, 617,274" href="country.php?id=id&doc=laws" alt="Indonesia map">
+            <area shape="poly" coords="439,133, 449,134, 464,140, 470,136, 484,144, 492,166, 498,176, 495,185, 481,181, 473,178, 466,171, 469,166, 458,164, 439,140" href="country.php?id=ir&doc=laws" alt="Iran map">
+            <area shape="poly" coords="430,156, 439,140, 458,164, 452,170, 446,168, 438,163" href="country.php?id=iq&doc=laws" alt="Iraq map">
+            <area shape="poly" coords="307,92, 307,84, 312,78, 313,83, 318,83, 317,89" href="country.php?id=ie&doc=laws" alt="Ireland map">
+            <area shape="poly" coords="404,158, 422,158, 421,164, 405,162" href="country.php?id=il&doc=laws" alt="Israel map">
+            <area shape="poly" coords="344,118, 346,108, 357,107, 375,128, 367,144, 347,134" href="country.php?id=it&doc=laws" alt="Italy map">
+            <area shape="poly" coords="651,95, 693,122, 693,130, 677,136, 664,154, 655,143, 666,127" href="country.php?id=jp&doc=laws" alt="Japan map">
+            <area shape="poly" coords="421,164, 422,158, 430,156, 438,163, 436,166, 428,166, 421,173" href="country.php?id=jo&doc=laws" alt="Jordan map">
+            <area shape="poly" coords="440,88, 463,90, 460,81, 475,76, 524,92, 520,115, 500,117, 497,124, 484,115, 465,111, 461,114, 466,122, 456,121, 442,106, 435,96" href="country.php?id=kz&doc=laws" alt="Kazakhstan map">
+            <area shape="poly" coords="427,269, 448,270, 448,292, 440,303, 426,288" href="country.php?id=ke&doc=laws" alt="Kenya map">
+            <area shape="poly" coords="452,170, 458,164, 469,166, 466,171, 458,171" href="country.php?id=kw&doc=laws" alt="Kuwait map">
+            <area shape="poly" coords="497,124, 500,117, 520,115, 527,121, 513,129, 500,128" href="country.php?id=kg&doc=laws" alt="Kyrgyzstan map">
+            <area shape="poly" coords="603,197, 608,193, 628,218, 628,226, 624,226, 616,209, 608,210" href="country.php?id=la&doc=laws" alt="Laos map">
+            <area shape="poly" coords="377,70, 387,71, 391,75, 386,78, 374,75" href="country.php?id=lv&doc=laws" alt="Latvia map">
+            <area shape="poly" coords="403,152, 421,152, 422,158, 404,158" href="country.php?id=lb&doc=laws" alt="Lebanon map">
+            <area shape="poly" coords="398,401, 413,399, 425,409, 404,416" href="country.php?id=ls&doc=laws" alt="Lesotho map">
+            <area shape="poly" coords="306,268, 294,257, 298,252, 303,253" href="country.php?id=lr&doc=laws" alt="Liberia map">
+            <area shape="poly" coords="353,165, 360,158, 394,161, 398,198, 396,206, 370,196, 361,192" href="country.php?id=ly&doc=laws" alt="Libya map">
+            <area shape="poly" coords="374,75, 386,78, 381,84, 371,81" href="country.php?id=lt&doc=laws" alt="Lithuania map">
+            <area shape="poly" coords="450,353, 468,336, 472,346, 457,389, 446,387" href="country.php?id=mg&doc=laws" alt="Madagascar map">
+            <area shape="poly" coords="421,341, 424,325, 430,335, 428,353" href="country.php?id=mw&doc=laws" alt="Malawi map">
+            <area shape="poly" coords="614,260, 620,261, 660,257, 667,265, 657,269, 656,279, 645,283, 626,280, 617,274" href="country.php?id=my&doc=laws" alt="Malaysia map">
+            <area shape="poly" coords="313,187, 338,210, 337,224, 329,227, 323,226, 312,242, 305,242, 295,235, 294,227, 312,223" href="country.php?id=ml&doc=laws" alt="Mali Map">
+            <area shape="poly" coords="280,199, 290,200, 295,192, 295,183, 304,183, 305,179, 313,187, 312,223, 294,227, 282,218" href="country.php?id=mu&doc=laws" alt="Mauritania map">
+            <area shape="poly" coords="25,148, 51,156, 66,177, 82,184, 90,197, 79,211, 67,219, 48,220, 27,190" href="country.php?id=mx&doc=laws" alt="Mexico map">
+            <area shape="poly" coords="524,92, 543,83, 579,87, 599,96, 581,119, 542,108" href="country.php?id=mn&doc=laws" alt="Mongolia map">
+            <area shape="poly" coords="293,176, 313,147, 324,148, 325,160, 306,170, 305,179, 304,183, 295,183, 295,192, 290,200, 280,199" href="country.php?id=ma&doc=laws" alt="Morocco map">
+            <area shape="poly" coords="421,357, 415,348, 421,341, 428,353, 430,335, 444,329, 443,347, 419,392, 413,388, 414,375" href="country.php?id=mz&doc=laws" alt="Mozambique map">
+            <area shape="poly" coords="362,355, 390,356, 383,390, 380,398, 370,398" href="country.php?id=na&doc=laws" alt="Namibia map">
+            <area shape="poly" coords="543,170, 541,162, 564,173, 568,179" href="country.php?id=np&doc=laws" alt="Nepal map">
+            <area shape="poly" coords="333,92, 342,84, 341,95" href="country.php?id=nl&doc=laws" alt="Netherlands map">
+            <area shape="poly" coords="767,376, 778,376, 785,393, 751,393" href="division.php?id=nc&doc=laws" alt="New Caledonia Map">
+            <area shape="poly" coords="701,490, 692,476, 751,442, 756,458" href="country.php?id=nz&doc=laws" alt="New Zealand map">
+            <area shape="poly" coords="109,181, 124,168, 141,189, 126,201, 114,190" href="country.php?id=bs&doc=laws" alt="The Bahamas map" >
+            <area shape="poly" coords="67,219, 79,211, 78,220, 76,224, 72,228, 51,229, 48,220" href="country.php?id=gt&doc=laws" alt="Guatemala map">
+            <area shape="poly" coords="76,224, 83,229, 78,236, 53,236, 51,229, 72,228" href="country.php?id=sv&doc=laws" alt="El Salvador map">
+            <area shape="poly" coords="126,201, 127,211, 111,205" href="country.php?id=ht&doc=laws" alt="Haiti map">
+            <area shape="poly" coords="65,253, 65,248, 83,248, 85,239, 91,240, 91,245, 90,252" href="country.php?id=cr&doc=laws" alt="Costa Rica map">
+            <area shape="poly" coords="126,201, 171,200, 137,210, 127,211" href="country.php?id=do&doc=laws" alt="Dominican Republic map">
+            <area shape="poly" coords="91,245, 91,240, 111,242, 107,250, 105,257, 90,252" href="country.php?id=pa&doc=laws" alt="Panama map">
+            <area shape="poly" coords="529,257, 539,258, 545,286, 528,289" href="country.php?id=mv&doc=laws" alt="The Maldives map">
+            <area shape="poly" coords="755,287, 782,275, 795,295" href="country.php?id=nr&doc=laws" alt="Nauru map">
+            <area shape="poly" coords="90,197, 99,190, 114,190, 126,201, 111,205" href="country.php?id=cu&doc=laws" alt="Cuba map">
+            <area shape="poly" coords="93,224, 104,234, 91,240, 85,239, 78,236, 83,229" href="country.php?id=ni&doc=laws" alt="Nicaragua map">
+            <area shape="poly" coords="76,224, 78,220, 102,219, 93,224, 83,229" href="country.php?id=hr&doc=laws" alt="Honduras map">
+            <area shape="poly" coords="693,243, 711,244, 719,268, 692,272" href="country.php?id=pv&doc=laws" alt="Palau map">
+            <area shape="poly" coords="457,312, 488,312, 491,323, 461,329" href="country.php?id=sc&doc=laws" alt="Seychelles map">
+            <area shape="poly" coords="732,238, 766,236, 764,246, 730,245" href="country.php?id=fm&doc=laws" alt="Micronesia map">
+            <area shape="poly" coords="776,236, 824,236, 823,246, 778,246" href="country.php?id=mh&doc=laws" alt="The Marshall Islands map">
+            <area shape="poly" coords="782,275, 811,280, 817,294, 795,295" href="country.php?id=ki&doc=laws" alt="Kiribati map">
+            <area shape="poly" coords="338,210, 361,192, 370,196, 364,231, 339,236, 329,227, 337,224" href="country.php?id=ne&doc=laws" alt="Niger map">
+            <area shape="poly" coords="339,236, 364,231, 369,243, 354,266, 334,262" href="country.php?id=ng&doc=laws" alt="Nigeria map">
+            <area shape="poly" coords="630,122, 635,108, 643,127, 637,131" href="country.php?id=kp&doc=laws" alt="North Korea map">
+            <area shape="poly" coords="355,39, 378,34, 380,40, 369,42, 360,43, 351,54, 350,66, 340,73, 339,58" href="country.php?id=no&doc=laws" alt="Norway map">
+            <area shape="poly" coords="482,208, 481,193, 481,181, 495,194, 489,214, 479,220, 473,210" href="country.php?id=om&doc=laws" alt="Oman map">
+            <area shape="poly" coords="498,176, 492,166, 503,167, 515,136, 524,145, 516,189, 495,185" href="country.php?id=pk&doc=laws" alt="Pakistan map">
+            <area shape="poly" coords="726,298, 761,301, 764,314, 753,318, 747,336, 724,324" href="country.php?id=pg&doc=laws" alt="Papua New Guinea map">
+            <area shape="poly" coords="155,365, 166,366, 183,388, 172,395, 170,385, 154,375" href="country.php?id=py&doc=laws" alt="Paraguay map">
+            <area shape="poly" coords="101,304, 112,286, 126,300, 116,314, 130,331, 131,360, 111,345, 95,303" href="country.php?id=pe&doc=laws" alt="Peru map">
+            <area shape="poly" coords="661,208, 681,213, 693,243, 685,264, 659,251" href="country.php?id=ph&doc=laws" alt="Philippines map">
+            <area shape="poly" coords="360,85, 364,80, 371,81, 381,84, 382,90, 380,98, 370,98, 361,92" href="country.php?id=pl&doc=laws" alt="Poland map">
+            <area shape="poly" coords="306,120, 313,125, 311,142, 305,141, 305,134, 289,134, 288,129, 305,128" href="country.php?id=pt&doc=laws" alt="Portugal map">
+            <area shape="poly" coords="481,193, 470,194, 469,188, 481,181" href="country.php?id=qa&doc=laws" alt="Qatar map">
+            <area shape="poly" coords="303,253, 298,252, 295,245, 289,250, 282,244, 288,236, 295,235, 305,242" href="country.php?id=gn&doc=laws" alt="Republic of Guinea map">
+            <area shape="poly" coords="383,103, 393,102, 398,110, 396,117, 384,117, 377,109" href="country.php?id=ro&doc=laws" alt="Romania map">
+            <area shape="poly" coords="469,12, 628,15, 659,71, 651,95, 635,108, 627,89, 581,74, 579,87, 543,83, 524,92, 475,76, 460,81, 463,90, 440,88, 435,96, 442,106, 444,121, 423,117, 416,110, 421,97, 403,88, 398,82, 391,75, 387,71, 396,69, 386,63, 388,55, 380,40, 378,34" href="country.php?id=ru&doc=laws" alt="Russia map">
+            <area shape="poly" coords="415,290, 426,288, 419,295, 412,297" href="country.php?id=rw&doc=laws" alt="Rwanda map">
+            <area shape="rect" coords="816,333, 829,346" href="country.php?id=ws&doc=laws" alt="Samoa map">
+            <area shape="poly" coords="421,173, 428,166, 436,166, 438,163, 446,168, 452,170, 458,171, 465,183, 468,187, 470,194, 481,193, 482,208, 473,210, 450,220" href="country.php?id=saudi-arabia&doc=laws" alt="Saudi Arabia map">
+            <area shape="poly" coords="254,224, 280,224, 282,218, 294,227, 295,235, 288,236, 280,235, 280,230, 253,230" href="country.php?id=sn&doc=laws" alt="Senegal map">
+            <area shape="poly" coords="261,253, 289,250, 295,245, 298,252, 294,257, 260,260" href="country.php?id=sl&doc=laws" alt="Sierra Leone map">
+            <area shape="poly" coords="764,314, 790,314, 793,324, 771,339" href="country.php?id=sb&doc=laws" alt="Solomon Islands Map">
+            <area shape="poly" coords="448,270, 466,252, 448,241, 476,241, 468,269, 448,292" href="country.php?id=so&doc=laws" alt="Somalia map">
+            <area shape="poly" coords="380,398, 383,390, 398,387, 408,374, 414,375, 413,388, 413,399, 398,401, 404,416, 379,420, 370,398" href="country.php?id=za&doc=laws" alt="South Africa map">
+            <area shape="poly" coords="637,131, 643,127, 653,136, 647,141" href="country.php?id=kr&doc=laws" alt="South Korea map">
+            <area shape="poly" coords="325,118, 335,125, 324,144, 311,142, 313,125, 306,120" href="country.php?id=es&doc=laws" alt="Spain map">
+            <area shape="poly" coords="556,245, 572,254, 574,267, 553,267" href="country.php?id=lk&doc=laws" alt="Sri Lanka map">
+            <area shape="poly" coords="396,206, 398,198, 430,198, 436,214, 431,220, 431,228, 427,246, 395,248, 390,233, 397,221" href="country.php?id=sd&doc=laws" alt="Sudan and South Sudan map">
+            <area shape="poly" coords="164,278, 162,260, 165,255, 183,255, 182,260, 171,262, 170,275" href="country.php?id=sr&doc=laws" alt="Suriname map">
+            <area shape="poly" coords="341,19, 369,17, 368,26, 346,26" href="division.php?id=no-21&doc=laws" alt="Svalbard Map">
+            <area shape="poly" coords="360,43, 369,42, 373,48, 366,58, 364,75, 356,81, 350,66, 351,54" href="country.php?id=se&doc=laws" alt="Sweden map">
+            <area shape="poly" coords="421,143, 439,140, 430,156, 422,158, 421,152" href="country.php?id=sy&doc=laws" alt="Syria map">
+            <area shape="rect" coords="652,179, 677,192" href="country.php?id=tw&doc=laws" alt="Taiwan map">
+            <area shape="poly" coords="500,128, 513,129, 515,136, 496,138" href="country.php?id=tj&doc=laws" alt="Tajikistan map">
+            <area shape="poly" coords="426,288, 440,303, 444,329, 430,335, 424,325, 414,320, 414,306, 419,295" href="country.php?id=tz&doc=laws" alt="Tanzania map">
+            <area shape="poly" coords="601,213, 603,197, 608,210, 616,209, 624,226, 617,227, 616,235, 611,231, 611,242, 620,261, 614,260, 609,243" href="country.php?id=th&doc=laws" alt="Thailand map">
+            <area shape="poly" coords="253,230, 280,230, 280,235, 249,235" href="country.php?id=gm&doc=laws" alt="The Gambia map">
+            <area shape="poly" coords="680,321, 705,322, 705,330, 684,330" href="country.php?id=tl&doc=laws" alt="Timor-Leste map">
+            <area shape="poly" coords="321,246, 329,243, 328,268, 319,263" href="country.php?id=tg&doc=laws" alt="Togo map">
+            <area shape="rect" coords="812,365, 822,377" href="country.php?id=to&doc=laws" alt="Tonga map">
+            <area shape="poly" coords="349,143, 359,143, 360,158, 353,165" href="country.php?id=tn&doc=laws" alt="Tunisia map">
+            <area shape="poly" coords="392,127, 397,122, 431,126, 437,127, 439,133, 439,140, 421,143, 401,144" href="country.php?id=tr&doc=laws" alt="Turkey map">
+            <area shape="poly" coords="471,120, 496,138, 484,144, 470,136, 464,140, 456,121, 466,122" href="country.php?id=tm&doc=laws" alt="Turkmenistan map">
+            <area shape="poly" coords="417,272, 427,269, 426,288, 415,290" href="country.php?id=ug&doc=laws" alt="Uganda map">
+            <area shape="poly" coords="382,90, 403,88, 421,97, 416,110, 410,115, 398,110, 393,102, 383,103, 380,98" href="country.php?id=ua&doc=laws" alt="Ukraine map">
+            <area shape="poly" coords="465,183, 470,182, 468,187" href="country.php?id=ua&doc=laws" alt="United Arab Emirates map">
+            <area shape="poly" coords="314,72, 323,69, 333,92, 317,95, 317,89, 318,83, 313,83, 312,78" href="country.php?id=gb&doc=laws" alt="United Kingdom map">
+            <area shape="poly" coords="26,118, 52,87, 114,91, 134,103, 130,119, 169,103, 169,112, 124,168, 109,181, 82,184, 66,177, 51,156, 25,148" href="country.php?id=us&doc=laws" alt="United States map">
+            <area shape="poly" coords="175,406, 190,413, 200,417, 186,424, 183,430" href="country.php?id=ug&doc=laws" alt="Uruguay map">
+            <area shape="poly" coords="465,111, 484,115, 497,124, 500,128, 496,138, 471,120, 466,122, 461,114" href="country.php?id=uz&doc=laws" alt="Uzbekistan map">
+            <area shape="poly" coords="776,347, 783,348, 787,358, 783,366, 777,367" href="country.php?id=vu&doc=laws" alt="Vanuatu map">
+            <area shape="poly" coords="122,235, 150,241, 155,251, 152,265, 142,269, 143,278, 133,278, 133,260, 120,255" href="country.php?id=ve&doc=laws" alt="Venezuela map">
+            <area shape="poly" coords="628,218, 608,193, 614,189, 623,195, 631,212, 652,226, 627,250, 625,243, 628,226" href="country.php?id=vn&doc=laws" alt="Vietnam map">
+            <area shape="poly" coords="450,220, 473,210, 479,220, 450,234" href="country.php?id=ye&doc=laws" alt="Yemen map">
+            <area shape="poly" coords="390,356, 394,330, 410,337, 414,320, 424,325, 421,341, 415,348, 401,358" href="country.php?id=zm&doc=laws" alt="Zambia map">
+            <area shape="poly" coords="401,358, 415,348, 421,357, 414,375, 408,374" href="country.php?id=zw&doc=laws" alt="Zimbabwe map">
+        </map></textarea><br>
+        <button id="importMap" onclick="if(document.getElementById('inputBox').value.startsWith('<map') && document.getElementById('inputBox').value.endsWith('</map>')) {document.getElementsByTagName('map')[0].outerHTML=document.getElementById('inputBox').value; getImg.usemap='#'+document.getElementsByTagName('map')[0].name; generatePolys(document.getElementById('checkbox').checked ? 840/getImg.naturalWidth:1, document.getElementById('checkbox').checked ? 500/getImg.naturalHeight:1, Number);}else{alert('You must enter a full HTML map tag');}">Import &ltmap&gt</button>
+        <button id="importSVG" onclick="if(document.getElementById('inputBox').value.startsWith('<svg') && document.getElementById('inputBox').value.endsWith('</svg>')) {getSvg.outerHTML=document.getElementById('inputBox').value; generateAreas(1, 1, Number); generatePolys(getImg.width, getImg.height, Number);}else{alert('You must enter a full HTML svg tag');}">Import &ltSVG&gt</button><br>
+        <input id="checkbox" type="checkbox" checked>First Time?</input>
+    </div>
+
+    <!--Output-->
+    <div id="output" style="top:47.5%; left:90.5%;">
+        <h2>Output</h2>
+        <textarea id="outputBox" style="height:400px; width:200px;" onClick="this.select();"></textarea><br>
+        <button id="exportMap" onclick="reset(); document.getElementById('outputBox').innerHTML=document.getElementsByTagName('map')[0].outerHTML; document.getElementById('outputBox').select(); document.execCommand('copy');">Export &ltmap&gt</button>
+        <button id="exportSVG" onclick="reset(); document.getElementById('outputBox').innerHTML=getSvg.outerHTML; document.getElementById('outputBox').select(); document.execCommand('copy');">Export &ltSVG&gt</button>
+    </div>
+    
+    <!--Declares some semi-global variables-->
+    <script>
+    //DOM Manipulation
+    const getAreas = document.getElementsByTagName('area');
+    const getImg = document.getElementById('mapIMG');
+    const getMap = document.getElementById('mapDiv');
+    const getSvg = document.getElementById('SVGCanvas');
+    //Creates color picker
+    const possibleColors = ["red", "orange", "yellow", "green", "aqua", "blue", "purple", "gray", "black", "white"];
+    //Calculates the position of the mouse is in relation to SVG Canvas6v
+    function getRelativeXPos (e, leftMargin) {return (e.clientX - (getMap.offsetLeft-getMap.style.width.substring(0, getMap.style.width.length-2)/2) - leftMargin).toString();}
+    function getRelativeYPos (e, topMargin) {return (e.clientY - (getMap.offsetTop-getMap.style.height.substring(0, getMap.style.height.length-2)/2) - topMargin).toString();}
+    //Allows you to convert "1" to "01"
+    function zeroBuffer (num, sizeLim) {
+        num = num.toString();
+        sizeLim = !sizeLim ? 3:sizeLim;
+        while(num.length < sizeLim) num = "0" + num;
+        return num.substring(num.length-sizeLim, num.length); 
+    }
+    //Detects if the mouse is over an element
+    function isMouseOver (elem, ptX, ptY) {
+        var cLeft = elem.cx.baseVal.value-(elem.r.baseVal.value), cRight = elem.cx.baseVal.value+(elem.r.baseVal.value);
+        var cTop = elem.cy.baseVal.value-(elem.r.baseVal.value), cBottom = elem.cy.baseVal.value+(elem.r.baseVal.value);
+        return (ptX>cLeft & ptX<cRight) & (ptY<cBottom & ptY>cTop);
+    }
+    //Adds attributes to circles
+    function addCircleAttributes (elem, id, cx, cy, r) {
+        elem.setAttribute("id", id);
+        elem.setAttribute("cx", cx);
+        elem.setAttribute("cy", cy);
+        elem.setAttribute("r", r);
+    }
+    //Adds listeners to circles
+    function addCircleListeners (elem) {
+        elem.addEventListener("mouseover", function() {this.style.fill="red";});
+        elem.addEventListener("mouseleave", function() {this.style.fill="blue";});
+        elem.addEventListener("mousedown", onMouseDownPoint);
+    }
+    //Creates a brand new poly for when you press the button
+    var newPolyNum = 0;
+    function createNewPoly () {
+        var brandNewPoly = document.createElement("area");
+        brandNewPoly.setAttribute("shape", "rect");
+        brandNewPoly.setAttribute("alt", "newPoly"+newPolyNum+" map"); newPolyNum++;
+        var placeholderc = (Math.max(getImg.width/2-getImg.offsetLeft, 0)+55)+","+(400-Math.max(getImg.offsetTop-getImg.height/2, 0))+", "+(Math.max(getImg.width/2-getImg.offsetLeft, 0)+105)+","+(450-Math.max(getImg.offsetTop-getImg.height/2, 0));
+        brandNewPoly.setAttribute("coords", placeholderc);
+        document.getElementsByTagName('map')[0].appendChild(brandNewPoly);
+    }
+    //Allows you to zoom
+    function zoom (sign) {
+        if (getImg.width>getMap.offsetWidth | getImg.width+'px'==getMap.style.width&sign>0) {
+            generateAreas(1+sign*840/10/getImg.width, 1+sign*500/10/getImg.height, Number);
+            getImg.width += sign*840/10;
+            getImg.height += sign*500/10;
+            getSvg.width.baseVal.value += sign*840/10;
+            getSvg.height.baseVal.value += sign*500/10;
+            generatePolys(1, 1, Number);
+        }
+    }
+    //Resets the size and position of the map
+    function reset () {
+        generateAreas(840/getImg.width, 500/getImg.height, Math.round); generatePolys(1, 1, Math.round);
+        getImg.style.left='420px'; getImg.style.top='250px'; getImg.width='840'; getImg.height='500';
+        getSvg.style.left='420px'; getSvg.style.top='250px'; getSvg.width.baseVal.value='840'; getSvg.height.baseVal.value='500';
+    }
+    //Alphabetizes elements
+    function alphabetize (parent, element, property) {
+        let elementIds = [];
+        for (var i=0; i<element.length; i++) {elementIds.push(element[i].id ? element[i].id:element[i].alt);}
+        elementIds = elementIds.sort((a, b) => a.localeCompare(b));
+        parent.prepend(document.querySelector('['+property+'*="'+elementIds[0]+'"]'));
+        for (var i=1; i<elementIds.length; i++) {
+            document.querySelector('['+property+'*="'+elementIds[i-1]+'"]').after(document.querySelector('['+property+'*="'+elementIds[i]+'"]'));
+        }
+    }
+    </script>
+
+    <!--Allows the whole map to be dragged-->
+    <script id="mapDragger">
+    //Gets some initial coordinates
+    var initialMousePosMap = {x:null, y:null}, initialPointsPosMap = {x:null, y:null};
+    //Updates the coordinates
+    function onMouseMoveMap(e) {
+        //Updates the Image and SVG coordinates
+        getImg.style.left = (initialPointsPosMap.x + (Number(getRelativeXPos(e, 0)) - initialMousePosMap.x)).toString()+'px';
+        getImg.style.top  = (initialPointsPosMap.y + (Number(getRelativeYPos(e, 0)) - initialMousePosMap.y)).toString()+'px';
+        getSvg.style.left = (initialPointsPosMap.x + (Number(getRelativeXPos(e, 0)) - initialMousePosMap.x)).toString()+'px';
+        getSvg.style.top  = (initialPointsPosMap.y + (Number(getRelativeYPos(e, 0)) - initialMousePosMap.y)).toString()+'px';
+        //Snaps them back into place
+        if (Math.abs(getImg.width/2-getImg.offsetLeft)<=3) {getImg.style.left=getImg.width/2+'px'; getSvg.style.left=getSvg.width.baseVal.value/2+'px';}
+        if (Math.abs(getImg.height/2-getImg.offsetTop)<=3) {getImg.style.top=getImg.height/2+'px'; getSvg.style.top=getSvg.height.baseVal.value/2+'px';}
+    }
+    //Sets up what to do when the mouse is pressed
+    function onMouseDownMap() {
+        if (getSvg.children[getSvg.children.length-1].style.strokeOpacity!='0') {
+            //Sets up what to do if the mouse is moved
+            initialMousePosMap.x = Number(getRelativeXPos(window.event, 0)); initialMousePosMap.y = Number(getRelativeYPos(window.event, 0));
+            initialPointsPosMap.x = getImg.offsetLeft; initialPointsPosMap.y = getImg.offsetTop;
+            this.onmousemove = onMouseMoveMap;
+            //Sets up what to do if the mouse is released or leaves the element
+            this.addEventListener("mouseup", function() {this.onmousemove=null; this.onmouseup=null;});
+        }
+    }
+    </script>
+
+    <!--Allows the points to be dragged-->
+    <script id="pointDragger">
+    //Declares some variables
+    var country, getPolys, pointNum, points;
+    //Updates the coordinates
+    function updateCoordsPoint(e) {
+        //Defines some variables
+        country = this.id.substring(0, this.id.length-2);
+        getPolys = document.getElementById(country);
+        pointNum = Number(this.id.substring(this.id.length-2, this.id.length));
+        //Merges points if they overlap
+        for (var k=0; k<document.getElementsByTagName("circle").length; k++) {
+            //Detecs if two points should be merged
+            if (document.getElementsByTagName("circle")[k].id!=this.id && isMouseOver(document.getElementsByTagName("circle")[k], this.cx.baseVal.value, this.cy.baseVal.value)) {
+                var pointBelow = document.getElementsByTagName("circle")[k];
+                var pointNumBelow = Number(pointBelow.id.substring(pointBelow.id.length-2, pointBelow.id.length));
+                if (pointBelow.id.substring(0, pointBelow.id.length-2)==this.id.substring(0, this.id.length-2)) {
+                    //Deletes points if needed
+                    if (((pointNum==pointNumBelow+2||pointNum==pointNumBelow-2) || ((pointNum==0&&pointNumBelow==document.getElementById(country).points.length*2-2)||(pointNum==document.getElementById(country).points.length*2-2&&pointNumBelow==0)))) {
+                        if (pointNum!=document.getElementById(country).points.length*2-2 || pointBelow.id.substring(pointBelow.id.length-2, pointBelow.id.length)!="00") {
+                            if (pointNumBelow>pointNum) {
+                                if (pointNum!=0 || pointNumBelow!=document.getElementById(country).points.length*2-2) {
+                                    document.getElementById(country+zeroBuffer(pointNum+1, 2)).remove();
+                                    document.getElementById(country).points.removeItem(pointNum/2+1);
+                                    for (var l=0; l<document.getElementById(country).points.length*2-pointNum-1; l++) {
+                                        document.getElementById(country+zeroBuffer(pointNum+3+l, 2)).id=country+zeroBuffer(pointNum+1+l, 2);
+                                    }
+                                } else {
+                                    document.getElementById(country+zeroBuffer(document.getElementById(country).points.length*2-1, 2)).remove();
+                                    document.getElementById(country).points.removeItem(document.getElementById(country).points.length-1);
+                                }
+                            } else {
+                                document.getElementById(country+zeroBuffer(pointNum-1, 2)).remove();
+                                document.getElementById(country).points.removeItem(pointNum/2-1);
+                                for (var l=0; l<document.getElementById(country).points.length*2-pointNum+2; l++) {
+                                    document.getElementById(country+zeroBuffer(pointNum+l, 2)).id=country+zeroBuffer(pointNum-2+l, 2);
+                                }
+                            }
+                            pointBelow.remove();
+                        } else {
+                            document.getElementById(country+zeroBuffer(pointNum+1, 2)).remove();
+                            document.getElementById(country).points.removeItem(pointNum/2);
+                            this.remove();
+                        }
+                    }
+                } else {//Merges the two points
+                    if (pointNumBelow%2==0) {
+                        pairs.circles.push(pointBelow);
+                        pairs.polys.push(document.getElementById(pointBelow.id.substring(0, pointBelow.id.length-2)).points[pointNumBelow/2]);
+                    }
+                }
+            }
+        }
+        //Changes the coordinates of the the circles
+        pairs.circles.forEach(function(item) {
+            //Redefines variables
+            country = item.id.substring(0, item.id.length-2);
+            getPolys = document.getElementById(country);
+            pointNum = Number(item.id.substring(item.id.length-2, item.id.length));
+            //Changes the shape of the area tag
+            var getParentArea = document.querySelector('[alt*="'+country+'"]');
+            if (getParentArea.shape == 'rect') getParentArea.shape='poly'
+            //Changes the coordinates for the corners
+            item.setAttribute("cx", getRelativeXPos(e, getImg.offsetLeft-getImg.width/2)); item.setAttribute("cy", getRelativeYPos(e, getImg.offsetTop-getImg.height/2));
+            //Changes the coordinates for the adjacent edges
+            if (pointNum != 0) {//The edge before
+                document.getElementById(country+zeroBuffer(pointNum-1, 2)).setAttribute("cx", (Number(getRelativeXPos(e, getImg.offsetLeft-getImg.width/2))+getPolys.points[pointNum/2-1].x)/2);
+                document.getElementById(country+zeroBuffer(pointNum-1, 2)).setAttribute("cy", (Number(getRelativeYPos(e, getImg.offsetTop-getImg.height/2))+getPolys.points[pointNum/2-1].y)/2);
+            } else {
+                document.getElementById(country+zeroBuffer(getPolys.points.length*2-1, 2)).setAttribute("cx", (Number(getRelativeXPos(e, getImg.offsetLeft-getImg.width/2))+document.getElementById(country+zeroBuffer(getPolys.points.length*2-2, 2)).cx.baseVal.value)/2);
+                document.getElementById(country+zeroBuffer(getPolys.points.length*2-1, 2)).setAttribute("cy", (Number(getRelativeYPos(e, getImg.offsetTop-getImg.height/2))+document.getElementById(country+zeroBuffer(getPolys.points.length*2-2, 2)).cy.baseVal.value)/2);
+            }
+            if (pointNum != getPolys.points.length*2-2) {//The edge after
+                document.getElementById(country+zeroBuffer(pointNum+1, 2)).setAttribute("cx", (Number(getRelativeXPos(e, getImg.offsetLeft-getImg.width/2))+getPolys.points[pointNum/2+1].x)/2);
+                document.getElementById(country+zeroBuffer(pointNum+1, 2)).setAttribute("cy", (Number(getRelativeYPos(e, getImg.offsetTop-getImg.height/2))+getPolys.points[pointNum/2+1].y)/2);
+            } else {
+                document.getElementById(country+zeroBuffer(pointNum+1, 2)).setAttribute("cx", (Number(getRelativeXPos(e, getImg.offsetLeft-getImg.width/2))+getPolys.points[0].x)/2);
+                document.getElementById(country+zeroBuffer(pointNum+1, 2)).setAttribute("cy", (Number(getRelativeYPos(e, getImg.offsetTop-getImg.height/2))+getPolys.points[0].y)/2);
+            }
+        });
+        //Changes the coordinates for the polygon points
+        pairs.polys.forEach(function(item) {item.x=getRelativeXPos(e, getImg.offsetLeft-getImg.width/2); item.y=getRelativeYPos(e, getImg.offsetTop-getImg.height/2);});
+    }        
+    //Sets up what to do when the mouse is pressed
+    function onMouseDownPoint(e) {
+        //Defines those variables
+        country = this.id.substring(0, this.id.length-2);
+        getPolys = document.getElementById(country);
+        pointNum = Number(this.id.substring(this.id.length-2, this.id.length));
+        //Adds a new point to the polygon if an edge is pressed
+        if (pointNum%2 === 1) {
+            //Adds a new corner to the SVG Polygon
+            getPolys.points.appendItem(getPolys.points[getPolys.points.length-1]);
+            for (var i = 0; i < getPolys.points.length - (pointNum/2+0.5) - 2; i++) {getPolys.points[getPolys.points.length-i-2] = getPolys.points[getPolys.points.length-i-3];}
+            getPolys.points[pointNum/2+0.5].x = getRelativeXPos(e, getImg.offsetLeft-getImg.width/2);
+            getPolys.points[pointNum/2+0.5].y = getRelativeYPos(e, getImg.offsetTop-getImg.height/2);
+            //Redefines the edge as a corner and changes ids for all other corners
+            //Changes the ID of all the circles after
+            for(var i = 1; i < getPolys.points.length*2-1-pointNum; i++) {document.getElementById(country+zeroBuffer((getPolys.points.length-1)*2-i, 2)).setAttribute("id", country+zeroBuffer((getPolys.points.length-1)*2+2-i, 2));}
+            //Adds a circle behind
+            var newEdge1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            addCircleAttributes(newEdge1, country + zeroBuffer(pointNum, 2), (this.cx.baseVal.value + getPolys.points[(pointNum-1)/2].x)/2, (this.cy.baseVal.value + getPolys.points[(pointNum-1)/2].y)/2, 3);
+            addCircleListeners(newEdge1);
+            this.before(newEdge1);
+            //Changes the ID of this circle
+            this.setAttribute("id", country + zeroBuffer(pointNum+1, 2));
+            //Adds a circle ahead
+            var newEdge2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            newEdge2.setAttribute("id", country + zeroBuffer(pointNum+2, 2));
+            if (pointNum !== getPolys.points.length*2-3) {
+                newEdge2.setAttribute("cx", (this.cx.baseVal.value + getPolys.points[(pointNum+3)/2].x)/2);
+                newEdge2.setAttribute("cy", (this.cy.baseVal.value + getPolys.points[(pointNum+3)/2].y)/2);
+            } else {
+                newEdge2.setAttribute("cx", (this.cx.baseVal.value + getPolys.points[0].x)/2);
+                newEdge2.setAttribute("cy", (this.cy.baseVal.value + getPolys.points[0].y)/2);
+            }
+            newEdge2.setAttribute("r", 3);
+            addCircleListeners(newEdge2);
+            this.after(newEdge2);
+            //Changes the point Number
+            pointNum++;
+        }
+        //Specifies the pairs
+        pairs = {polys:[getPolys.points[pointNum/2]], circles:[document.getElementById(this.id)]};
+        //Temporarily moves the circle to the end of the SVG canvas
+        getSvg.appendChild(this);
+        //Changes the properties of the circle
+        this.setAttribute("r", 10);
+        this.style.strokeWidth="800px";
+        this.style.strokeOpacity="0";
+        //Sets up what to do if the mouse is moved
+        this.onmousemove = updateCoordsPoint;
+        //Sets up what to do if the mouse is released or leaves the element
+        this.addEventListener("mouseup", onMouseUpPoint);
+    }
+    //Sets up what to do when the mouse is released
+    function onMouseUpPoint() {
+        //Redefines those variables
+        country = this.id.substring(0, this.id.length-2);
+        getPolys = document.getElementById(country);
+        pointNum = Number(this.id.substring(this.id.length-2, this.id.length));
+        //Moves the point back to its origin on the SVG canvas
+        if(pointNum != "00") {
+            document.getElementById(country + zeroBuffer(pointNum-1, 2)).after(this);
+        } else document.getElementById(country).after(this);
+        //Resets the properties of the circle
+        this.setAttribute("r", 3);
+        this.style.strokeWidth="1px";
+        this.style.strokeOpacity="1";
+        //Nullifies listeners
+        this.onmousemove = null;
+        this.onmouseup = null;
+    }
+    </script>
+
+    <!--Allows the polygons to be dragged-->
+    <script id="polyDragger">
+    //Gets some initial coordinates
+    var initialMousePosPoly = {x:null, y:null}, initialPointsPosPoly = {x:[], y:[]};
+    //Updates the coordinates
+    function updateCoordsPoly(e) {
+        for (var i=0; i<this.points.length; i++) {
+            this.points[i].x = initialPointsPosPoly.x[i] + (getRelativeXPos(e, getImg.offsetLeft-getImg.width/2) - initialMousePosPoly.x);
+            this.points[i].y = initialPointsPosPoly.y[i] + (getRelativeYPos(e, getImg.offsetTop-getImg.height/2) - initialMousePosPoly.y);
+        }
+        generatePoints(true);
+    }
+    function onKeyDownPoly(e) {
+        if (e.key=='Backspace'|e.key=='Delete') {
+            this.remove();
+            document.querySelectorAll('circle[id*="'+this.id+'"]').forEach(function(item){item.remove();});
+            document.querySelector('[alt*="'+this.id+'"]').remove();
+            if(this.id.startsWith("newPoly")) newPolyNum--;
+        }
+    }
+    //Sets up what to do when the mouse is pressed
+    function onMouseDownPoly(e) {
+        //Temporarily moves the polygon to the end of the SVG canvas
+        getSvg.appendChild(this);
+        //Changes the properties of the polygon
+        this.style.cursor="grabbing";
+        this.style.strokeWidth="800px";
+        this.style.strokeOpacity="0";
+        //Sets up what to do if the mouse is moved
+        initialMousePosPoly.x = getRelativeXPos(e, getImg.offsetLeft-getImg.width/2); initialMousePosPoly.y = getRelativeYPos(e, getImg.offsetTop-getImg.height/2);
+        initialPointsPosPoly = {x:[], y:[]};
+        for (var i=0; i<this.points.length; i++) {initialPointsPosPoly.x.push(this.points[i].x); initialPointsPosPoly.y.push(this.points[i].y);}
+        this.onmousemove = updateCoordsPoly;
+        //Sets up what to do if backspace or del is pressed
+        this.addEventListener('focus', function(){this.addEventListener('keydown', onKeyDownPoly);});
+        //Sets up what to do if the mouse is released or leaves the element
+        this.addEventListener("mouseup", onMouseUpPoly);
+    }
+    //Sets up what to do when the mouse is released
+    function onMouseUpPoly() {
+        //Moves the poly back to its origin on the SVG canvas
+        document.getElementById(this.id + "00").before(this);
+        //Resets the properties of the polygon
+        this.style.cursor="grab";
+        this.style.strokeWidth="1px";
+        this.style.strokeOpacity="1";
+        //Nullifies event listeners
+        this.onmousemove=null;
+        this.onmouseup=null;
+    }
+    </script>
+
+    <!--Generates the points and assigns them their values-->
+    <script id="pointGenerator">
+    function generatePoints(update) {
+        //Picks out the polygons
+        for (var i = 0; i < (update ? 1:document.getElementsByTagName("polygon").length); i++) {
+            //Pulls out the DOM
+            var getPolySpecs = update ? document.getElementById(document.getElementsByTagName("polygon")[document.getElementsByTagName("polygon").length-1].id):document.getElementsByTagName("polygon")[i];
+            //Picks out the points
+            for (var j = 0; j < getPolySpecs.points.length; j++) {
+                //Creates and sets values for the corners
+                var newCorner = update ? document.getElementById(getPolySpecs.id+zeroBuffer(2*j, 2)):document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                addCircleAttributes(newCorner, getPolySpecs.id + zeroBuffer(2*j, 2), getPolySpecs.points[j].x, getPolySpecs.points[j].y, 3);
+                addCircleListeners(newCorner);
+                if(!update) {
+                    if (j == 0) {
+                        document.getElementById(getPolySpecs.id).after(newCorner);
+                    } else document.getElementById(getPolySpecs.id + zeroBuffer(2*j-1, 2)).after(newCorner);
+                }
+                //Creates and sets values for the edges
+                var newEdge = update ? document.getElementById(getPolySpecs.id+zeroBuffer(2*j+1, 2)):document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                newEdge.setAttribute("id", getPolySpecs.id + zeroBuffer(2*j+1, 2));
+                if (j < getPolySpecs.points.length - 1) {
+                    newEdge.setAttribute("cx", (getPolySpecs.points[j].x + getPolySpecs.points[j + 1].x)/2);
+                    newEdge.setAttribute("cy", (getPolySpecs.points[j].y + getPolySpecs.points[j + 1].y)/2);
+                } else {
+                    newEdge.setAttribute("cx", (getPolySpecs.points[j].x + getPolySpecs.points[0].x)/2);
+                    newEdge.setAttribute("cy", (getPolySpecs.points[j].y + getPolySpecs.points[0].y)/2);
+                }
+                newEdge.setAttribute("r", 3);
+                addCircleListeners(newEdge);
+                if(!update) document.getElementById(getPolySpecs.id + zeroBuffer(2*j, 2)).after(newEdge);
+            }
+        }
+    }
+    </script>
+
+    <!--Generates the SVGs-->
+    <script id="polyGenerator">
+    function generatePolys (widthRatio, heightRatio, Round) {
+        //Clears the SVGs
+        getSvg.innerHTML="";
+        //Actually does the stuff
+        for (var i = 0; i < getAreas.length; i++) {
+            //Creates blue svg polygons
+            var newPolys = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            //Sets the IDs
+            newPolys.setAttribute("id", getAreas[i].alt.substring(0, getAreas[i].alt.length - 4));
+            //Gets all those coordinates stuff
+            if (getAreas[i].shape === "poly"){
+                //Reads original coordinates
+                var polyStep = 0;
+                var polyValueNum = 0;
+                var xPoly = [""], yPoly = [""];
+                //Reads the coordinates one character at a time
+                for (var j = 0; j <= 20; j++) {
+                    //Terminates the loop when the string ends
+                    if (getAreas[i].coords[j + polyStep] === undefined) {break;}
+                    //Changes the value that is being read if a comma turns up
+                    else if (getAreas[i].coords[j + polyStep] === ",") {
+                        if (polyValueNum % 2 === 0) {
+                            xPoly.push("");
+                        } else if (polyValueNum % 2 === 1) {
+                            yPoly.push("")
+                        }
+                        polyValueNum ++;
+                        polyStep += j;
+                        j = 0;
+                    } else if (getAreas[i].coords[j+polyStep] == " ") {
+                        //Nothing happens if the value is blank
+                    } else {
+                        if (polyValueNum % 2 === 0) {
+                            xPoly[xPoly.length - 1] += getAreas[i].coords[j + polyStep];
+                        } else if (polyValueNum % 2 === 1) {
+                            yPoly[yPoly.length - 1] += getAreas[i].coords[j + polyStep];
+                        }
+                    }
+                }
+                //Assigns the coordinates
+                var polyPoints = "";
+                for (var k = 0; k < yPoly.length; k++) {
+                    polyPoints += Round(xPoly[k]*widthRatio)+","+Round(yPoly[k]*heightRatio);
+                    if (k !== yPoly.length - 1) polyPoints += ", ";
+                }
+                newPolys.setAttribute("points", polyPoints);
+            } else if (getAreas[i].shape === "rect") {
+                //Variables for reading original coordinates
+                var rectStep = 0;
+                var rectValueNum = 0;
+                var xRect = ["",""]; var yRect = ["",""];
+                //Reads the coordinates one character at a time
+                for (var j = 0; j <= 20; j++) {
+                    //Terminates the loop when the string ends
+                    if (getAreas[i].coords[j+rectStep] === undefined) {break;}
+                    //Changes the value that is being read if a comma turns up
+                    else if (getAreas[i].coords[j+rectStep] === ",") {
+                        rectValueNum ++;
+                        rectStep += j;
+                        j = 0;
+                    } else if (getAreas[i].coords[j+rectStep] == " ") {
+                        //Nothing happens if there's a space
+                    } else {
+                        switch (rectValueNum) {
+                            case 0:
+                                xRect[0] += getAreas[i].coords[j+rectStep]; break;
+                            case 1:
+                                yRect[0] += getAreas[i].coords[j+rectStep]; break;
+                            case 2:
+                                xRect[1] += getAreas[i].coords[j+rectStep]; break;
+                            case 3:
+                                yRect[1] += getAreas[i].coords[j+rectStep]; break;
+                        }
+                    }
+                }
+                //Assigns the coordinates
+                newPolys.setAttribute("points", Round(xRect[0]*widthRatio)+","+Round(yRect[0]*heightRatio)+", "+Round(xRect[1]*widthRatio)+","+Round(yRect[0]*heightRatio)+", "+Round(xRect[1]*widthRatio)+","+Round(yRect[1]*heightRatio)+", "+Round(xRect[0]*widthRatio)+","+Round(yRect[1]*heightRatio));
+            }
+            //Assigns the href and alt
+            newPolys.setAttribute("href", getAreas[i].href);
+            newPolys.setAttribute("alt", getAreas[i].alt);
+            //Assigns the color
+            newPolys.setAttribute("style", "fill:"+possibleColors[i - possibleColors.length*Math.floor(i/possibleColors.length)]+"; cursor: grab;");
+            //Sets event listeners
+            newPolys.addEventListener("mousedown", onMouseDownPoly);
+            //Puts the element in the svg canvas
+            getSvg.appendChild(newPolys);
+        }
+        alphabetize(getSvg, document.getElementsByTagName("polygon"), "id");
+        generatePoints(false);
+    }
+    </script>
+
+    <!--Regenerates the map-->
+    <script id="areaGenerator">
+    function generateAreas (widthRatio, heightRatio, Round) {
+        //Pulls out the DOM
+        var getPolySpecs = document.getElementsByTagName("polygon");
+        //Picks out the polygons
+        for (var i = 0; i < getPolySpecs.length; i++) {
+            desiredArea = document.querySelector('[alt*="'+getPolySpecs[i].id+'"]');
+            if (desiredArea.shape == "poly") {
+                desiredArea.setAttribute("coords", "");
+                for (var j = 0; j < getPolySpecs[i].points.length; j++) {
+                    desiredArea.coords += (Round(getPolySpecs[i].points[j].x*widthRatio)+","+Round(getPolySpecs[i].points[j].y*heightRatio)+", ");
+                } desiredArea.coords = desiredArea.coords.substring(0, desiredArea.coords.length-2);
+            } else if (desiredArea.shape == "rect") {
+                desiredArea.coords = Round(getPolySpecs[i].points[0].x*widthRatio)+","+Round(getPolySpecs[i].points[0].y*heightRatio)+", "+Round(getPolySpecs[i].points[2].x*widthRatio)+","+Round(getPolySpecs[i].points[2].y*heightRatio);
+            }
+        }
+        //Alphabetizes
+        alphabetize(document.getElementsByTagName("map")[0], getAreas, "alt");
+    }
+    </script> 
+</body>
+</html>
