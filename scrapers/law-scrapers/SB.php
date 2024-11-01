@@ -35,7 +35,7 @@
         }
 
         //Fixes the laws that have no spaces
-        $spaceFixer = array(
+        $sanitizeName = array(
             'CorrectionalServicesAct2007' => 'Correctional Services Act 2007',
             'MagistratesCourts(AmendmentAct2007' => 'Magistrates Courts (Amendment) Act 2007',
             'PrescriptionofMinistersAct2007' => 'Prescription of Ministers Act 2007',
@@ -43,6 +43,8 @@
             'StateOwnedEnterprisesAct2007' => 'State Owned Enterprises Act 2007',
             'The Income Taxt (Amendment) (NO. 2) Act1991' => 'The Income Taxt (Amendment) (NO. 2) Act 1991',
             'SOLOMON ISLANDS RED CROSS SOCIETY ACT1983' => 'Solomon Islands Red Cross Society Act 1983',
+
+            '.pdf'=>'', '.PDF'=>'', '_'=>' ', '( '=>'(', ' )'=>')', '(('=>'(', ')A'=>') A', '  '=>' '
         );
 
         //Gets the limit
@@ -55,15 +57,15 @@
             $laws = $html_dom->find('a[href^="/sites/default/files/"]');
             foreach ($laws as $lawNum => $law) {
                 //Gets values
-                $enactDate = preg_replace('/[A-Za-z]/', '', explode('/', $law->href)[4]) === '' ? end(explode(' ', strtr(strtr($law->plaintext, $spaceFixer), array('.pdf'=>'', '.PDF'=>'', '_'=>' ')))).'-01-01':explode('/', $law->href)[4].'-01'; $enforceDate = $enactDate; $lastactDate = $enforceDate;
+                $enactDate = preg_replace('/[A-Za-z]/', '', explode('/', $law->href)[4]) === '' ? end(explode(' ', strtr($law->plaintext, $sanitizeName))).'-01-01':explode('/', $law->href)[4].'-01'; $enforceDate = $enactDate; $lastactDate = $enforceDate;
                 $ID = $country.'-'.$page.$lawNum;
                 $regime = 'The Solomon Islands';
-                $name = capitalize_title(strtr(strtr($law->plaintext, $spaceFixer), array('.pdf'=>'', '.PDF'=>'', '_'=>' ', '( '=>'(', ' )'=>')', '(('=>'(', ')A'=>') A')), array(' ', '('));
+                $name = capitalize_title(strtr($law->plaintext, $sanitizeName), array(' ', '('));
                 $type = 'Act';
                     if (str_contains($name, 'Amendment')) {$type = 'Amendment to '.$type;}
                 $status = 'Valid';
                     if (str_contains($name, 'Repealed')) {$status = 'Repealed';}
-                $source = 'https://www.parliament.gov.sb'.$law->href; $pdf = $source;
+                $source = 'https://www.parliament.gov.sb'.$law->href;
 
                 //Makes sure there are no quotes in the title
                 if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
@@ -71,11 +73,10 @@
                 //JSONifies the values
                 $name = '{"en":"'.$name.'"}';
                 $source = '{"en":"'.$source.'"}';
-                $pdf = '{"en":"'.$pdf.'"}';
                 
                 //Inserts the new laws
-                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `status`, `source`, `pdf`) 
-                            VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', '".$status."', '".$source."', '".$pdf."')"; echo $SQL2.'<br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `status`, `source`, `PDF`) 
+                            VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', '".$status."', '".$source."', '".$source."')"; echo $SQL2.'<br/>';
                 if (!$test) {$conn->query($SQL2);}
             }
         }
