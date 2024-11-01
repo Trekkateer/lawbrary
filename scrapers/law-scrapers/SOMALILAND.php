@@ -21,7 +21,7 @@
         if (!$test) {$conn->query($SQL1);}
 
         //Sets up querying function
-        $HTTP_Call = function ($cookie, $href) {
+        $HTTP_Call = function ($href, $cookie) {
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $href,
@@ -38,25 +38,34 @@
             return $response;
         };
 
+        //Sanitizes the titles
+        $sanitizeName = [
+            '_'=>' ', '-'=>' '
+        ];
+
         //Loops through the languages
-        foreach (array('so'=>'d381c96dfd672c98ffcf982811c98afdfb84bbcds%3A2%3A%22so%22%3B', 'ar'=>'a502f8b7649acf5894cc0c93b5ca5715d13dc7fas%3A2%3A%22ar%22%3B', 'en'=>'07f7f786c05a4320e4aaf9fba41169aabef2e545s%3A2%3A%22en%22%3B') as $lang => $cookie) {
-            foreach (array('parliament-acts-2') as $superPage) {
+        foreach (array('so'=>'d381c96dfd672c98ffcf982811c98afdfb84bbcds%3A2%3A%22so%22%3B'/*, 'ar'=>'a502f8b7649acf5894cc0c93b5ca5715d13dc7fas%3A2%3A%22ar%22%3B', 'en'=>'07f7f786c05a4320e4aaf9fba41169aabef2e545s%3A2%3A%22en%22%3B'*/) as $lang => $cookie) {
+            //Loops through the types
+            foreach (array('parliament-acts-2' => 'Act') as $typePage => $type) {
                 //Gets the limit
-                $html_dom->load($HTTP_Call($cookie, 'https://www.govsomaliland.org/articles/'.$superPage.'?page=0'));
-                $new_limit = $limit ?? explode('page=', $html_dom->find('li.last')[0]->find('a')[0]->href)[1];
+                $html_dom->load($HTTP_Call('https://govsomaliland.org/articles/'.$typePage.'?page=0', $cookie));
+                $limit = $limit ?? explode('page=', $html_dom->find('li.last')[0]->find('a')[0]->href)[1];
 
                 //Loops through the pages
-                for ($page = $start; $page <= $new_limit; $page++) {
+                for ($page = $start; $page <= $limit; $page++) {
                     //Processes the data
-                    $html_dom->load($HTTP_Call($cookie, 'https://www.govsomaliland.org/articles/'.$superPage.'?page='.$page));
-                    $laws = $html_dom->find('div[class="col-md-12 ministry"]');
+                    $html_dom->load($HTTP_Call('https://govsomaliland.org/articles/'.$typePage.'?page='.$page, $cookie));
+                    $laws = $html_dom->find('div.col-md-12.ministry');
                     foreach($laws as $lawNum => $law) {
-                        //Gets values
-                        $enactDate = '1970/01/01'; $enforceDate = $enactDate;
+                        //Gets the source
+                        $source = 'https://govsomaliland.org'.$law->find('h1')[0]->find('a')[0]->href;
+                        //Gets the rest of the values
+                        $law_dom = new simple_html_dom();
+                            $enactDate = date('Y-m-d', strtotime($law_dom->load($HTTP_Call($source, $cookie))->find('div.col-lg-9')[0]->find('div.singlepost')[0]->find('div.postmeta')[0]->plaintext)); $enforceDate = $enactDate; $lastactDate = $enactDate;
                         $ID = $country.'-'.($page-1).$lawNum;
-                        $name = $law->find('h1')[0]->find('a')[0]->plaintext;
-                        $type = 'Act'; $status = 'Valid';
-                        $source = 'https://www.govsomaliland.org'.$law->find('h1')[0]->find('a')[0]->href;
+                        $regime = 'The Republic of Somaliland';
+                        $name = ucwords(strtolower(strtr($law->find('h1')[0]->find('a')[0]->plaintext, $sanitizeName)));
+                        $status = 'Valid';
 
                         //Makes sure there are no quotes in the title
                         if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
@@ -85,8 +94,8 @@
                             $source = '{"'.$lang.'":"'.$source.'"}';
 
                             //Creates SQL
-                            $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `ID`, `name`, `type`, `status`, `source`)
-                                    VALUES ('".$enactDate."', '".$enforceDate."', '".$ID."', '".$name."', '".$type."', '".$status."', '".$source."')";
+                            $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `status`, `source`)
+                                    VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', '".$status."', '".$source."')";
                         }
 
                         //Makes the query
