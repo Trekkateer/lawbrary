@@ -33,6 +33,7 @@
                 `regime` text NOT NULL,
                 `name` text NOT NULL,
                 `type` text NOT NULL,
+                `isAmmend` boolean NOT NULL,
                 `status` text NOT NULL,
                 `origin` text,
                 `signers` text,
