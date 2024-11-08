@@ -1,5 +1,6 @@
 <html><body>
     <?php //TODO: Implement crawling the specific law pages. Get PDF and types
+          //TODO: Make a way for a law to have multiple origins
           //TODO: Implement ammendment support
         //Settings
         $test = true; $country = 'ES';
