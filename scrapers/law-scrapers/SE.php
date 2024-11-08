@@ -21,24 +21,38 @@
         if (!$test) {$conn->query($SQL1);}
 
         //Fixes the types
-        $types  = array('Svensk författningssamling'=>'Swedish Code of Statutes',);
+        $types = array('Svensk författningssamling'=>'Swedish constitutional collection');
         
         //Finds the limit
-        $API_Call = json_decode(file_get_contents('https://www.riksdagen.se/api/data/?url=%2Fsv%2Fsok%2F%3Favd%3Ddokument%26doktyp%3Dsfs'), true);
-        $limit = $limit ?? $API_Call['search']['numberOfPages']; echo $limit.'<br/>';
+        $limit = $limit ?? json_decode(file_get_contents('https://www.riksdagen.se/api/data/?url=%2Fsv%2Fsok%2F%3Fdoktyp%3Dsfs'), true)['search']['numberOfPages']; echo $limit.'<br/>';
         //Gets the laws
         for ($page = $start; $page <= $limit; $page++) {
             //Gets the data from congress.gov API
-            $laws = json_decode(file_get_contents('https://www.riksdagen.se/api/data/?url=%2Fsv%2Fsok%2F%3Favd%3Ddokument%26doktyp%3Dsfs%26p%3D'.$page), true)['search']['documents'];
+            $laws = json_decode(file_get_contents('https://www.riksdagen.se/api/data/?url=%2Fsv%2Fsok%2F%3Fdoktyp%3Dsfs%26p%3D'.$page), true)['search']['documents'];
             foreach ($laws as $law) {
                 //Interprets the data
                 $html_dom->load($law['statusRow']);
-                    $enactDate = trim(str_replace('-', '/', $html_dom->find('dd')[0]->plaintext ?? explode('-', $law['id'])[1].'/01/01')); $enforceDate = $enactDate;
-                $ID = $country.'-'.str_replace('-', '', $law['id']);
+                    $enactDate = $lastactDate = trim($html_dom->find('dd')[0]->plaintext ?? explode('-', $law['id'])[1].'-01-01');
+                    $enforceDate = explode('Träder i kraft I:', explode('/', trim($law['summary'], ' /'))[0])[1] ?? $enactDate;
+                $ID = $country.'-'.strtoupper(str_replace('-', '', $law['id']));
+                //Gets the regime
+                switch (true) {
+                    case strtotime($enactDate) < strtotime('today'):
+                        $regime = 'The Kingdom of Sweden';
+                    case strtotime($enactDate) < strtotime('10 September 1721'):
+                        $regime = 'The Swedish Empire';
+                    case strtotime($enactDate) < strtotime('6 June 1523'):
+                        $regime = 'The Kalmar Union';
+                    case strtotime($enactDate) < strtotime('17 June 1397'):
+                        $regime = 'The Kingdom of Sweden';
+                        break;
+                }
+                //Gets the rest of the data
                 $name = $law['title'];
-                $summary = '<span>'.trim($law['summary']).'</span>';
+                $summary = strtr(trim($law['summary'] ?? 'NULL'), array("\n" => ' ', "\r" => ' ', "\t" => ' ', '  '=>' '));
                 $type = $types[$law['debateName']]; $status = 'Valid';
-                $source = $law['url']; $PDF = $law['attachedFileList']['files'][0]['url'] ?? 'NULL';
+                $source = $law['url'];
+                $PDF = $law['attachedFileList']['files'][0]['url'] ?? 'NULL';
 
                 //Makes sure there are no quotes in the title or summary
                 if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
@@ -48,11 +62,11 @@
                 $name = '{"sv":"'.$name.'"}';
                 $summary = isset($law['summary']) ? '{"sv":"'.$summary.'"}':'NULL';
                 $source = '{"sv":"'.$source.'"}';
-                $PDF = isset($law['attachedFileList']['files'][0]['url']) ? '{"sv":"'.$PDF.'"}':'NULL';
+                $PDF = isset($law['attachedFileList']['files'][0]['url']) ? '{"sv":"'.$PDF.'"}':$PDF;
 
                 //Creates SQL
-                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `ID`, `name`, `summary`, `type`, `status`, `source`, `PDF`) 
-                        VALUES ('".$enactDate."', '".$enforceDate."', '".$ID."', '".$name."', '".$summary."', '".$type."', '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `re`, `regime`, `summary`, `type`, `status`, `source`, `PDF`) 
+                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$regime."', ".$summary.", '".$type."', '".$status."', '".$source."', ".$PDF.")"; echo $SQL2.'<br/>';
                 if (!$test) {$conn->query($SQL2);}
             }
         }
