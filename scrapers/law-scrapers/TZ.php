@@ -24,24 +24,32 @@
             //Interprets the data
             $enactDate = $law['posted'].'-01-01'; $enforceDate = $enactDate; $lastactDate = $enforceDate;
             $ID = $country.'-'.$law['id'];
-            $regime = 'The United Republic of Tanzania';
-            $name = $law['title_sw'];
-            $type = 'Act'; $status = 'Valid';
-            $source = 'https://www.parliament.go.tz/polis'.str_replace(' ', '%20', $law['file_url']); $PDF = $source;
+            $regime = '{"en":"The United Republic of Tanzania", "sw":"Jamhuri ya Muungano wa Tanzania"}';
+            //Gets the name
+            $name_sw = strtr(trim($law['title_sw'], ' .'), array('  '=>' ')); $name_en = strtr(trim($law['title_en'], ' .'), array('  '=>' '));
+            if ($name_sw !== $name_en && !str_contains($name_sw, ' Act')) {
+                $name = '{"sw":"'.$name_sw.'", "en":"'.$name_en.'"}';
+            } else {
+                if (str_contains($name_en, ' Act')) {
+                    $name = '{"en":"'.$name_en.'"}';
+                } else {$name = '{"sw":"'.$name_sw.'"}';}
+            }
+            //Gets the rest of the values
+            $type = 'Act'; if (str_contains($law['title_en'], 'Code')) {$type = 'Code';}
+            if (str_contains($law['title_sw'], 'Sheria ya Marekebisho') || str_contains($law['title_en'], 'Amendment')) {$isAmend = 1;} else {$isAmend = 0;}
+            $status = 'Valid';
+            $source = 'https://www.parliament.go.tz/polis'.str_replace(' ', '%20', $law['file_url']);
 
             //Makes sure there are no quotes in the title or summary
             if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
             if (str_contains($source, "'")) {$source = str_replace("'", "%27", $source);}
-            if (str_contains($PDF, "'")) {$PDF = str_replace("'", "%27", $PDF);}
 
             //JSONifies the title and source
-            $name = '{"sw":"'.$name.'"}';
             $source = '{"sw":"'.$source.'"}';
-            $PDF = '{"sw":"'.$PDF.'"}';
 
             //Creates SQL
-            $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `ID`, `regime`, `name`, `type`, `status`, `source`, `PDF`) 
-                    VALUES ('".$enactDate."', '".$enforceDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
+            $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `isAmend`, `status`, `source`, `PDF`) 
+                    VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', ".$isAmend.", '".$status."', '".$source."', '".$source."')"; echo $SQL2.'<br/>';
             if (!$test) {$conn->query($SQL2);}
         }
 
