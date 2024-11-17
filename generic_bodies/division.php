@@ -66,36 +66,36 @@
                     $dashedURL2Name = $dashedURL2Name.$pathName[$i].'-';
                 } $dashedURL2Name = substr($dashedURL2Name, 0, strlen($dashedURL2Name)-1);
                 if ($row['parent'] === 'US' && json_decode($row['type'], true)['en'] === 'State') {
-                    if ($params['id'] === 'us-de' || $params['id'] === 'us-nh' || $params['id'] === 'us-ri' || $params['id'] === 'us-vt') {
+                    if ($params['id'] === 'US-DE' || $params['id'] === 'US-NH' || $params['id'] === 'US-RI' || $params['id'] === 'US-VT') {
                         $src='https://ontheworldmap.com/usa/state/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
                     } else {
                         $src='https://ontheworldmap.com/usa/state/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
                     }
                 } else if ($row['parent'] === 'GB' && json_decode($row['type'], true)['en'] === 'Country') {
                     $src='https://ontheworldmap.com/uk/'.$dashedURL2Name.'/administrative-divisions-map-of-'.$dashedURL2Name.'-max.jpg';
-                } else if ($params['id'] === 'ae') {
+                } else if ($params['id'] === 'AE') {
                     $src='https://ontheworldmap.com/uae/map-of-uae.jpg';
-                } else if ($params['id'] === 'dk' ||  $params['id'] === 'hi') {
+                } else if ($params['id'] === 'DK' ||  $params['id'] === 'hi') {
                     $src='https://ontheworldmap.com/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
-                } else if ($params['id'] === 'aq') {
+                } else if ($params['id'] === 'AQ') {
                     $src='https://ontheworldmap.com/'.$dashedURL2Name.'/'.$dashedURL2Name.'-map-with-country-claims-max.jpg';
-                } else if ($params['id'] === 'au') {
+                } else if ($params['id'] === 'AU') {
                     $src='https://ontheworldmap.com/'.$dashedURL2Name.'/'.$dashedURL2Name.'-map-2-max.jpg';
-                } else if ($params['id'] === 'at') {
+                } else if ($params['id'] === 'AT') {
                     $src='https://ontheworldmap.com/'.$dashedURL2Name.'/'.$dashedURL2Name.'-map-max.jpg';
-                } else if ($params['id'] === 'bl') {
+                } else if ($params['id'] === 'BL') {
                     $src='https://ontheworldmap.com/st-barts/map-of-st-barts-max.jpg';
-                } else if ($params['id'] === 'cw') {
+                } else if ($params['id'] === 'CW') {
                     $src='https://ontheworldmap.com/curacao/map-of-curacao-max.jpg';
-                } else if ($params['id'] === 'nf') {
+                } else if ($params['id'] === 'NF') {
                     $src='https://ontheworldmap.com/norfolk/map-of-'.$dashedURL2Name.'-max.jpg';
-                } else if ($params['id'] === 're') {
+                } else if ($params['id'] === 'RE') {
                     $src='https://ontheworldmap.com/reunion/map-of-reunion-max.jpg';
-                } else if ($params['id'] === 'tc') {
+                } else if ($params['id'] === 'TC') {
                     $src='https://ontheworldmap.com/turks-and-caicos/map-of-turks-and-caicos-max.jpg';
-                } else if ($params['id'] === 'vi') {
+                } else if ($params['id'] === 'VI') {
                     $src='https://ontheworldmap.com/virgin-islands-us/map-of-us-virgin-islands-max.jpg';
-                } else if ($params['id'] === 'vg') {
+                } else if ($params['id'] === 'VG') {
                     $src='https://ontheworldmap.com/virgin-islands-british/map-of-british-virgin-islands-max.jpg';
                 } else {
                     $src='https://ontheworldmap.com/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';

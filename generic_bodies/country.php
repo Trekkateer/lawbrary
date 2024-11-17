@@ -14,71 +14,71 @@
                     $dashedURLName = $dashedURLName.$pathName[$i].'-';
                 } $dashedURLName = substr($dashedURLName, 0, strlen($dashedURLName)-1);
                 if ($row['type'] === 'US State') {
-                    if ($params['id'] === 'us-de' | $params['id'] === 'us-nh' | $params['id'] === 'us-ri' | $params['id'] === 'us-vt') {
-                        $src='https://ontheworldmap.com/usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
+                    if ($params['id'] === 'US-DE' || $params['id'] === 'US-NH' || $params['id'] === 'US-RI' || $params['id'] === 'US-VT') {
+                        $src='usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
                     } else {
-                        $src='https://ontheworldmap.com/usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
+                        $src='usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                     }
                 } else if ($row['type'] === 'US Capital') {
-                    $src='https://ontheworldmap.com/usa/city/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
+                    $src='usa/city/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 } else if ($row['type'] === 'British Kingdom') {
-                    $src='https://ontheworldmap.com/uk/'.$dashedURLName.'/administrative-divisions-map-of-'.$dashedURLName.'-max.jpg';
-                } else if ($params['id'] === 'ae') {
-                    $src='https://ontheworldmap.com/uae/map-of-uae.jpg';
-                } else if ($params['id'] === 'al' | $params['id'] === 'ar' | $params['id'] === 'bz' | $params['id'] === 'hr' | $params['id'] === 'ie' | $params['id'] === 'il' | $params['id'] === 'fi' | $params['id'] === 'hi' | $params['id'] === 'jp' | $params['id'] === 'li' | $params['id'] === 'lu' | $params['id'] === 'me' | $params['id'] === 'mz' | $params['id'] === 'nz' | $params['id'] === 'ph' | $params['id'] === 'pt' | $params['id'] === 'th' | $params['id'] === 'tn' | $params['id'] === 'kr' | $params['id'] === 'vn') {
-                    $src='https://ontheworldmap.com/'.$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
-                } else if ($params['id'] === 'au') {
-                    $src='https://ontheworldmap.com/'.$dashedURLName.'/'.$dashedURLName.'-map-2-max.jpg';
-                } else if ($params['id'] === 'at') {
-                    $src='https://ontheworldmap.com/'.$dashedURLName.'/'.$dashedURLName.'-map-max.jpg';
-                } else if ($params['id'] === 'bs') {
-                    $src='https://ontheworldmap.com/bahamas/map-of-bahamas-max.jpg';
-                } else if ($params['id'] === 'cd') {
-                    $src='https://ontheworldmap.com/democratic-republic-of-the-congo/map-of-dr-congo-max.jpg';
-                } else if ($params['id'] === 'cf') {
-                    $src='https://ontheworldmap.com/central-african/map-of-central-african-max.jpg';
-                } else if ($params['id'] === 'cg') {
-                    $src='https://ontheworldmap.com/republic-of-the-congo/map-of-republic-of-the-congo-max.jpg';
-                } else if ($params['id'] === 'ci') {
-                    $src='https://ontheworldmap.com/cote-d-ivoire/map-of-cote-d-ivoire-max.jpg';
-                } else if ($params['id'] === 'northern-cyprus') {
-                    $src='https://ontheworldmap.com/cyprus/map-of-cyprus-max.jpg';
-                } else if ($params['id'] === 'cz') {
-                    $src='https://ontheworldmap.com/czech-republic/map-of-czech-republic-max.jpg';
-                } else if ($params['id'] === 'gb') {
-                    $src='https://ontheworldmap.com/uk/united-kingdom-map-max.jpg';
-                } else if ($params['id'] === 'gm') {
-                    $src='https://ontheworldmap.com/gambia/map-of-gambia-max.jpg';
-                } else if ($params['id'] === 'mk') {
-                    $src='https://ontheworldmap.com/macedonia/map-of-macedonia-max.jpg';
-                } else if ($params['id'] === 'mm') {
-                    $src='https://ontheworldmap.com/burma/map-of-burma.jpg';
-                } else if ($params['id'] === 'mh') {
-                    $src='https://ontheworldmap.com/marshall-islands/map-of-marshall-islands-max.jpg';
-                } else if ($params['id'] === 'nl') {
-                    $src='https://ontheworldmap.com/netherlands/map-of-netherlands-max.jpg';
-                } else if ($params['id'] === 'ps-gaza' || $params['id'] === 'ps-west-bank') {
-                    $src='https://ontheworldmap.com/palestine/map-of-palestine.jpg';
-                } else if ($params['id'] === 'ph') {
-                    $src='https://ontheworldmap.com/philippines/map-of-philippines-max.jpg';
-                } else if ($params['id'] === 'se') {
-                    $src='https://ontheworldmap.com/'.$dashedURLName.'/political-map-of-'.$dashedURLName.'.jpg';
-                } else if ($params['id'] === 'st') {
-                    $src='https://ontheworldmap.com/sao-tome-and-principe/map-of-sao-tome-and-principe-max.jpg';
-                } else if ($params['id'] === 'sc') {
-                    $src='https://ontheworldmap.com/seychelles/map-of-seychelles-1000.jpg';
-                } else if ($params['id'] === 'sb') {
-                    $src='https://ontheworldmap.com/solomon-islands/map-of-solomon-islands-max.jpg';
-                } else if ($params['id'] === 'tc') {
-                    $src='https://ontheworldmap.com/turks-and-caicos/map-of-turks-and-caicos-max.jpg';
-                } else if ($params['id'] === 'tl') {
-                    $src='https://ontheworldmap.com/timor-east/map-of-timor-east-max.jpg';
-                } else if ($params['id'] === 'us') {
-                    $src='https://ontheworldmap.com/usa/'.$params['id'].'-map-max.jpg';
+                    $src='uk/'.$dashedURLName.'/administrative-divisions-map-of-'.$dashedURLName.'-max.jpg';
+                } else if ($params['id'] === 'AE') {
+                    $src='uae/map-of-uae.jpg';
+                } else if ($params['id'] === 'AL' || $params['id'] === 'AR' || $params['id'] === 'BZ' || $params['id'] === 'HR' || $params['id'] === 'IE' || $params['id'] === 'IL' || $params['id'] === 'FI' || $params['id'] === 'HI' || $params['id'] === 'JP' || $params['id'] === 'LI' || $params['id'] === 'LU' || $params['id'] === 'ME' || $params['id'] === 'MZ' || $params['id'] === 'NZ' || $params['id'] === 'PH' || $params['id'] === 'PT' || $params['id'] === 'TH' || $params['id'] === 'TN' || $params['id'] === 'KR' || $params['id'] === 'VN') {
+                    $src=$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
+                } else if ($params['id'] === 'AU') {
+                    $src=$dashedURLName.'/'.$dashedURLName.'-map-2-max.jpg';
+                } else if ($params['id'] === 'AT') {
+                    $src=$dashedURLName.'/'.$dashedURLName.'-map-max.jpg';
+                } else if ($params['id'] === 'BS') {
+                    $src='bahamas/map-of-bahamas-max.jpg';
+                } else if ($params['id'] === 'CD') {
+                    $src='democratic-republic-of-the-congo/map-of-dr-congo-max.jpg';
+                } else if ($params['id'] === 'CF') {
+                    $src='central-african/map-of-central-african-max.jpg';
+                } else if ($params['id'] === 'CG') {
+                    $src='republic-of-the-congo/map-of-republic-of-the-congo-max.jpg';
+                } else if ($params['id'] === 'CI') {
+                    $src='cote-d-ivoire/map-of-cote-d-ivoire-max.jpg';
+                } else if ($params['id'] === 'NORTHERN-CYPRUS') {
+                    $src='cyprus/map-of-cyprus-max.jpg';
+                } else if ($params['id'] === 'CZ') {
+                    $src='czech-republic/map-of-czech-republic-max.jpg';
+                } else if ($params['id'] === 'GB') {
+                    $src='uk/united-kingdom-map-max.jpg';
+                } else if ($params['id'] === 'GM') {
+                    $src='gambia/map-of-gambia-max.jpg';
+                } else if ($params['id'] === 'MK') {
+                    $src='macedonia/map-of-macedonia-max.jpg';
+                } else if ($params['id'] === 'MM') {
+                    $src='burma/map-of-burma.jpg';
+                } else if ($params['id'] === 'MH') {
+                    $src='marshall-islands/map-of-marshall-islands-max.jpg';
+                } else if ($params['id'] === 'NL') {
+                    $src='netherlands/map-of-netherlands-max.jpg';
+                } else if ($params['id'] === 'PS-GAZA' || $params['id'] === 'PS-WEST-BANK') {
+                    $src='palestine/map-of-palestine.jpg';
+                } else if ($params['id'] === 'PH') {
+                    $src='philippines/map-of-philippines-max.jpg';
+                } else if ($params['id'] === 'SE') {
+                    $src=$dashedURLName.'/political-map-of-'.$dashedURLName.'.jpg';
+                } else if ($params['id'] === 'ST') {
+                    $src='sao-tome-and-principe/map-of-sao-tome-and-principe-max.jpg';
+                } else if ($params['id'] === 'SC') {
+                    $src='seychelles/map-of-seychelles-1000.jpg';
+                } else if ($params['id'] === 'SB') {
+                    $src='solomon-islands/map-of-solomon-islands-max.jpg';
+                } else if ($params['id'] === 'TC') {
+                    $src='turks-and-caicos/map-of-turks-and-caicos-max.jpg';
+                } else if ($params['id'] === 'TL') {
+                    $src='timor-east/map-of-timor-east-max.jpg';
+                } else if ($params['id'] === 'US') {
+                    $src='usa/'.$params['id'].'-map-max.jpg';
                 } else {
-                    $src='https://ontheworldmap.com/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
+                    $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 }
-                echo '<img id="mapImg" src='.$src.' usemap="#Map" alt="'.strtr($translations[2], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.strtr($translations[2], array('[name]'=>$name)).'">';
             }
         }
     }
