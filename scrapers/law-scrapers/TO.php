@@ -18,6 +18,10 @@
         $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($country)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
+        //Makes sure certain things get capitalized
+        $capitalizees    = ['the asian development bank', 'the international monetary fund', 'the kingdom', "the bailiffs' office", 'the office of the anti-corruption commissioner', "pa'anga", 'supreme court', 'tonga', 'kingdom of tonga', 'united nations'];
+        $capitalizations = ['the Asian Development Bank', 'the International Monetary Fund', 'the Kingdom', "the Bailiffs' Office", 'the Office of the Anti-corruption Commissioner', "Pa'anga", 'Supreme Court', 'Tonga', 'Kingdom of Tonga', 'United Nations'];
+
         //Loops through all the letters
         foreach (array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z') as $letter) {
             //Creates curl handler for search
@@ -56,12 +60,16 @@
                 $sourceEN = $body_row->find('td')[3]->find('a')[0]->href; $sourceTO = $body_row->find('td')[4]->find('a')[0]->href;
                 
                 //Sanitizes some values
-                $enactDate = date('Y-m-d', strtotime(explode('<br />', $enactDate)[1])); $enforceDate = $enactDate;
+                $enactDate = date('Y-m-d', strtotime(explode('<br />', $enactDate)[1])); $enforceDate = $enactDate; $lastactDate = $enactDate;
                 $ID = $country.'-'.explode('</strong>', explode('<br />', $ID)[0])[1];
-                $nameEN = explode('&nbsp', $nameEN)[0]; $nameTO = explode('&nbsp', $nameTO)[0];
-                $summary = explode('<br />', $summary)[2] ?? 'NULL';
-                    $summary = $summary === 'NULL' ? $summary:ucfirst(strtolower($summary));
-                $type = 'Act'; $status = 'Valid';
+                if (strtotime($enactDate) < strtotime('4 June 1970')) {$regime = 'The British Empire';}
+                    else {$regime = 'The Kingdom of Tonga';}
+                $nameEN = trim(explode('&nbsp;', $nameEN)[0]); $nameTO = trim(explode('&nbsp;', $nameTO)[0]);
+                $summary = strtolower(explode('<br />', $summary)[2] ?? 'NULL');
+                    $summary = ($summary !== 'null' && str_starts_with($summary, 'an act')) ? ucfirst(str_replace($capitalizees, $capitalizations, $summary)):'NULL';
+                $type = 'Act';
+                if (str_contains(strtolower($nameEN), 'amendment')) {$isAmend = 1;} else {$isAmend = 0;}
+                $status = 'Valid';
                 $topic = explode(" - ", $topic)[1];
                 $sourceEN = 'https://ago.gov.to'.$sourceEN; $sourceTO = 'https://ago.gov.to'.$sourceTO;
 
@@ -73,11 +81,11 @@
                 $name = '{"to":"'.$nameTO.'", "en":"'.$nameEN.'"}';
                 $summary = $summary === 'NULL' ? $summary:"'{\"en\":\"".$summary."\"}'";
                 $topic = '{"en":"'.$topic.'"}';
-                $source = '{"to":"'.$sourceTO.'", "en":"'.$sourceEN.'"}'; $PDF = $source;
+                $source = '{"to":"'.$sourceTO.'", "en":"'.$sourceEN.'"}';
                 
                 //Inserts the new laws
-                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `ID`, `name`, `summary`, `type`, `topic`, `status`, `source`, `PDF`) 
-                            VALUES ('".$enactDate."', '".$enforceDate."', '".$ID."', '".$name."', ".$summary.", '".$type."', '".$topic."', '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `summary`, `type`, `isAmend`, `topic`, `status`, `source`, `PDF`) 
+                            VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', ".$summary.", '".$type."', '".$isAmend."', '".$topic."', '".$status."', '".$source."', '".$source."')"; echo $SQL2.'<br/>';
                 if (!$test) {$conn->query($SQL2);}
             }
         }
