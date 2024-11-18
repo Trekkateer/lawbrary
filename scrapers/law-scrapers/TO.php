@@ -18,9 +18,9 @@
         $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($country)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
-        //Makes sure certain things get capitalized
-        $capitalizees    = ['the asian development bank', 'the international monetary fund', 'the kingdom', "the bailiffs' office", 'the office of the anti-corruption commissioner', "pa'anga", 'supreme court', 'tonga', 'kingdom of tonga', 'united nations'];
-        $capitalizations = ['the Asian Development Bank', 'the International Monetary Fund', 'the Kingdom', "the Bailiffs' Office", 'the Office of the Anti-corruption Commissioner', "Pa'anga", 'Supreme Court', 'Tonga', 'Kingdom of Tonga', 'United Nations'];
+        //Makes sure certain things get capitalized TODO: Add more
+        $capitalizees    = ['the asian development bank', ' the multilateral investment guarantee agency', ' the international centre for the settlement of investment disputes', ' the international development association', ' international bank for reconstruction and development', ' the international finance corporation', ' international monetary fund', 'the kingdom', "the bailiffs' office", 'the office of the anti-corruption commissioner', "pa'anga", ' red cross', ' supreme court', ' kingdom of tonga', ' tonga', ' united nations'];
+        $capitalizations = ['the Asian Development Bank', ' the Multilateral Investment Guarantee Agency', ' the International Centre for the Settlement of Investment Disputes', ' the International Development Association', ' International Bank for Reconstruction and Development', ' the International Finance Corporation', ' International Monetary Fund', 'the Kingdom', "the Bailiffs' Office", 'the Office of the Anti-corruption Commissioner', "Pa'anga", ' Red Cross', ' Supreme Court', ' Kingdom of Tonga', ' Tonga', ' United Nations'];
 
         //Loops through all the letters
         foreach (array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z') as $letter) {
