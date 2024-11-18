@@ -7,7 +7,7 @@
         $limit = null;//Total number of laws desired.
 
         //Opens the parser (HTML_DOM)
-        include '../simple_html_dom.php';
+        include '../../simple_html_dom.php';
 
         //Connects to the Law database
         $username="u9vdpg8vw9h2e";
@@ -178,26 +178,26 @@
                 $number = end($law->find('sup'))->plaintext; echo '<br/>'.$number.'<br/>';
 
                 //Interprets the data
-                $enactDate = date('Y-m-d', strtotime($law->find('div.doc')[0]->find('div.doc-card')[0]->find('span')[0]->innertext)); $enforceDate = $enactDate;
-                $ID = $country.'-'.str_replace('-', '', explode('<span>', $law->find('div.doc')[0]->find('small')[0]->innertext)[0]);
+                $enactDate = date('Y-m-d', strtotime($law->find('div.doc')[0]->find('div.doc-card')[0]->find('span')[0]->innertext)); $enforceDate = $enactDate; $lastactDate = $enactDate;
+                $ID = $country.'-'.strtr(explode('<span>', $law->find('div.doc')[0]->find('small')[0]->innertext)[0], array('-'=>'', '/'=>''));
+                if (strtotime($enactDate) < strtotime('1991-08-24')) {$regime = 'The Ukrainian SSR';} else {$regime = 'Ukraine';}
                 $name = trim($law->find('div.doc')[0]->find('a')[0]->plaintext);
                 $type = $types[trim(preg_replace('/[0-9]/', '', explode('<span>', $law->find('div.doc')[0]->find('small')[0]->plaintext)[0]))];
-                    if ($law->find('div.doc')[0]->find('div.doc-card')[0]->find('div.reg')[0]->innertext) {$type = 'Ammendment to '.$type;}
+                    if ($law->find('div.doc')[0]->find('div.doc-card')[0]->find('div.reg')[0]->innertext) {$isAmend = 'Ammendment to '.$type;}
                 $status = $statuses[$law->find('div.doc')[0]->find('small')[0]->find('span')[0]->find('b')[0]->plaintext ?? 'Чинний'];
                 $origin = $origins[trim(explode('Зареєстровано:', explode('від ', $law->find('div.doc')[0]->find('div.doc-card')[0]->find('div.reg')[0]->innertext)[0])[1] ?? explode(',', explode(';', $law->find('div.doc')[0]->find('div.doc-card')[0]->find('em')[0]->plaintext)[0])[0])];
                 $source = 'https://data.rada.gov.ua'.$law->find('div.doc')[0]->find('a')[0]->href;
 
                 //Makes sure there are no quotes in the title
                 if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
-                //if (str_contains($name, '"')) {$name = str_replace('"', '\"', $name);}
 
                 //JSONifies the title and source
                 $name = '{"uk":"'.$name.'"}';
                 $source = '{"uk":"'.$source.'"}';
 
                 //Creates SQL
-                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `ID`, `name`, `type`, `origin`, `status`, `source`) 
-                        VALUES ('".$enactDate."', '".$enforceDate."', '".$ID."', '".$name."', '".$type."', '".$origin."', '".$status."', '".$source."')"; echo $SQL2.'<br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `origin`, `status`, `source`) 
+                        VALUES ('".$enactDate."', '".$enforceDate.", '".$lastactDate."', '".$ID."', '".$name."', '".$regime."', '".$type."', '".$origin."', '".$status."', '".$source."')"; echo $SQL2.'<br/>';
                 if (!$test) {$conn->query($SQL2);}
             }
         }
