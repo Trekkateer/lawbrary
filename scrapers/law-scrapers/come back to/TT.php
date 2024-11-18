@@ -1,5 +1,5 @@
 <html><body>
-    <?php
+    <?php //!!The laws are not available online, only as downlaods!!
         //Settings
         $test = true; $country = 'TT';
         $start = 1832;//Which year to start from
@@ -32,7 +32,7 @@
             foreach ($html_dom->find('table.table.table-striped.m-b-none')[0]->find('tbody')[0]->find('tr') as $law) {
                 //Gets the values
                 $enactDate = $year.'-01-01'; $enforceDate = $enactDate; $lastactDate = $enactDate;
-                $ID = $country.'-'.trim(strtr($law->find('td')[1]->plaintext, array('No. '=>'', ' of '=>'')));
+                $ID = $country.'-'.trim(str_replace(['No. ', ' of '], ['', ''], $law->find('td')[1]->plaintext));
                 $name = $law->find('td')[2]->plaintext;
                 //Gets the regime
                 switch(true) {
@@ -51,14 +51,12 @@
                 }
                 //Gets the rest of the values
                 $type = 'Law';
-                    if (str_contains($name, 'Ammendment')) {$type = 'Ammendment to '.$type;}
+                    if (str_contains($name, 'Ammendment')) {$isAmend = 1;} else {$isAmend = 0;}
                 $status = 'Valid';
                 $source = 'https://laws.gov.tt/'.$law->find('td')[0]->find('a')[0]->href; $PDF = $source;
 
                 //Makes sure there are no quotes in the title
                 if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
-                //if (str_contains($name, '"')) {$name = str_replace('"', "\"", $name);}
-                //if (str_contains($name, '""')) {$name = str_replace('""', "\'", $name);}
 
                 //JSONifies the values
                 $name = '{"en":"'.$name.'"}';
@@ -66,8 +64,8 @@
                 $PDF = '{"en":"'.$PDF.'"}';
 
                 //Inserts the law to the table
-                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `status`, `source`, `PDF`) 
-                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `isAmend`, `status`, `source`, `PDF`) 
+                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', '".$isAmend."', '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
 
                 //Makes the query
                 if (!$test) {$conn->query($SQL2);}
