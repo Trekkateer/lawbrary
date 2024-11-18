@@ -19,61 +19,63 @@
                     } else {
                         $src='usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                     }
-                } else if ($row['type'] === 'US Capital') {
+                } elseif ($row['type'] === 'US Capital') {
                     $src='usa/city/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
-                } else if ($row['type'] === 'British Kingdom') {
+                } elseif ($row['type'] === 'British Kingdom') {
                     $src='uk/'.$dashedURLName.'/administrative-divisions-map-of-'.$dashedURLName.'-max.jpg';
-                } else if ($params['id'] === 'AE') {
+                } elseif ($params['id'] === 'AE') {
                     $src='uae/map-of-uae.jpg';
-                } else if ($params['id'] === 'AL' || $params['id'] === 'AR' || $params['id'] === 'BZ' || $params['id'] === 'HR' || $params['id'] === 'IE' || $params['id'] === 'IL' || $params['id'] === 'FI' || $params['id'] === 'HI' || $params['id'] === 'JP' || $params['id'] === 'LI' || $params['id'] === 'LU' || $params['id'] === 'ME' || $params['id'] === 'MZ' || $params['id'] === 'NZ' || $params['id'] === 'PH' || $params['id'] === 'PT' || $params['id'] === 'TH' || $params['id'] === 'TN' || $params['id'] === 'KR' || $params['id'] === 'VN') {
+                } elseif ($params['id'] === 'AL' || $params['id'] === 'AR' || $params['id'] === 'BZ' || $params['id'] === 'HR' || $params['id'] === 'IE' || $params['id'] === 'IL' || $params['id'] === 'FI' || $params['id'] === 'HI' || $params['id'] === 'JP' || $params['id'] === 'LI' || $params['id'] === 'LU' || $params['id'] === 'ME' || $params['id'] === 'MZ' || $params['id'] === 'NZ' || $params['id'] === 'PH' || $params['id'] === 'PT' || $params['id'] === 'TH' || $params['id'] === 'TN' || $params['id'] === 'KR' || $params['id'] === 'VN') {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
-                } else if ($params['id'] === 'AU') {
+                } elseif ($params['id'] === 'AU') {
                     $src=$dashedURLName.'/'.$dashedURLName.'-map-2-max.jpg';
-                } else if ($params['id'] === 'AT') {
+                } elseif ($params['id'] === 'AT') {
                     $src=$dashedURLName.'/'.$dashedURLName.'-map-max.jpg';
-                } else if ($params['id'] === 'BS') {
+                } elseif ($params['id'] === 'BS') {
                     $src='bahamas/map-of-bahamas-max.jpg';
-                } else if ($params['id'] === 'CD') {
+                } elseif ($params['id'] === 'CD') {
                     $src='democratic-republic-of-the-congo/map-of-dr-congo-max.jpg';
-                } else if ($params['id'] === 'CF') {
+                } elseif ($params['id'] === 'CF') {
                     $src='central-african/map-of-central-african-max.jpg';
-                } else if ($params['id'] === 'CG') {
+                } elseif ($params['id'] === 'CG') {
                     $src='republic-of-the-congo/map-of-republic-of-the-congo-max.jpg';
-                } else if ($params['id'] === 'CI') {
+                } elseif ($params['id'] === 'CI') {
                     $src='cote-d-ivoire/map-of-cote-d-ivoire-max.jpg';
-                } else if ($params['id'] === 'NORTHERN-CYPRUS') {
+                } elseif ($params['id'] === 'NORTHERN-CYPRUS') {
                     $src='cyprus/map-of-cyprus-max.jpg';
-                } else if ($params['id'] === 'CZ') {
+                } elseif ($params['id'] === 'CZ') {
                     $src='czech-republic/map-of-czech-republic-max.jpg';
-                } else if ($params['id'] === 'GB') {
+                } elseif ($params['id'] === 'GB') {
                     $src='uk/united-kingdom-map-max.jpg';
-                } else if ($params['id'] === 'GM') {
+                } elseif ($params['id'] === 'GM') {
                     $src='gambia/map-of-gambia-max.jpg';
-                } else if ($params['id'] === 'MK') {
+                } elseif ($params['id'] === 'MK') {
                     $src='macedonia/map-of-macedonia-max.jpg';
-                } else if ($params['id'] === 'MM') {
+                } elseif ($params['id'] === 'MM') {
                     $src='burma/map-of-burma.jpg';
-                } else if ($params['id'] === 'MH') {
+                } elseif ($params['id'] === 'MH') {
                     $src='marshall-islands/map-of-marshall-islands-max.jpg';
-                } else if ($params['id'] === 'NL') {
+                } elseif ($params['id'] === 'NL') {
                     $src='netherlands/map-of-netherlands-max.jpg';
-                } else if ($params['id'] === 'PS-GAZA' || $params['id'] === 'PS-WEST-BANK') {
+                } elseif ($params['id'] === 'PS-GAZA' || $params['id'] === 'PS-WEST-BANK') {
                     $src='palestine/map-of-palestine.jpg';
-                } else if ($params['id'] === 'PH') {
+                } elseif ($params['id'] === 'PH') {
                     $src='philippines/map-of-philippines-max.jpg';
-                } else if ($params['id'] === 'SE') {
+                } elseif ($params['id'] === 'SE') {
                     $src=$dashedURLName.'/political-map-of-'.$dashedURLName.'.jpg';
-                } else if ($params['id'] === 'ST') {
+                } elseif ($params['id'] === 'ST') {
                     $src='sao-tome-and-principe/map-of-sao-tome-and-principe-max.jpg';
-                } else if ($params['id'] === 'SC') {
+                } elseif ($params['id'] === 'SC') {
                     $src='seychelles/map-of-seychelles-1000.jpg';
-                } else if ($params['id'] === 'SB') {
+                } elseif ($params['id'] === 'SB') {
                     $src='solomon-islands/map-of-solomon-islands-max.jpg';
-                } else if ($params['id'] === 'TC') {
+                } elseif ($params['id'] === 'TC') {
                     $src='turks-and-caicos/map-of-turks-and-caicos-max.jpg';
-                } else if ($params['id'] === 'TL') {
+                } elseif ($params['id'] === 'TL') {
                     $src='timor-east/map-of-timor-east-max.jpg';
-                } else if ($params['id'] === 'US') {
+                } elseif ($params['id'] === 'TR') {
+                    $src='turkey/map-of-turkey-max.jpg';
+                } elseif ($params['id'] === 'US') {
                     $src='usa/'.$params['id'].'-map-max.jpg';
                 } else {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
