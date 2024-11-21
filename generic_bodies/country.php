@@ -14,7 +14,7 @@
                     $dashedURLName = $dashedURLName.$pathName[$i].'-';
                 } $dashedURLName = substr($dashedURLName, 0, strlen($dashedURLName)-1);
                 if ($row['type'] === 'US State') {
-                    if ($params['id'] === 'US-DE' || $params['id'] === 'US-NH' || $params['id'] === 'US-RI' || $params['id'] === 'US-VT') {
+                    if ($ID === 'US-DE' || $ID === 'US-NH' || $ID === 'US-RI' || $ID === 'US-VT') {
                         $src='usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
                     } else {
                         $src='usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
@@ -23,60 +23,60 @@
                     $src='usa/city/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 } elseif ($row['type'] === 'British Kingdom') {
                     $src='uk/'.$dashedURLName.'/administrative-divisions-map-of-'.$dashedURLName.'-max.jpg';
-                } elseif ($params['id'] === 'AE') {
+                } elseif ($ID === 'AE') {
                     $src='uae/map-of-uae.jpg';
-                } elseif ($params['id'] === 'AL' || $params['id'] === 'AR' || $params['id'] === 'BZ' || $params['id'] === 'HR' || $params['id'] === 'IE' || $params['id'] === 'IL' || $params['id'] === 'FI' || $params['id'] === 'HI' || $params['id'] === 'JP' || $params['id'] === 'LI' || $params['id'] === 'LU' || $params['id'] === 'ME' || $params['id'] === 'MZ' || $params['id'] === 'NZ' || $params['id'] === 'PH' || $params['id'] === 'PT' || $params['id'] === 'TH' || $params['id'] === 'TN' || $params['id'] === 'KR' || $params['id'] === 'VN') {
+                } elseif ($ID === 'AL' || $ID === 'AR' || $ID === 'BZ' || $ID === 'HR' || $ID === 'IE' || $ID === 'IL' || $ID === 'FI' || $ID === 'HI' || $ID === 'JP' || $ID === 'LI' || $ID === 'LU' || $ID === 'ME' || $ID === 'MZ' || $ID === 'NZ' || $ID === 'PH' || $ID === 'PT' || $ID === 'TH' || $ID === 'TN' || $ID === 'KR' || $ID === 'VN') {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
-                } elseif ($params['id'] === 'AU') {
+                } elseif ($ID === 'AU') {
                     $src=$dashedURLName.'/'.$dashedURLName.'-map-2-max.jpg';
-                } elseif ($params['id'] === 'AT') {
+                } elseif ($ID === 'AT') {
                     $src=$dashedURLName.'/'.$dashedURLName.'-map-max.jpg';
-                } elseif ($params['id'] === 'BS') {
+                } elseif ($ID === 'BS') {
                     $src='bahamas/map-of-bahamas-max.jpg';
-                } elseif ($params['id'] === 'CD') {
+                } elseif ($ID === 'CD') {
                     $src='democratic-republic-of-the-congo/map-of-dr-congo-max.jpg';
-                } elseif ($params['id'] === 'CF') {
+                } elseif ($ID === 'CF') {
                     $src='central-african/map-of-central-african-max.jpg';
-                } elseif ($params['id'] === 'CG') {
+                } elseif ($ID === 'CG') {
                     $src='republic-of-the-congo/map-of-republic-of-the-congo-max.jpg';
-                } elseif ($params['id'] === 'CI') {
+                } elseif ($ID === 'CI') {
                     $src='cote-d-ivoire/map-of-cote-d-ivoire-max.jpg';
-                } elseif ($params['id'] === 'NORTHERN-CYPRUS') {
+                } elseif ($ID === 'NORTHERN-CYPRUS') {
                     $src='cyprus/map-of-cyprus-max.jpg';
-                } elseif ($params['id'] === 'CZ') {
+                } elseif ($ID === 'CZ') {
                     $src='czech-republic/map-of-czech-republic-max.jpg';
-                } elseif ($params['id'] === 'GB') {
+                } elseif ($ID === 'GB') {
                     $src='uk/united-kingdom-map-max.jpg';
-                } elseif ($params['id'] === 'GM') {
+                } elseif ($ID === 'GM') {
                     $src='gambia/map-of-gambia-max.jpg';
-                } elseif ($params['id'] === 'MK') {
+                } elseif ($ID === 'MK') {
                     $src='macedonia/map-of-macedonia-max.jpg';
-                } elseif ($params['id'] === 'MM') {
+                } elseif ($ID === 'MM') {
                     $src='burma/map-of-burma.jpg';
-                } elseif ($params['id'] === 'MH') {
+                } elseif ($ID === 'MH') {
                     $src='marshall-islands/map-of-marshall-islands-max.jpg';
-                } elseif ($params['id'] === 'NL') {
+                } elseif ($ID === 'NL') {
                     $src='netherlands/map-of-netherlands-max.jpg';
-                } elseif ($params['id'] === 'PS-GAZA' || $params['id'] === 'PS-WEST-BANK') {
+                } elseif ($ID === 'PS-GAZA' || $ID === 'PS-WEST-BANK') {
                     $src='palestine/map-of-palestine.jpg';
-                } elseif ($params['id'] === 'PH') {
+                } elseif ($ID === 'PH') {
                     $src='philippines/map-of-philippines-max.jpg';
-                } elseif ($params['id'] === 'SE') {
+                } elseif ($ID === 'SE') {
                     $src=$dashedURLName.'/political-map-of-'.$dashedURLName.'.jpg';
-                } elseif ($params['id'] === 'ST') {
+                } elseif ($ID === 'ST') {
                     $src='sao-tome-and-principe/map-of-sao-tome-and-principe-max.jpg';
-                } elseif ($params['id'] === 'SC') {
+                } elseif ($ID === 'SC') {
                     $src='seychelles/map-of-seychelles-1000.jpg';
-                } elseif ($params['id'] === 'SB') {
+                } elseif ($ID === 'SB') {
                     $src='solomon-islands/map-of-solomon-islands-max.jpg';
-                } elseif ($params['id'] === 'TC') {
+                } elseif ($ID === 'TC') {
                     $src='turks-and-caicos/map-of-turks-and-caicos-max.jpg';
-                } elseif ($params['id'] === 'TL') {
+                } elseif ($ID === 'TL') {
                     $src='timor-east/map-of-timor-east-max.jpg';
-                } elseif ($params['id'] === 'TR') {
+                } elseif ($ID === 'TR') {
                     $src='turkey/map-of-turkey-max.jpg';
-                } elseif ($params['id'] === 'US') {
-                    $src='usa/'.$params['id'].'-map-max.jpg';
+                } elseif ($ID === 'US') {
+                    $src='usa/'.$ID.'-map-max.jpg';
                 } else {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 }
@@ -264,9 +264,9 @@
     <?php include __DIR__.'/../searchbar.php';?>
     
     <ul id="navbar">
-        <li><a class="navlink" href=<?php echo '/country.php?id='.$params['id'].'>'.$translations[6];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/popular.php?id='.$params['id'].'>'.$translations[7];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$params['id'].'>'.$translations[8];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$params['id'].'>'.$translations[9];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations[6];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country/popular.php?id='.$ID.'>'.$translations[7];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations[8];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations[9];?></a></li>
     </ul>
 </div>

@@ -66,13 +66,13 @@
         // output data of each row
         while ($row = $result->fetch_assoc()) {
             if ($row['hasFlag']) {//Outputs the flag
-                if (strtolower($params['id'] === 'danish-realm')) {
+                if ($ID === 'DANISH-REALM') {
                     $flagSrc='https://flagpedia.net/data/flags/w580/dk.webp';
-                } else if (strtolower($params['id'] === 'kosovo')) {
+                } else if ($ID === 'KOSOVO') {
                     $flagSrc='https://flagpedia.net/data/flags/w580/xk.webp';
-                } else if (strtolower($params['id']) === 'ps-west-bank') {
+                } else if ($ID === 'PS-WEST-BANK') {
                     $flagSrc='https://flagpedia.net/data/flags/w580/ps.webp';
-                } else {$flagSrc='https://flagpedia.net/data/flags/w580/'.strtolower($params['id']).'.webp';}
+                } else {$flagSrc='https://flagpedia.net/data/flags/w580/'.strtolower($ID).'.webp';}
             }
         }
     }
