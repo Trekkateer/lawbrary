@@ -76,7 +76,7 @@
                 } elseif ($ID === 'TR') {
                     $src='turkey/map-of-turkey-max.jpg';
                 } elseif ($ID === 'US') {
-                    $src='usa/'.$ID.'-map-max.jpg';
+                    $src='usa/us-map-max.jpg';
                 } else {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 }
