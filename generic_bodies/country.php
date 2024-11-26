@@ -25,7 +25,7 @@
                     $src='uk/'.$dashedURLName.'/administrative-divisions-map-of-'.$dashedURLName.'-max.jpg';
                 } elseif ($ID === 'AE') {
                     $src='uae/map-of-uae.jpg';
-                } elseif ($ID === 'AL' || $ID === 'AR' || $ID === 'BZ' || $ID === 'HR' || $ID === 'IE' || $ID === 'IL' || $ID === 'FI' || $ID === 'HI' || $ID === 'JP' || $ID === 'LI' || $ID === 'LU' || $ID === 'ME' || $ID === 'MZ' || $ID === 'NZ' || $ID === 'PH' || $ID === 'PT' || $ID === 'TH' || $ID === 'TN' || $ID === 'KR' || $ID === 'VN') {
+                } elseif ($ID === 'AL' || $ID === 'AR' || $ID === 'BZ' || $ID === 'HR' || $ID === 'IE' || $ID === 'IL' || $ID === 'FI' || $ID === 'HI' || $ID === 'JP' || $ID === 'LI' || $ID === 'LU' || $ID === 'ME' || $ID === 'MZ' || $ID === 'NZ' || $ID === 'PT' || $ID === 'TH' || $ID === 'TN' || $ID === 'KR' || $ID === 'VN') {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
                 } elseif ($ID === 'AU') {
                     $src=$dashedURLName.'/'.$dashedURLName.'-map-2-max.jpg';
@@ -60,7 +60,7 @@
                 } elseif ($ID === 'PS-GAZA' || $ID === 'PS-WEST-BANK') {
                     $src='palestine/map-of-palestine.jpg';
                 } elseif ($ID === 'PH') {
-                    $src='philippines/map-of-philippines-max.jpg';
+                    $src='philippines/map-of-philippines.jpg';
                 } elseif ($ID === 'SE') {
                     $src=$dashedURLName.'/political-map-of-'.$dashedURLName.'.jpg';
                 } elseif ($ID === 'ST') {
@@ -80,7 +80,7 @@
                 } else {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 }
-                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.strtr($translations[2], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.strtr($translations[1], array('[name]'=>$name)).'">';
             }
         }
     }
@@ -168,8 +168,6 @@
 </div>
 
 <div id="rightdiv">
-    <?php /*Country Flag*/ echo '<img id="flag" src='.$flagSrc.' alt="'.strtr($translations[3], array('[name]'=>$name)).'">';?>
-
     <?php //Outputs the country type
         $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
         $result = $conn->query($sql);
@@ -241,20 +239,22 @@
     </div>
 
     <div id="title-div">
-        <!--?php /*Country Flag*/ echo '<img id="title-flag" src='.$flagSrc.' alt="'.strtr($translations[3], array('[name]'=>$name)).'"/>';?-->
-
         <div id="title-text" style="">
-            <h1 id="title" class="title" style="margin: 0px;"><?php /*Country Name*/ echo $name ?></h1><br/><br/><br/>
+            <h1 id="title" class="title" style="margin: 0px;">
+                <?php /*Country Flag*/ echo '<img height=21.5px id="title-flag" src='.$flagSrc.' alt="'.strtr($translations[2], array('[name]'=>$name)).'"/>';?>
+                <?php /*Country Name*/ echo $name ?>
+            </h1><br/><br/><br/>
 
             <?php //Creates link to source website
                 $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-                $homesite = $conn->query($sql)->fetch_assoc()['source'];
-                if ($homesite) {
+                $homesites = $conn->query($sql)->fetch_assoc()['source'];
+                if ($homesites) {
                     //Gets the link base on language
-                    $homesite = json_decode($homesite, true)[$lang] ?? json_decode($homesite, true)['en'] ?? array_values(json_decode($homesite, true))[0];
-                    foreach ($homesite as $siteNum => $siteRef) {
-                        echo '<a id="source-website'.$siteNum.'" class="title" href="'.$siteRef.'" target="blank">'.$translations[1].'</a><br/>';
+                    foreach (json_decode($homesites, true) as $siteNum => $homesite) {
+                        $homesite = $homesite[$lang] ?? $homesite['en'] ?? array_values($homesite)[0];
+                        echo '<a height=20px id="source-website-'.$siteNum.'" class="title" href="'.$homesite.'" target="_blank">'.explode('/', $homesite)[2].'</a>';
                     }
+                    echo '<br/>';
                 }
             ?>
         </div>
@@ -264,9 +264,9 @@
     <?php include __DIR__.'/../searchbar.php';?>
     
     <ul id="navbar">
-        <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations[6];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/popular.php?id='.$ID.'>'.$translations[7];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations[8];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations[9];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations[5];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country/popular.php?id='.$ID.'>'.$translations[6];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations[7];?></a></li>
+        <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations[8];?></a></li>
     </ul>
 </div>
