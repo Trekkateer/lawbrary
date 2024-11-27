@@ -449,6 +449,7 @@
             'vℕaℕpℕ-ℕ' => 'Court Decision',
         ];
         //Sets the origin translations
+        //TODO: Make something that can automatically add translations for countries and IGOs
         $origins = ["Академія державного управління" => [["en"=>"The Academy of Public Administration", "uk"=>"Академія державного управління"], "UA"],
                     "НАН України"            => [["en"=>"The National Academy of Sciences", "uk"=>"Національна академія наук"], "UA"],
                     "НААН"                   => [["en"=>"The National Academy of Agrarian Sciences", "uk"=>"Національна академія аграрних наук"], "UA"],
