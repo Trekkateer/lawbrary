@@ -1,11 +1,10 @@
 <html><body>
     <?php
         //Settings
-        $test = true; $country = 'US';
-        $startCongress = 82;//For some reason no laws before this are recorded
-        $startLaw = 0;//Which law to start from
-        $step = 250;//How much to increase the limit by every iteration
-        $limit = null;//Total number of laws desired for each congress. Set to null to get number automatically 
+        $test = true; $LBpage = 'US';
+        $start = 82;//the API does not have data for congresses before 82
+        $step = 250;//Number of laws on each page
+        $limit = null;//Total number of laws desired for each congress
 
         //Connects to the Law database
         $username="u9vdpg8vw9h2e";
@@ -15,7 +14,7 @@
         $conn->select_db($database) or die("Unable to select database");
 
         //Clears the table
-        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($country)."`"; echo $SQL1.'<br/><br/>';
+        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($LBpage)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
         //Figures out ordinals
@@ -26,37 +25,46 @@
         };
 
         //Gets data from Congress API
-        $mostRecentCongress = round((getdate()['year'] - 1788)/2);
-        for ($congress = $startCongress; $congress <= $mostRecentCongress; $congress++) {
+        $mostRecentCongress = round((date('Y') - 1788)/2);
+        //$missingCongresses = array(1, 2, 3, 4, 5, 12, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81);
+        for ($congress = $start; $congress <= $mostRecentCongress; $congress++) {
+            //Skips some of the congresses
+            //if (in_array($congress, $missingCongresses)) {echo 'continue<br/>'; continue;}
+            echo $congress.'<br/>';
+
             //Figures out how many laws there are for a given congress
-            $data1 = file_get_contents('https://api.congress.gov/v3/law/'.$congress.'?api_key=b5wpSYu45GbmEBoXKJwB3AbIbsiNWFZ6MhbjHdEk'); echo $data1.'<br/>';
+            $data1 = file_get_contents('https://api.congress.gov/v3/law/'.$congress.'?api_key=b5wpSYu45GbmEBoXKJwB3AbIbsiNWFZ6MhbjHdEk');
             $limit = $limit ?? json_decode($data1, true)['pagination']['count'];
 
             //Gets the laws
-            for ($offset = $startLaw; $offset < $limit; $offset += $step) {
+            for ($offset = 0; $offset < $limit; $offset += $step) {
                 //Gets the data from congress.gov API
                 $data = file_get_contents('https://api.congress.gov/v3/law/'.$congress.'?offset='.$offset.'&limit='.$step.'&api_key=b5wpSYu45GbmEBoXKJwB3AbIbsiNWFZ6MhbjHdEk');
                 $bills = json_decode($data, true)['bills'];
                 foreach ($bills as $bill) {
                     //Interprets the data
-                    $enactDate = date('Y/m/d', strtotime($bill['latestAction']['actionDate'])); $enforceDate = $enactDate;
-                    $ID = $country.'-'.$bill['laws'][sizeof($bill['laws'])-1]['number'];
-                    $name = $bill['title'];
+                    $enactDate = $bill['latestAction']['actionDate']; $enforceDate = $enactDate;
+                        $lastactDate = $bill['updateDate'] ?? $enactDate;
+                    $ID = $LBpage.':'.$bill['laws'][sizeof($bill['laws'])-1]['number'];
+                    $country = '["US"]';
+                    $regime = 'The United States of America';
+                    $origin = str_replace(['House', 'Senate'], ['The House of Representatives', 'The Senate'], $bill['originChamber']);
+                    $name = trim($bill['title'], ' .');
                     $type = $bill['laws'][sizeof($bill['laws'])-1]['type'];
+                    if (str_contains($name, 'Amend') || str_contains($name, 'amend')) {$isAmend = 1;} else {$isAmend = 0;}
+                    $status = 'Valid';
                     $source = 'https://congress.gov/bill/'.$ordinalize($congress).'-congress/'.strtolower($bill['originChamber']).'-bill/'.$bill['number'].'/text';
 
                     //Makes sure there are no quotes in the title
-                    if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
-                    if (str_contains($name, '"')) {$name = str_replace('"', "\'", $name);}
-                    if (str_contains($name, '""')) {$name = str_replace('""', "\'", $name);}
+                    $name = strtr($name, array("'" => "’", ' "' => " “", '"' => "”"));
 
                     //JSONifies the title and source
                     $name = '{"en":"'.$name.'"}';
                     $source = '{"en":"'.$source.'"}';
 
                     //Creates SQL
-                    $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `ID`, `name`, `type`, `status`, `source`) 
-                            VALUES ('".$enactDate."', '".$enforceDate."', '".$ID."', '".$name."', '".$type."', '"."Valid"."', '".$source."')"; echo $SQL2.'<br/>';
+                    $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `isAmend`, `status`, `source`) 
+                            VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$origin."', '".$type."', ".$isAmend.", '".$status."', '".$source."')"; echo $SQL2.'<br/>';
                     if (!$test) {$conn->query($SQL2);}
                 }
             }
@@ -70,7 +78,7 @@
         $conn2->select_db($database) or die("Unable to select database");
 
         //Updates the date on the countries table
-        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$country."'"; echo '<br/><br/>'.$SQL3;
+        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$LBpage."'"; echo '<br/><br/>'.$SQL3;
         if (!$test) {$conn2->query($SQL3);}
     ?>
 </body></html>
