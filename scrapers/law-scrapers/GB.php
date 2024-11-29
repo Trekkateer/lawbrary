@@ -106,7 +106,7 @@
                 $PDF = 'https://www.legislation.gov.uk'.str_replace('/contents', '/data.pdf', $law->find('a')[0]->href);
 
                 //Makes sure there are no appostophes in the title
-                if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
+                $name = strtr($name, array("'" => "’", ' "' => " “", '"' => "”"));
 
                 //Creates SQL
                 $SQL = "SELECT * FROM `laws".strtolower($LBpage)."` WHERE `ID`='".$ID."'";
