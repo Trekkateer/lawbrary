@@ -82,12 +82,11 @@
                 //Sanitizes some values
                 $enactDate = $enforceDate = $lastactDate = date('Y-m-d', strtotime($enactDate));
                 $ID = $LBpage.':'.explode('<hr', explode(': ', $ID)[1])[0];
-                if (strtotime($enactDate) < strtotime('1 October 1978')) $regime = '{"en":"The British Empire"}'; else $regime = '{"en":"Tuvalu"}';
                 $name = explode('&nbsp;', $name)[0];
                 $country = '["TV"]';
-                $type = 'Act';
+                $regime = strtotime($enactDate) > strtotime('1 October 1978') ? '{"en":"Tuvalu"}':'{"en":"The British Empire"}';
+                $type = 'Act'; $status = 'Valid';
                 $isAmend = str_contains($name, 'Amendment') ? 1:0;
-                $status = 'Valid';
                 $summary = strtolower(explode("<hr class='notes'>", $summary)[1] ?? 'NULL');
                     $summary = ($summary !== 'null' && str_starts_with($summary, 'an act')) ? ucfirst(str_replace(array_keys($sanitizeSummary), array_values($sanitizeSummary), $summary)):'NULL';
                 $topic = trim(explode('<br></span>', explode("'>", $topic)[1])[0]);
