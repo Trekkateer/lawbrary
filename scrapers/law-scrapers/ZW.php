@@ -20,6 +20,24 @@
         $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($LBpage)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
+        //Creates function to capitalize with exceptions
+        $exceptions = ['and', 'as', 'at', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to', 'up'];
+        function ucwordsexcept($str, $exceptions, $delims=' ',) {
+            $out = array(trim($str));
+            foreach (str_split($delims) as $key => $delim) {//Loops through the delimiters
+                if (!str_contains($out[$key], $delim)) {break;}//Breaks if delimiter not present
+                $out[$key+1] = '';
+                foreach (explode($delim, $out[$key]) as $word) {//Loops through the words and capitalizes if not in exceptions
+                    $out[$key+1] .= !in_array($word, $exceptions) ? mb_strtoupper($word[0], 'UTF-8').substr($word, 1).$delim:$word.$delim;
+                }
+                $out[$key+1] = rtrim($out[$key+1], $delim);
+            }
+            return ucfirst(end($out));
+        }
+
+        //Sanitize Title
+        $sanitizeTitle = [' )'=>')'];
+
         //Makes sure there are four digits in each outputed number
         $zero_buffer = function ($input, $numLen=4) {
             $output = ''.$input;
@@ -41,7 +59,7 @@
                 //Gets values
                 $enactDate = date('Y-m-d', strtotime($law->find('div')[3]->find('span.badge')[0]->plaintext));
                 $ID = $LBpage.'-'.$zero_buffer($page.$lawNum);
-                $name = $law->find('div')[0]->find('a')[0]->plaintext;
+                $name = ucwordsexcept(strtolower(str_replace(array_keys($sanitizeTitle), array_values($sanitizeTitle), $law->find('div')[0]->find('a')[0]->plaintext)), $exceptions, ' (');
                 $country = '["ZW"]';
                 //Gets the regime
                 switch (true) {
