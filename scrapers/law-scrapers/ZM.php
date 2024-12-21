@@ -1,7 +1,7 @@
 <html><body>
     <?php
         //Settings
-        $test = true; $scraper = 'ZM';
+        $test = true; $LBpage = 'ZM';
         $start = 0;//Which page to start from
         $limit = null;//How many pages there are
 
@@ -16,7 +16,7 @@
         $conn->select_db($database) or die("Unable to select database");
 
         //Clears the table
-        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($scraper)."`"; echo $SQL1.'<br/><br/>';
+        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($LBpage)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
         //Gets the limit
@@ -27,30 +27,37 @@
             //Gets the HTML
             $html_dom = file_get_html('https://www.parliament.gov.zm/acts-of-parliament?page='.$page);
 
-            //Processes the data in the table
-            $laws = $html_dom->find('div.view-content')[0]->find('li.views-row');
-            foreach ($laws as $law) {
-                //Gets values
-                $enactDate = explode(')', end(explode(' ', $law->find('div.views-field-title')[0]->find('span.field-content')[0]->find('a')[0]->find('div.act-number-appended')[0]->plaintext)))[0].'-01-01';
-                $ID = $scraper.'-'.strtr($law->find('div.views-field-title')[0]->find('span.field-content')[0]->find('a')[0]->find('div.act-number-appended')[0]->plaintext, array('( Act No. '=>'', ' of '=>'', ' '=>'', ')'=>''));
-                $name = trim(explode('<div', $law->find('div.views-field-title')[0]->find('span.field-content')[0]->find('a')[0]->innertext)[0]);
-                $country = '["ZM"]';
-                $regime = strtotime($enactDate) > strtotime('18 April 1980') ? '{"en":"The Republic of Zambia}':'{"en":"The British Empire"}';
-                $type = 'Act'; $status = 'Valid';
-                $isAmend = str_contains($name, 'Amendment') ? 1:0;
-                $source = 'https://www.parliament.gov.zm'.$law->find('div.views-field-title')[0]->find('span.field-content')[0]->find('a')[0]->href;
+            //Processes data year by year
+            $years = $html_dom->find('div.view-content')[0]->find('div.item-list-acts-year');
+            foreach($years as $year) {
+                //Processes the data in the table
+                $laws = $year->find('li.views-row');
+                $year = $year->find('h3')[0]->find('span.date-display-single')[0]->plaintext;
+                foreach ($laws as $law) {
+                    //Gets values
+                    $enactDate = $year.'-01-01';
+                    $ID = $LBpage.'-'.strtr($law->find('div.views-field-title')[0]->find('span.field-content')[0]->find('a')[0]->find('div.act-number-appended')[0]->plaintext, array('( Act No. '=>'', ' of '=>'', ' '=>'', ')'=>''));
+                    $name = trim(explode('<div', $law->find('div.views-field-title')[0]->find('span.field-content')[0]->find('a')[0]->innertext)[0]);
+                    $country = '["ZM"]';
+                    $regime = strtotime($enactDate) > strtotime('18 April 1980') ? '{"en":"The Republic of Zambia}':'{"en":"The British Empire"}';
+                    $type = 'Act'; $status = 'Valid';
+                    $isAmend = str_contains($name, 'Amendment') ? 1:0;
+                    $source = 'https://www.parliament.gov.zm'.$law->find('div.views-field-title')[0]->find('span.field-content')[0]->find('a')[0]->href;
+                    $PDF = 'https://www.parliament.gov.zm/sites/default/files/documents/acts/'.$name.'.pdf';
 
-                //Makes sure there are no quotes in the title
-                if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
+                    //Makes sure there are no quotes in the title
+                    if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
 
-                //JSONifies the values
-                $name = '{"en":"'.$name.'"}';
-                $source = '{"en":"'.$source.'"}';
-                
-                //Inserts the new laws
-                $SQL2 = "INSERT INTO `laws".strtolower($scraper)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `isAmend`, `status`, `source`) 
-                            VALUES ('".$enactDate."', '".$enactDate."', '".$enactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$type."', ".$isAmend.", '".$status."', '".$source."')"; echo $SQL2.'<br/>';
-                if (!$test) {$conn->query($SQL2);}
+                    //JSONifies the values
+                    $name = '{"en":"'.$name.'"}';
+                    $source = '{"en":"'.$source.'"}';
+                    $PDF = '{"en":"'.$PDF.'"}';
+                    
+                    //Inserts the new laws
+                    $SQL2 = "p. ".$page.": INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `isAmend`, `status`, `source`, `PDF`) 
+                                VALUES ('".$enactDate."', '".$enactDate."', '".$enactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$type."', ".$isAmend.", '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
+                    if (!$test && $enactDate !== '-01-01') {$conn->query($SQL2);}
+                }
             }
         }
         
@@ -62,7 +69,7 @@
         $conn2->select_db($database) or die("Unable to select database");
 
         //Updates the date on the countries table
-        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$scraper."'"; echo '<br/><br/>'.$SQL3;
+        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$LBpage."'"; echo '<br/><br/>'.$SQL3;
         if (!$test) {$conn2->query($SQL3);}
     ?>
 </body></html>
