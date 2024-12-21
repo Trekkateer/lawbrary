@@ -57,9 +57,8 @@
                 }
                 $regime = strtotime($enactDate) > strtotime('24 October 1964') ? '{"en":"The Republic of Zambia}':'{"en":"The British Empire"}';
                 //Gets the rest of the values
-                $type = 'Act';
+                $type = 'Act'; $status = 'Valid';
                 $isAmend = str_contains($name, 'Amendment') ? 1:0;
-                $status = 'Valid';
                 $source = $law->find('div')[0]->find('a')[0]->href;
 
                 //Makes sure there are no quotes in the title
