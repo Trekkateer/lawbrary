@@ -42,6 +42,7 @@
                     `signers` text,
                     `type` text NOT NULL,
                     `isAmend` boolean NOT NULL,
+                    `amends` text,
                     `isINTL` boolean NOT NULL,
                     `status` text NOT NULL,
                     `preamble` text,
