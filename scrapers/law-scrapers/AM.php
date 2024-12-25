@@ -1,10 +1,10 @@
 <html><body>
-    <?php
+    <?php //TODO: Implement code to tell which law an amendment is amending
         //Settings
-        $test = true; $country = 'AM';
-        define('MAX_FILE_SIZE', 6000000);//From simple_html_dom
+        $test = true; $LBpage = 'AM';
 
         //Opens the parser (HTML_DOM)
+        define('MAX_FILE_SIZE', 6000000);//From simple_html_dom
         include '../simple_html_dom.php';
 
         //Connects to the Law database
@@ -15,7 +15,7 @@
         $conn->select_db($database) or die("Unable to select database");
 
         //Clears the table
-        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($country)."`"; echo $SQL1.'<br/><br/>';
+        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($LBpage)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
         //Preloop arrays
@@ -31,29 +31,31 @@
             $html_dom = file_get_html('http://www.parliament.am/legislation.php?sel=alpha&lang='.$locale);
 
             //Processes the data in the table
-            $laws = $html_dom->find('a.blue_mid_norm');
+            $laws = $html_dom->find('a[target="_new"]');
             foreach ($laws as $law) {
                 //Gets Hyperref
                 $source = 'http://www.parliament.am'.$law->href;
                 if ($source !== 'http://www.parliament.am#') {//Makes sure we can get the source
                     //Gets ID, date, name, and type
-                    $ID = $country.'-'.explode('&lang', explode('ID=', $source)[1])[0];
-                    echo substr(end(explode(' (', $law->plaintext)), 0, 10).'<br/>';
+                    $ID = $LBpage.'-'.explode('&lang', explode('ID=', $source)[1])[0];
+                        if ($law->class === "blue_mid_norm") {$lastID = $ID;}
                     $enactDate = date('Y-m-d', strtotime(substr(end(explode(' (', $law->plaintext)), 0, 10)));
                         if ($enactDate === '1970-01-01' || $ID === 'AM-1281') {$enactDate = $dateFixer[explode('-', $ID)[1]];} $enforceDate = $enactDate; $lastactDate = $enforceDate;
                     $name = trim(explode(' ('.substr(end(explode(' (', $law->plaintext)), 0, 10), $law->plaintext)[0]);
-                    if (strtotime($enactDate) <= 685576800) {$regime = 'The Armenian S.S.R.';}
+                    $country = '["AM"]';
+                    if (strtotime($enactDate) < strtotime('23 September 1991')) {$regime = 'The Armenian S.S.R.';}
                         else {$regime = 'The Republic of Armenia';}
                     $type = explode(')', end(explode(explode('-', $enactDate)[0].' ', $law->plaintext)))[0];
                         if (explode('-', $type)[0] === '' || $ID === 'AM-1281') {$type = $typeFixer[explode('-', $ID)[1]];}
                         $type = $types[explode('-', $type)[0]];
+                    if ($law->class === "blue_sm_11") {$isAmend = 1; $amends = "'".$lastID."'";} else {$isAmend = 0; $amends = 'NULL';}
                     $status = 'Valid';
 
                     //Makes sure there are no appostophes in the title
-                    if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
+                    $name = strtr($name, array(" '"=>" ‘", "'"=>"’"));
 
                     //Creates SQL
-                    $SQL = "SELECT * FROM `laws".strtolower($country)."` WHERE `ID`='".$ID."'";
+                    $SQL = "SELECT * FROM `laws".strtolower($LBpage)."` WHERE `ID`='".$ID."'";
                     $result = $conn->query($SQL);
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -67,7 +69,7 @@
                             $compoundedSource[$lang] = $source;
                             $source = json_encode($compoundedSource, JSON_UNESCAPED_UNICODE);
 
-                            $SQL2 = "UPDATE `laws".strtolower($country)."` SET `name`='".$name."', `source`='".$source."' WHERE `ID`='".$ID."'";
+                            $SQL2 = "UPDATE `laws".strtolower($LBpage)."` SET `name`='".$name."', `source`='".$source."' WHERE `ID`='".$ID."'";
                         }
                     } else {
                         //JSONifies the name and href
@@ -75,8 +77,8 @@
                         $source = '{"'.$lang.'":"'.$source.'"}';
 
                         //Creates SQL
-                        $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `regime`, `type`, `status`, `source`)
-                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$regime."', '".$type."', '".$status."', '".$source."')";
+                        $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `isAmend`, `amends`, `status`, `source`)
+                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$type."', ".$isAmend.", ".$amends.", '".$status."', '".$source."')";
                     }
 
                     //Executes the SQL
@@ -95,7 +97,7 @@
         $conn2 = new mysqli("localhost", $username, $password, $database);
 
         //Updates the date on the countries table
-        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$country."'"; echo '<br/><br/>'.$SQL3;
+        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$LBpage."'"; echo '<br/><br/>'.$SQL3;
         if (!$test) {$conn2->query($SQL3);}
     ?>
 </body></html>
