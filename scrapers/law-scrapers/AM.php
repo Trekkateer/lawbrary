@@ -43,12 +43,16 @@
                         if ($enactDate === '1970-01-01' || $ID === 'AM-1281') {$enactDate = $dateFixer[explode('-', $ID)[1]];} $enforceDate = $enactDate; $lastactDate = $enforceDate;
                     $name = trim(explode(' ('.substr(end(explode(' (', $law->plaintext)), 0, 10), $law->plaintext)[0]);
                     $country = '["AM"]';
-                    if (strtotime($enactDate) < strtotime('23 September 1991')) {$regime = 'The Armenian S.S.R.';}
-                        else {$regime = 'The Republic of Armenia';}
+                    if (strtotime($enactDate) < strtotime('23 September 1991')) {$regime = '{"hy":"Հայկական ԽՍՀ", "en":"The Armenian SSR", "ru":"Армянская ССР"';}
+                        else {$regime = '{"hy":"Հայաստանի Հանրապետություն", "en":"The Republic of Armenia", "ru":"Республика Армения"}';}
                     $type = explode(')', end(explode(explode('-', $enactDate)[0].' ', $law->plaintext)))[0];
                         if (explode('-', $type)[0] === '' || $ID === 'AM-1281') {$type = $typeFixer[explode('-', $ID)[1]];}
                         $type = $types[explode('-', $type)[0]];
-                    if ($law->class === "blue_sm_11") {$amends = "'[\"".$lastID."\"]'";} else {$amends = 'NULL';}
+                    if ($law->class === "blue_sm_11") {
+                        $amends = "'[\"".$lastID."\"]'";
+                        $SQL21 = "UPDATE `laws".strtolower($LBpage)."` SET `lastactDate`='".$enactDate."' WHERE `ID`='".$lastID."'";
+                        echo '<br/>'.$SQL21.'<br/>'; $conn->query($SQL21);
+                    } else {$amends = 'NULL';}
                     $status = 'Valid';
 
                     //Makes sure there are no appostophes in the title
@@ -78,7 +82,7 @@
 
                         //Creates SQL
                         $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `amends`, `status`, `source`)
-                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$type.", ".$amends.", '".$status."', '".$source."')";
+                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$type."', ".$amends.", '".$status."', '".$source."')";
                     }
 
                     //Executes the SQL
