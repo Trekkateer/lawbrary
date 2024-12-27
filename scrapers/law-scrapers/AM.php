@@ -48,7 +48,7 @@
                     $type = explode(')', end(explode(explode('-', $enactDate)[0].' ', $law->plaintext)))[0];
                         if (explode('-', $type)[0] === '' || $ID === 'AM-1281') {$type = $typeFixer[explode('-', $ID)[1]];}
                         $type = $types[explode('-', $type)[0]];
-                    if ($law->class === "blue_sm_11") {$isAmend = 1; $amends = "'".$lastID."'";} else {$isAmend = 0; $amends = 'NULL';}
+                    if ($law->class === "blue_sm_11") {$amends = "'".$lastID."'";} else {$amends = 'NULL';}
                     $status = 'Valid';
 
                     //Makes sure there are no appostophes in the title
@@ -77,8 +77,8 @@
                         $source = '{"'.$lang.'":"'.$source.'"}';
 
                         //Creates SQL
-                        $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `isAmend`, `amends`, `status`, `source`)
-                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$type."', ".$isAmend.", ".$amends.", '".$status."', '".$source."')";
+                        $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `amends`, `status`, `source`)
+                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$type.", ".$amends.", '".$status."', '".$source."')";
                     }
 
                     //Executes the SQL
