@@ -42,6 +42,7 @@
                     `signers` text,
                     `type` text NOT NULL,
                     `amends` text,
+                    `amendedBy` text,
                     `status` text NOT NULL,
                     `preamble` text,
                     `summary` text,
