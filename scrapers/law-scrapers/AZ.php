@@ -1,7 +1,7 @@
 <html><body>
     <?php
         //Settings
-        $test = true; $country = 'AZ';
+        $test = false; $LBpage = 'AZ';
         $start = 0;//What page to start from
         $step = 1000;//How many laws per page
         $limit = null;//Total number of pages desired
@@ -14,109 +14,157 @@
         $conn->select_db($database) or die("Unable to select database");
 
         //Clears the table
-        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($country)."`"; echo $SQL1.'<br/><br/>';
+        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($LBpage)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
-        //Fixes the types and origins
+        //Translates the types
         $types = array(
-            'Dövlət Dəniz Administrasiyası'=>array('The State Maritime Administration', 'Decision'),
-            'Milli Arxiv İdarəsi'=>array('The National Archives Administration', 'Decision'),
+            'Məcəllələr' => 'Code',
 
-            'Qida Təhlükəsizliyi Agentliyi'=>array('The Food Safety Agency', 'Decision'),
-            'Dövlət Turizm Agentliyi'=>array('The State Tourism Agency', 'Decision'),
-            'Azərbaycan Respublikasının Prezidenti yanında Vətəndaşlara Xidmət və Sosial İnnovasiyalar üzrə Dövlət Agentliyi'=>array('The State Agency for Service to Citizens and Social Innovations', 'Decision'),
-            'Alternativ və Bərpa Olunan Enerji Mənbələri üzrə Dövlət Agentliyi'=>array('The State Agency for Alternative and Renewable Energy Sources', 'Decision'),
-            'Azərbaycan Respublikasının Satınalmalar üzrə Dövlət Agentliyi'=>array('The State Procurement Agency', 'Decision'),
-            'Azərbaycan Respublikası Müəllif Hüquqları Agentliyi'=>array('The Copyright Agency', 'Decision'),
+            'Konstitusiya' => 'Constitution',
 
-            'Azərbaycan Respublikasının beynəlxalq müqavilələri'=>array('The Republic of Azerbaijan', 'Treaty'),
-            'Beynəlxalq hüquqi bəyannamələr'=>array('The Republic of Azerbaijan', 'International Law'),
-            'Beynəlxalq hüquqi memorandumlar'=>array('The Republic of Azerbaijan', 'International Law'),
-            'Dövlət (milli) standartları və beynəlxalq standartlar'=>array('The Republic of Azerbaijan', 'Standards'),
-            'Konstitusiya'=>array('The Republic of Azerbaijan', 'The Constitution'),
+            'Müəyyən Etdiyi Hallar' => 'Court Decision',
 
-            'AZƏRBAYCAN RESPUBLİKASI NAZİRLƏR KABİNETİNİN QƏRARLARI'=>array('The Cabinent of Ministers', 'Decision'),
-            'AZƏRBAYCAN RESPUBLİKASI NAZİRLƏR KABİNETİNİN SƏRƏNCAMLARI'=>array('The Cabinent of Ministers', 'Decree'),
-            'Nazirlər Kabinetinin müəyyən etdiyi hallar'=>array('The Cabinent of Ministers', 'Court Decision'),
-            'Nazirlər Kabinetinin təsdiq etdiyi nizamnamələr'=>array('The Cabinent of Ministers', 'Regulation'),
-            'Nazirlər Kabinetinin təsdiq etdiyi nümunələr'=>array('The Cabinent of Ministers', 'Information'),
-            'Nazirlər Kabinetinin təsdiq etdiyi qaydalar'=>array('The Cabinent of Ministers', 'Rules'),
-            'Nazirlər Kabinetinin təsdiq etdiyi siyahılar'=>array('The Cabinent of Ministers', 'List'),
-            'Nazirlər Kabinetinin təsdiq etdiyi təsvirlər'=>array('The Cabinent of Ministers', 'Descriptions'),
-            'Nazirlər Kabinetinin qərarları'=>array('The Cabinent of Ministers', 'Decision'),
+            'Sərəncamlari' => 'Decree',
 
-            'Mərkəzi bankın qərarı'=>array('The Central Bank', 'Decision'),
+            'Təsvirlər' => 'Descriptions',
 
-            'AZƏRBAYCAN RESPUBLİKASI MƏRKƏZİ SEÇKİ KOMİSSİYASININ QƏRARLARI, TƏLİMATLARI VƏ İZAHLARI'=>array('The Central Election Commission', 'Regulation'),
-            'Tələbə Qəbulu üzrə Dövlət Komissiyası'=>array('The State Commission on Student Admission', 'Regulation'),
-            'Azərbaycan Respublikası Prezidenti yanında Dövlət Qulluğu Məsələləri üzrə Komissiya'=>array('The Presidential Commission on Civil Service Issues', 'Regulation'),
+            'Köməkçi Sənədlər' => 'Supporting Documents',
 
-            'Maliyyə Bazarlarına Nəzarət Palatasının qərarı'=>array('The Financial Markets Control Chamber', 'Decision'),
+            'Nümunələr' => 'Examples',
 
-            'Diasporla İş üzrə Dövlət Komitəsi'=>array('The State Committee on Work with Diaspora', 'Decision'),
-            'Dövlət Gömrük Komitəsi'=>array('The State Customs Committee', 'Decision'),
-            'Ailə, Qadın və Uşaq Problemləri üzrə Dövlət Komitəsi'=>array('The State Committee on Family, Women and Children’s Issues', 'Decision'),
-            'Dövlət Şəhərsalma və Arxitektura Komitəsi'=>array('The State Committee for Urban Developement and Architecture', 'Decision'),
-            'Dövlət Torpaq və Xəritəçəkmə Komitəsi'=>array('The State Land and Mapping Committee', 'Decision'),
-            'Əmlak Məsələləri Dövlət Komitəsi'=>array('The State Committee on Property Affairs', 'Decision'),
-            'Qaçqınların və Məcburi Köçkünlərin İşləri üzrə Dövlət Komitəsi'=>array('The State Committee on the Affairs of Refugees and IDPs', 'Decision'),
-            'Dini Qurumlarla İş üzrə Dövlət Komitəsi'=>array('The State Committee on Work with Religious Institutions', 'Decision'),
-            'Qiymətli Kağızlar üzrə Dövlət Komitəsi'=>array('The State Security Committee', 'Decision'),
-            'Standartlaşdırma, Metrologiya və Patent üzrə Dövlət Komitəsi'=>array('The State Committee on Standardization, Metrology, and Patents', 'Decision'),
-            'Dövlət Statistika Komitəsi'=>array('The State Statistics Committee', 'Decision'),
-            'Köməkçi Sənədlər'=>array('A State Committee', 'Supporting Documents'),
+            'Beynəlxalq Müqavilələri' => 'International Treaties',
+            'Beynəlxalq Müqavilələr' => 'International Treaty',
+            'Beynəlxalq Hüquqi Bəyannamələr' => 'International Legal Declarations',
+            'Beynəlxalq Hüquqi Memorandumlar' => 'International Legal Memorandums',
 
-            'AZƏRBAYCAN RESPUBLİKASI AUDİOVİZUAL ŞURASININ QƏRARLARI'=>array('The Audiovisual Council', 'Resolution'),
-            'Azərbaycan Respublikasının Tarif (qiymət) Şurası'=>array('The Tariff Council', 'Resolution'),
+            'Konsti̇tusi̇ya Qanunlari' => 'Constitutional Law',
+            'Qanunlar' => 'Law',
 
-            'KONSTİTUSİYA MƏHKƏMƏSİNİN QƏRARLARI'=>array('The Constitutional Court', 'Court Decision'),
-            'İnsan Hüquqları üzrə Avropa Məhkəməsi'=>array('The European Court of Human Rights', 'Court Decision'),
-            'Azərbaycan Respublikası Ali Məhkəməsinin qərarları'=>array('The Supreme Court', 'Court Decision'),
+            'Siyahılar' => 'List',
 
-            'MƏHKƏMƏ-HÜQUQ ŞURASININ QƏRARLARI'=>array('The Judiciary', 'Court Decision'),
+            'Fərmanlari' => 'Order',
 
-            'YERLİ İCRA HAKİMİYYƏTİ ORQANLARININ QƏRARLARI'=>array('The Local Executive Authorities', 'Decision'),
-            'YERLİ ÖZÜNÜİDARƏ ORQANLARININ QƏRARLARI'=>array('Local Government Bodies', 'Decision'),
+            'Referendum Aktları' => 'Referendum',
 
-            'Kənd Təsərrüfatı Nazirliyi'=>array('The Ministry of Agriculture', 'Decision'),
-            'Mədəniyyət Nazirliyi'=>array('The Ministry of Culture', 'Decision'),
-            'Mədəniyyət və Turizm Nazirliyi'=>array('The Ministry of Culture and Tourism', 'Decision'),
-            'Müdafiə Sənayesi Nazirliyi'=>array('The Ministry of Defence Industry', 'Decision'),
-            'Rəqəmsal İnkişaf və Nəqliyyat Nazirliyi'=>array('The Ministry of Digital Development and Transport', 'Decision'),
-            'Ekologiya və Təbii Sərvətlər Nazirliyi'=>array('The Ministry of Ecology and Natural Resources', 'Decision'),
-            'İqtisadiyyat Nazirliyi'=>array('The Ministry of Economics', 'Decision'),
-            'Fövqəladə Hallar Nazirliyi'=>array('The Ministry of Emergency Affairs', 'Decision'),
-            'Energetika Nazirliyi'=>array('The Ministry of Energy', 'Decision'),
-            'Maliyyə Nazirliyi'=>array('The Ministry of Finance', 'Decision'),
-            'Xarici İşlər Nazirliyi'=>array('The Ministry of Foreign Affairs', 'Decision'),
-            'Səhiyyə Nazirliyi'=>array('The Ministry of Health', 'Decision'),
-            'Daxili İşlər Nazirliyi'=>array('The Ministry of Internal Affairs', 'Decision'),
-            'Ədliyyə Nazirliyi'=>array('The Ministry of Justice', 'Decision'),
-            'Əmək və Əhalinin Sosial Müdafiəsi Nazirliyi'=>array('The Ministry of Labor and Social Protection of the Population', 'Decision'),
-            'Milli Təhlükəsizlik Nazirliyi'=>array('The Ministry of National Security', 'Decision'),
-            'Elm və Təhsil Nazirliyi'=>array('The Ministry of Science and Eduaction', 'Decision'),
-            'Vergilər Nazirliyi'=>array('The Ministry of Taxes', 'Decision'),
-            'Nəqliyyat Nazirliyi'=>array('The Ministry of Transport', 'Decision'),
-            'Gənclər və İdman Nazirliyi'=>array('The Ministry of Youth and Health', 'Decision'),
+            'Nizamnamələr' => 'Regulation',
 
-            'AZƏRBAYCAN RESPUBLİKASI MİLLİ MƏCLİSİNİN QƏRARLARI'=>array('The National Assembly of Azerbaijan', 'Decision'),
-            'Qanunlar'=>array('The National Assembly of Azerbaijan', 'Law'),
-            'AZƏRBAYCAN RESPUBLİKASININ KONSTİTUSİYA QANUNLARI'=>array('The National Assembly of Azerbaijan', 'Constitutional Law'),
-            'Məcəllələr'=>array('The National Assembly of Azerbaijan', 'Code'),
-            'Referendum aktları'=>array('The National Assembly of Azerbaijan', 'Referendum'),
+            'Qərarlari, Təli̇matlari və İzahlari' => 'Resolution',
+            'Qərarları' => 'Resolution',
+            'Qərarlari' => 'Resolution',
+            'Qərarı' => 'Decision',
+            'Qərar' => 'Decision',
 
-            'AZƏRBAYCAN RESPUBLİKASI PREZİDENTİNİN FƏRMANLARI'=>array('The President', 'Order'),
-            'AZƏRBAYCAN RESPUBLİKASI PREZİDENTİNİN SƏRƏNCAMLARI'=>array('The President', 'Decree'),
+            'Qaydalar' => 'Rules',
 
-            'Dövlət Sərhəd Xidməti'=>array('The State Border Service', 'Decision'),
-            'Səfərbərlik və Hərbi Xidmətə Çağırış üzrə Dövlət Xidməti'=>array('The State Service for Mobilization and Conscription', 'Decision'),
-            'Maliyyə Monitorinqi Xidməti'=>array('The Financial Monitering Service', 'Decision'),
-            'Dövlət Miqrasiya Xidməti'=>array('The State Migration Service', 'Decision'),
-            'Dövlət Təhlükəsizliyi Xidməti'=>array('The State Security Service', 'Decision'),
+            'Standartlar' => 'Standards',
+        );
 
-            'Dövlət Sosial Müdafiə Fondu'=>array('The State Social Security Fund', 'Resolution'),
+        //Creates function to capitalize with exceptions
+        $exceptions = [
+            'və', 'üzrə', 'yanında'
+        ];
+        function mb_ucwordsexcept($str, $delims=' ', $encoding='UTF-8') {
+            global $exceptions;
+            $out = array(trim($str));
+            foreach (str_split($delims) as $key => $delim) {//Loops through the delimiters
+                if (!str_contains($out[$key], $delim)) {break;}//Breaks if delimiter not present
+                $out[$key+1] = '';
+                foreach (explode($delim, $out[$key]) as $word) {//Loops through the words and capitalizes if not in exceptions
+                    $out[$key+1] .= !in_array($word, $exceptions) ? mb_strtoupper(mb_substr($word, 0, 1, $encoding), $encoding).mb_substr($word, 1, strlen($word)-1, $encoding).$delim:$word.$delim;
+                }
+                $out[$key+1] = rtrim($out[$key+1], $delim);
+            }
+            return ucfirst(end($out));
+        }
+        
+        //Translates the origins
+        $origins = array(
+            '' => NULL,
 
-            'BMT-nin Təhlükəsizlik Şurası'=>array('The UN Security Council', 'Resolution')
+            'Dövlət Dəniz Administrasiyası' => 'The State Maritime Administration',
+
+            'Qida Təhlükəsizliyi Agentliyi' => 'The Food Safety Agency',
+            'Dövlət Turizm Agentliyi' => 'The State Tourism Agency',
+            'Azərbaycan Respublikasının Prezidenti yanında Vətəndaşlara Xidmət və Sosial İnnovasiyalar üzrə Dövlət Agentliyi' => 'The State Agency for Public Service and Social Innovations under the President',
+            'Alternativ və Bərpa Olunan Enerji Mənbələri üzrə Dövlət Agentliyi' => 'The State Agency for Alternative and Renewable Energy Sources',
+            'Azərbaycan Respublikasının Satınalmalar üzrə Dövlət Agentliyi' => 'The State Procurement Agency',
+            'Azərbaycan Respublikası Müəllif Hüquqları Agentliyi' => 'The Copyright Agency',
+
+            'Azərbaycan Respublikasının' => 'The Republic of Azerbaijan',
+
+            'Azərbaycan Respubli̇kasi Nazi̇rlər Kabi̇neti̇ni̇n' => 'The Cabinent of Ministers',
+
+            'Mərkəzi Bankın' => 'The Central Bank',
+
+            'Tələbə Qəbulu üzrə Dövlət Komissiyası' => 'The State Commission on Student Admission',
+            'Azərbaycan Respubli̇kasi Mərkəzi̇ Seçki̇ Komi̇ssi̇yasinin' => 'The Central Elections Commission',
+            'Azərbaycan Respublikası Prezidenti yanında Dövlət Qulluğu Məsələləri üzrə Komissiya' => 'The Presidential Commission on Civil Service Issues',
+
+            'Maliyyə Bazarlarına Nəzarət Palatasının' => 'The Financial Markets Control Chamber',
+
+            'Diasporla İş üzrə Dövlət Komitəsi' => 'The State Committee on Work with the Diaspora',
+            'Dövlət Gömrük Komitəsi' => 'The State Customs Committee',
+            'Ailə, Qadın və Uşaq Problemləri üzrə Dövlət Komitəsi' => 'The State Committee on Family, Women and Children’s Issues',
+            'Dövlət Şəhərsalma və Arxitektura Komitəsi' => 'The State Committee for Urban Developement and Architecture',
+            'Dövlət Torpaq və Xəritəçəkmə Komitəsi' => 'The State Land and Mapping Committee',
+            'Əmlak Məsələləri Dövlət Komitəsi' => 'The State Committee on Property Affairs',
+            'Qaçqınların və Məcburi Köçkünlərin İşləri üzrə Dövlət Komitəsi' => 'The State Committee on the Affairs of Refugees and IDPs',
+            'Dini Qurumlarla İş üzrə Dövlət Komitəsi' => 'The State Committee on Work with Religious Institutions',
+            'Qiymətli Kağızlar üzrə Dövlət Komitəsi' => 'The State Security Committee',
+            'Standartlaşdırma, Metrologiya və Patent üzrə Dövlət Komitəsi' => 'The State Committee on Standardization, Metrology, and Patents',
+            'Dövlət Statistika Komitəsi' => 'The State Statistics Committee',
+
+            'Azərbaycan Respubli̇kasi Audi̇ovi̇zual Şurasinin' => 'The Audiovisual Council',
+            'Azərbaycan Respublikasının Tarif (qiymət) Şurası' => 'The Tariff Council',
+
+            'Konsti̇tusi̇ya Məhkəməsi̇ni̇n' => 'The Constitutional Court',
+            'İnsan Hüquqları üzrə Avropa Məhkəməsi' => 'The European Court of Human Rights',
+            'Azərbaycan Respublikası Ali Məhkəməsinin' => 'The Supreme Court',
+
+            'Dövlət Sosial Müdafiə Fondu' => 'The State Social Security Fund',
+
+            'Məhkəmə-hüquq Şurasinin' => 'The Judiciary',
+
+            'Yerli̇ İcra Haki̇mi̇yyəti̇ Orqanlarinin' => 'The Local Executive Authorities',
+            'Yerli̇ Özünüi̇darə Orqanlarinin' => 'Local Government Bodies',
+
+            'Kənd Təsərrüfatı Nazirliyi' => 'The Ministry of Agriculture',
+            'Mədəniyyət Nazirliyi' => 'The Ministry of Culture',
+            'Mədəniyyət və Turizm Nazirliyi' => 'The Ministry of Culture and Tourism',
+            'Müdafiə Sənayesi Nazirliyi' => 'The Ministry of Defence Industry',
+            'Rəqəmsal İnkişaf və Nəqliyyat Nazirliyi' => 'The Ministry of Digital Development and Transport',
+            'Ekologiya və Təbii Sərvətlər Nazirliyi' => 'The Ministry of Ecology and Natural Resources',
+            'İqtisadiyyat Nazirliyi' => 'The Ministry of the Economy',
+            'Fövqəladə Hallar Nazirliyi' => 'The Ministry of Emergency Affairs',
+            'Energetika Nazirliyi' => 'The Ministry of Energy',
+            'Maliyyə Nazirliyi' => 'The Ministry of Finance',
+            'Xarici İşlər Nazirliyi' => 'The Ministry of Foreign Affairs',
+            'Səhiyyə Nazirliyi' => 'The Ministry of Health',
+            'Daxili İşlər Nazirliyi' => 'The Ministry of Internal Affairs',
+            'Ədliyyə Nazirliyi' => 'The Ministry of Justice',
+            'Əmək və Əhalinin Sosial Müdafiəsi Nazirliyi' => 'The Ministry of Labor and Social Protection of the Population',
+            'Milli Təhlükəsizlik Nazirliyi' => 'The Ministry of National Security',
+            'Elm və Təhsil Nazirliyi' => 'The Ministry of Science and Eduaction',
+            'Vergilər Nazirliyi' => 'The Ministry of Taxes',
+            'Nəqliyyat Nazirliyi' => 'The Ministry of Transport',
+            'Gənclər və İdman Nazirliyi' => 'The Ministry of Youth and Health',
+
+            'Azərbaycan Respubli̇kasi Mi̇lli̇ Məcli̇si̇ni̇n' => 'The National Assembly of Azerbaijan',
+
+            'Milli Arxiv İdarəsi' => 'The National Archives Office',
+
+            'Azərbaycan Respubli̇kasi Prezi̇denti̇ni̇n' => 'The President of Azerbaijan',
+
+            'Dövlət Sərhəd Xidməti' => 'The State Border Service',
+            'Səfərbərlik və Hərbi Xidmətə Çağırış üzrə Dövlət Xidməti' => 'The State Service for Mobilization and Conscription',
+            'Maliyyə Monitorinqi Xidməti' => 'The Financial Monitering Service',
+            'Dövlət Miqrasiya Xidməti' => 'The State Migration Service',
+            'Dövlət Təhlükəsizliyi Xidməti' => 'The State Security Service',
+
+            'BMT-nin Təhlükəsizlik Şurası' => 'The UN Security Council',
+
+            'Azərbaycan Respubli̇kasinin' => 'The Republic of Azerbaijan',
         );
         //Fixes the statuses
         $statuses = array(
@@ -130,18 +178,30 @@
         for ($page = $start; $page <= $limit; $page += $step) {
             //Gets the data from congress.gov API
             $laws = $API_Call($page, $step)['data'];
-            foreach ($laws as $law) {
+            foreach ($laws as $law) { echo '<br/>';
                 //Interprets the data
-                $enactDate = $law['classCode']; $enforceDate = $enactDate; $lastactDate = $enactDate;
-                $ID = $country.'-'.$law['id'];
-                if (strtotime($law['classCode']) <= 687740400) {$regime = 'The Azerbaijan S.S.R.';}
-                    else {$regime = 'The Republic of Azerbaijan';}
+                $enactDate = $law['classCode']; $enforceDate = $law['effectDate'] ?? $enactDate; $lastactDate = $enactDate;
+                $ID = $LBpage.'-'.$law['id'];
+                $country = '["AZ"]';
+                if (strtotime($law['classCode']) <= 687740400) {$regime = '{"az":"Azərbaycan SSR", "en":"The Azerbaijani SSR", "ru":"Азербайджанская ССР"}';}
+                    else {$regime = '{"az":"Azərbaycan Respublikası", "en":"The Republic of Azerbaijan"}';}
                 $name = trim($law['title']);
-                $type = $types[$law['typeName']][1];
-                    if (str_contains($name, 'dəyişiklik')) {$type = 'Ammendment to '.$type;}
+                //Gets the type and origin
+                $law['typeName'] = strtr(mb_ucwordsexcept(mb_strtolower($law['typeName'], 'UTF-8')), array('Bmt-nin'=>'BMT-nin', 'İ'=>'İ'));
+                $type = NULL;
+                foreach ($types as $typeAZ => $typeEN) {
+                    if (str_contains($law['typeName'], $typeAZ)) {
+                        $type = $typeEN;
+                        $law['typeName'] = trim(str_replace($typeAZ, '', $law['typeName']), ' ,');
+                        break;
+                    }
+                }
+                if ($type == NULL && str_contains($law['typeName'], 'Nazirliyi')) {$type = 'Decision';}
+                $origin = $origins[$law['typeName']] ? '\'{"az":"'.$law['typeName'].'", "en":"'.$origins[$law['typeName']].'"}\'':'NULL';
+                //Gets the rest of the values
                 $status = $statuses[$law['statusName']];
-                $origin = $types[$law['typeName']][0];
                 $source = 'https://e-qanun.az/framework/'.$law['id'];
+                $PDF = 'https://frameworks.e-qanun.az/'.substr($law['id'], 0, strlen($law['id'])-3).'/'.$law['id'].'.pdf';
 
                 //Makes sure there are no quotes in the title or summary
                 if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
@@ -149,10 +209,12 @@
                 //JSONifies the title and source
                 $name = '{"az":"'.$name.'"}';
                 $source = '{"az":"'.$source.'"}';
+                $PDF = '{"az":"'.$PDF.'"}';
 
                 //Creates SQL
-                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `regime`, `name`, `type`, `status`, `origin`, `source`) 
-                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$regime."', '".$name."', '".$type."', '".$status."', '".$origin."', '".$source."')"; echo $law['rowNum'].'. '.$SQL2.'<br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `country`, `regime`, `name`, `type`, `status`, `origin`, `source`, `PDF`) 
+                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$country."', '".$regime."', '".$name."', '".$type."', '".$status."', ".$origin.", '".$source."', '".$PDF."')";
+                echo $law['rowNum'].'. '.$SQL2.'<br/>';
                 if (!$test) {$conn->query($SQL2);}
             }
         }
@@ -165,7 +227,7 @@
         $conn2->select_db($database) or die("Unable to select database");
 
         //Updates the date on the countries table
-        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$country."'"; echo '<br/><br/>'.$SQL3;
+        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$LBpage."'"; echo '<br/><br/>'.$SQL3;
         if (!$test) {$conn2->query($SQL3);}
     ?>
 </body></html>
