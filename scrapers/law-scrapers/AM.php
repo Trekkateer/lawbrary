@@ -1,7 +1,7 @@
 <html><body>
     <?php //TODO: Implement code to tell which law an amendment is amending
         //Settings
-        $test = true; $LBpage = 'AM';
+        $test = false; $LBpage = 'AM';
 
         //Opens the parser (HTML_DOM)
         define('MAX_FILE_SIZE', 6000000);//From simple_html_dom
@@ -48,10 +48,21 @@
                     $type = explode(')', end(explode(explode('-', $enactDate)[0].' ', $law->plaintext)))[0];
                         if (explode('-', $type)[0] === '' || $ID === 'AM-1281') {$type = $typeFixer[explode('-', $ID)[1]];}
                         $type = $types[explode('-', $type)[0]];
+                    //What to do if the law is an amendment
                     if ($law->class === "blue_sm_11") {
                         $amends = "'[\"".$lastID."\"]'";
-                        $SQL21 = "UPDATE `laws".strtolower($LBpage)."` SET `lastactDate`='".$enactDate."' WHERE `ID`='".$lastID."'";
-                        echo '<br/>'.$SQL21.'<br/>'; $conn->query($SQL21);
+                        //Changes the amendedBy field of the last law
+                        $SQL21 = "SELECT * FROM `laws".strtolower($LBpage)."` WHERE `ID`='".$lastID."'";
+                        $result = $conn->query($SQL21);
+                        $row = $result->fetch_assoc();
+                        $amendedBy = json_decode($row['amendedBy'], true);
+                        $amendedBy[] = $ID;
+                        $amendedBy = json_encode($compoundedAmendedBy, JSON_UNESCAPED_UNICODE);
+                        $SQL21 = "UPDATE `laws".strtolower($LBpage)."` SET `amendedBy`='".$amendedBy."' WHERE `ID`='".$lastID."'";
+                        echo $SQL21.'<br/>'; $conn->query($SQL21);
+                        //Changes the lastactDate
+                        $SQL23 = "UPDATE `laws".strtolower($LBpage)."` SET `lastactDate`='".$enactDate."' WHERE `ID`='".$lastID."'";
+                        echo '<br/>'.$SQL23.'<br/>'; $conn->query($SQL23);
                     } else {$amends = 'NULL';}
                     $status = 'Valid';
 

@@ -95,7 +95,6 @@
                     }
                     $origin = $origin !== 'NULL' ? "'".$origin."'":$origin;
                     //Gets the rest of the values
-                    $isAmend = (str_contains($name, 'Amend') || str_contains($name, 'بتعديل')) ? 1:0;
                     $status = 'In Force';
                     $source = $law->find('div.body_td')[0]->find('a')[0]->href;
                     $PDF = $source.'/download';
@@ -133,8 +132,8 @@
                         $PDF = '{"'.$lang.'":"'.$PDF.'"}';
 
                         //Creates SQL
-                        $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `isAmend`, `status`, `source`, `PDF`)
-                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', ".$origin.", '".$type."', ".$isAmend.", '".$status."', '".$source."', '".$PDF."')";
+                        $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `status`, `source`, `PDF`)
+                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', ".$origin.", '".$type."', ".$status."', '".$source."', '".$PDF."')";
                     }
 
                     //Makes the query
