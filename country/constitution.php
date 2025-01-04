@@ -1,7 +1,7 @@
 <html>
 <head>
     <?php
-        include('../generic_heads/country.php')
+        include('../lbheads/country.php')
     ?>
 </head>
 <body>
@@ -30,7 +30,7 @@
     </div>
 
     <?php
-        include('../generic_bodies/country.php')
+        include('../lbbodies/country.php')
     ?>
 
     <?php //Closes the connection to database

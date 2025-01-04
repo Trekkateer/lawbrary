@@ -1,7 +1,7 @@
 <html>
 <head>
     <?php
-        include('../generic_heads/division.php')
+        include('../lbheads/division.php')
     ?>
 </head>
 <body>
@@ -48,7 +48,7 @@
     </div>
 
     <?php
-        include('../generic_bodies/division.php')
+        include('../lbbodies/division.php')
     ?>
 
     <?php //Closes the connection to database

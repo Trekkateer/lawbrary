@@ -239,8 +239,8 @@
     </div>
 
     <div id="title-div">
-        <div id="title-text" style="">
-            <h1 id="title" class="title" style="margin: 0px;">
+        <div id="title-text">
+            <h1 id="title" style="margin: 0px;">
                 <?php /*Country Flag*/ echo '<img height=21.5px id="title-flag" src='.$flagSrc.' alt="'.strtr($translations[2], array('[name]'=>$name)).'"/>';?>
                 <?php /*Country Name*/ echo $name ?>
             </h1><br/><br/><br/>
@@ -252,7 +252,7 @@
                     //Gets the link base on language
                     foreach (json_decode($homesites, true) as $siteNum => $homesite) {
                         $homesite = $homesite[$lang] ?? $homesite['en'] ?? array_values($homesite)[0];
-                        echo '<a height=20px id="source-website-'.$siteNum.'" class="title" href="'.$homesite.'" target="_blank">'.explode('/', $homesite)[2].'</a>';
+                        echo '<a height=20px id="source-website-'.$siteNum.'" href="'.$homesite.'" target="_blank">'.explode('/', $homesite)[2].'</a>';
                     }
                     echo '<br/>';
                 }
@@ -263,10 +263,12 @@
     <!--Gets the searchbar-->
     <?php include __DIR__.'/../searchbar.php';?>
     
-    <ul id="navbar">
-        <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations[5];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/popular.php?id='.$ID.'>'.$translations[6];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations[7];?></a></li>
-        <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations[8];?></a></li>
-    </ul>
+    <!--Navbar-->
+    <div id="navbar">
+        <ul id="navlist">
+            <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations[5];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations[7];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations[8];?></a></li>
+        </ul>
+    </div>
 </div>

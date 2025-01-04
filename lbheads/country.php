@@ -152,16 +152,15 @@
         border: 5px double brown;
         font-size: 12px;
     } #navbar {
+        text-align: center;
+        width: 100%;
+    } #navlist {
         list-style-type: none;
-        margin: 0;
-        padding: 0;
+        margin: 0; padding: 0;
         overflow: hidden;
         background-color: silver;
-        width: 354.66;
-        position: relative;
-        left: 50%; top: 80px;
-        transform: translate(-50%);
-    }  .navlink {
+        display: inline-block;
+    } .navlink {
         display: block;
         color: brown;
         text-align: center;
@@ -187,7 +186,7 @@
         text-align: center;
         position: absolute;
         width: 45%;
-        left: 50%; top: 125px;
+        left: 50%; top: 135px;
         transform: translate(-50%, 0%);
     } .lawlink {word-wrap: normal;}
 

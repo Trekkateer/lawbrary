@@ -1,7 +1,7 @@
 <html>
 <head>
     <?php
-        include('../generic_heads/country.php')
+        include('../lbheads/country.php')
     ?>
     <?php //Sets the page
         $page = $params['page'] ?? 1;
@@ -56,7 +56,7 @@
     </div>
 
     <?php
-        include('../generic_bodies/country.php')
+        include('../lbbodies/country.php')
     ?>
 
     <?php //Closes the connection to database
