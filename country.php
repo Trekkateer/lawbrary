@@ -1,7 +1,7 @@
 <html>
 <head>
     <?php 
-        require 'generic_heads/country.php'
+        require 'lbheads/country.php'
     ?>
 </head>
 <body>
@@ -22,7 +22,7 @@
     </div>
 
     <?php
-        require 'generic_bodies/country.php';
+        require 'lbbodies/country.php';
     ?>
 
     <?php //Closes the database connection

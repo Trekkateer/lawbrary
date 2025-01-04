@@ -1,12 +1,12 @@
 <html>
 <head>
     <?php
-        require 'generic_heads/division.php';
+        require 'lbheads/division.php';
     ?>
 </head>
 <body>
     <?php
-        require 'generic_bodies/division.php';
+        require 'lbbodies/division.php';
     ?>
 
     <?php //Closes the database connection
