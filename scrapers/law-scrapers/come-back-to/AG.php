@@ -1,12 +1,12 @@
 <html><body>
-    <?php //Website not responsive to cURL
+    <?php //Website not responsive to cURL or file_get_html
         //Settings
         $test = true; $country = 'AG';
         $start = 1981;//Which year to start from
         $limit = null;//Which year to end at
 
         //Opens the parser (HTML_DOM)
-        include '../simple_html_dom.php'; // '../' refers to the parent directory
+        include '../../simple_html_dom.php'; // '../' refers to the parent directory
         $html_dom = new simple_html_dom();
 
         //Connects to the Law database
