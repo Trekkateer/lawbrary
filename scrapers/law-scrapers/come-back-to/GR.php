@@ -1,28 +1,26 @@
 <html><body>
-    <?php //!! Cookies need to be updated regularly
+    <?php //!!Cookies need to be updated regularly. Website is not responsive!!
         //Settings
-        $test = true; $country = 'GR';
+        $test = true; $LBpage = 'GR';
         $start = 1;//Which law to start from
         $step = 10;//How many laws per page
-        $limit = null;//Total number of laws desired
+        $limit = NULL;//Total number of laws desired
 
         //Connects to the Law database
-        $username="u9vdpg8vw9h2e";
-        $password="f1x.A1pgN[BwX4[t";
-        $database="dbpsjng5amkbcj";
+        $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
         $conn = new mysqli("localhost", $username, $password, $database);
         $conn->select_db($database) or die("Unable to select database");
 
         //Clears the table
-        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($country)."`"; echo $SQL1.'<br/><br/>';
+        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($LBpage)."`"; echo $SQL1.'<br/><br/>';
         if (!$test) {$conn->query($SQL1);}
 
         //Sets up querying function
-        $API_Call = function ($href) {
+        $API_Call = function ($page) use ($step) {
             $curl = curl_init();
             curl_setopt_array($curl, array(
-                CURLOPT_URL => $href,
-                CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0',
+                CURLOPT_URL => 'https://www.hellenicparliament.gr/api.ashx?q=laws&pageNo='.$page.'&pageSize='.$step,
+                CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -31,14 +29,15 @@
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
-                    'Cookie: __Secure-ASPSESSION=c4jny40xapqotiwgoidueevg; cookiesession1=678B287DRSTUV0123467898901237E79'
+                    //Cookie is not working
+                    'Cookie: __Secure-ASPSESSION=thdwca3ifludcwobavwjan52;'
                 ),
             ));
             $response = curl_exec($curl); curl_close($curl); echo $response;
             return json_decode($response, true);
         };
 
-        //Gets the types
+        //Translates the types
         $types = array(
             'Νόμος'=>'Law',
             'Σχέδιο νόμου'=>'Draft',
@@ -50,7 +49,7 @@
             'Πρόταση αναθεώρησης του Συντάγματος'=>'Constitutional Amendment Proposal'
         );
 
-        //Gets the origins
+        //Translates the origins
         $origins = array(
             'Επικρατείας (Άκης Σκέρτσος)'=>'The Ministry of State',
             'Επικρατείας (Μάκης Βορίδης)'=>'The Ministry of State',
@@ -163,45 +162,70 @@
         );
 
         //Gets the total number of laws
-        $limit = $limit ?? $API_Call('https://www.hellenicparliament.gr/api.ashx?q=laws&pageNo='.$start.'&pageSize='.$step)['TotalPages'].'<br/>';
+        $limit = $limit ?? $API_Call($start)['TotalPages'].'<br/>';
         for ($page = $start; $page <= $limit; $page++) {
             //Interprets the data
-            $laws = $API_Call('https://www.hellenicparliament.gr/api.ashx?q=laws&pageNo='.$page.'&pageSize='.$step)['Data'];
+            $laws = $API_Call($page)['Data'];
             foreach ($laws as $law) {
                 //Gets the values
                 echo $law['DateVoted'].'<br/>';
                 $enactDate = date('Y-m-d', strtotime($law['DateVoted'])); $enforceDate = $enactDate;
-                $ID = $country.'-'.$law['LawNum'];
+                $ID = $LBpage.':'.$law['LawNum'];
                 $name = $law['Title'];
+                $country = '["GR"]';
+                //Gets the regime
+                switch (true) {
+                    case strtotime($enactDate) <= strtotime('today'):
+                        $regime = '{"el":"Τρίτη Ελληνική Δημοκρατία", "en":"The Third Hellenic Republic"}';
+                        break;
+                    case strtotime($enactDate) < strtotime('24 July 1974'):
+                        $regime = '{"el":"Το καθεστώς των συνταγματαρχών", "en":"The Regime of the Colonels"}';
+                        break;
+                    case strtotime($enactDate) < strtotime('21 April 1967'):
+                        $regime = '{"el":"Βασίλειον τῆς Ἑλλάδος", "en":"The Kingdom of Greece"}';
+                        break;
+                    case strtotime($enactDate) < strtotime('10 October 1935'):
+                        $regime = '{"el":"Δευτέρα Ελληνική Δημοκρατία", "en":"The Second Hellenic Republic"}';
+                        break;
+                    case strtotime($enactDate) < strtotime('25 March 1924'):
+                        $regime = '{"el":"Βασίλειον τῆς Ἑλλάδος", "en":"The Kingdom of Greece"}';
+                        break;
+                    case strtotime($enactDate) < strtotime('30 August 1832'):
+                        $regime = '{"el":"Πρώτη Ελληνική Δημοκρατία", "en":"The First Hellenic Republic"}';
+                        break;
+                    case strtotime($enactDate) < strtotime('1 January 1822'):
+                        $regime = '{"el":"Η Οθωμανική Αυτοκρατορία", "en":"The Ottoman Empire"}';
+                        break;
+                }
+                //Gets the rest of the values
                 $type = $types[$law['Type']]; $status = 'Valid';
                 $origin = $origins[$law['Ministry']];
                 $source = $law['VotedLaws'][0]['File'];
 
                 //Makes sure there are no quotes in the title
-                if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
-                if (str_contains($name, '"')) {$name = str_replace('"', "\'", $name);}
-                if (str_contains($name, '""')) {$name = str_replace('""', "\'", $name);}
+                $name = strtr($name, array(' "'=>' “', '"'=>'”', " '"=>" ‘", "'"=>"’"));
 
                 //JSONifies the title
                 $name = '{"el":"'.$name.'"}';
                 $source = '{"el":"'.$source.'"}'; $PDF = $source;
 
                 //Creates SQL
-                $SQL2 = "INSERT INTO `laws".strtolower($country)."`(`enactDate`, `enforceDate`, `ID`, `name`, `type`, `status`, `source`, `PDF`) 
-                        VALUES ('".$enactDate."', '".$enforceDate."', '".$ID."', '".$name."', '".$type."', '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `status`, `source`, `PDF`) 
+                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$origin."', '".$type."', '".$status."', '".$source."', '".$PDF."')"; echo $SQL2.'<br/>';
                 if (!$test) {$conn->query($SQL2);}
             }
         }
 
         //Connects to the content database
-        $username="ug0iy8zo9nryq";
-        $password="T_1&x+$|*N6F";
-        $database="dbupm726ysc0bg";
-        $conn2 = new mysqli("localhost", $username, $password, $database);
-        $conn2->select_db($database) or die("Unable to select database");
+        $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
+        $conn2 = new mysqli("localhost", $username2, $password2, $database2);
+        $conn2->select_db($database2) or die("Unable to select database");
 
         //Updates the date on the countries table
-        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$country."'"; echo '<br/><br/>'.$SQL3;
+        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$LBpage."'"; echo '<br/><br/>'.$SQL3;
         if (!$test) {$conn2->query($SQL3);}
+
+        //Closes the connections
+        $conn->close(); $conn2->close();
     ?>
 </body></html>
