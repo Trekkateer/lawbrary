@@ -38,14 +38,17 @@
             'DECRETO PRESIDENZIALE'                   => ['Presidential Decree', '[{"it":"Il Presidente", "en":"The President"}]'],
             'DECRETO REALE'                           => ['Royal Decree', '[{"it":"Il Monarca", "en":"The Monarch"}]',],
             'DECRETO DEL DUCE'                        => ['Decree', '[{"it":"Il Duce", "en":"The Duke"}]'],
-            'DECRETO DEL CAPO DEL GOVERNO, PRIMO MINISTRO SEGRITARIO DI STATO' => ['Decree', '[{"it":"Il Capo del Governo", "en":"The Head of Government"}, {"en":"Prime Minister Secretary of State"}]'],
+            'DECRETO DEL CAPO DEL GOVERNO, PRIMO MINISTRO SEGRITARIO DI STATO' => ['Decree', '[{"it":"Il Capo del Governo", "en":"The Head of Government"}, {"it":"Primo ministro segritario di Stato", "en":"Prime Minister Secretary of State"}]'],
+            'DECRETO DEL CAPO DEL GOVERNO, PRIMO MINISTRO SEGRETARIO DI STATO' => ['Decree', '[{"it":"Il Capo del Governo", "en":"The Head of Government"}, {"it":"Primo ministro segritario di Stato", "en":"Prime Minister Secretary of State"}]'],
             'DECRETO DEL CAPO DEL GOVERNO'            => ['Decree', '[{"it":"Capo del Governo", "en":"The Head of Government"}]'],
-            
+            'DECRETO LEGISLATIVO DEL CAPO PROVVISORIO DELLO STATO' => ['Legislative Decree', '[{"it":"Il Capo provvisorio dello Stato", "en":"The Provisional Head of State"}]'],
+            'DECRETO DEL CAPO PROVVISORIO DELLO STATO' => ['Decree', '[{"it":"Il Capo provvisorio dello Stato", "en":"The Provisional Head of State"}]'],
+
             'DELIBERAZIONE'                           => ['Deliberation', NULL],
 
             'DETERMINAZIONE INTERCOMMISSARIALE'       => ['Determination', NULL],
-            'DETERMINAZIONE DEL COMMISSARIO PER LA PRODUZIONE BELLICA' => ['Determination', '[{"it":"Il commissario alla produzione bellica", "en":"The Commissioner of War Production"}]'],
-            'DETERMINAZIONE DEL COMMISSARIO PER LE FINANZE' => ['Determination', '[{"it":"Il commissario delle Finanze", "en":"The Commissioner of Finance"}]'],
+            'DETERMINAZIONE DEL COMMISSARIO PER LA PRODUZIONE BELLICA' => ['Determination', '[{"it":"Il Commissario alla produzione bellica", "en":"The Commissioner of War Production"}]'],
+            'DETERMINAZIONE DEL COMMISSARIO PER LE FINANZE' => ['Determination', '[{"it":"Il Commissario delle Finanze", "en":"The Commissioner of Finance"}]'],
 
             'LEGGE'                                   => ['Law', '[{"it":"Parlamento", "en":"Parliament"}]'],
             'LEGGE COSTITUZIONALE'                    => ['Constitutional Law', '[{"it":"Parlamento", "en":"Parliament"}]'],
@@ -74,7 +77,7 @@
                 $source = trim('https://www.normattiva.it'.$law->find('div.collapse-header')[0]->find('p')[0]->find('a')[0]->href);
                     parse_str(parse_url($source)['query'], $params);
                 $ID = $LBpage.':'.$params['atto_codiceRedazionale'];
-                $name = trim($law->find('p')[1]->plaintext, ' [].');
+                $name = str_replace(' ((. . .))', '', trim($law->find('p')[1]->plaintext, ' [].'));
                 //Gets the date and type
                 foreach (explode(' ', $law->find('p')[0]->find('a')[0]->plaintext) as $partNum => $part) {
                     if (ctype_digit($part)) {
@@ -99,7 +102,7 @@
                 $status = "Valid";
 
                 //Makes sure there are no quotes in the title
-                $name = strtr($name, array("'"=>"’"));
+                $name = strtr($name, array(' "'=>' “', '"'=>'”', "'"=>"’"));
 
                 //JSONifies the values
                 $name = '{"it":"'.$name.'"}';
@@ -109,9 +112,7 @@
                 $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `status`, `source`) 
                             VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', ".$origin.", '".$type."', '".$status."', '".$source."')";
                 echo 'p. '.$page.': '.$SQL2.'<br/>';
-                if (!$test/* && !str_contains($name, '((') && !str_contains($ID, '[')*/) {
-                    $conn->query($SQL2);
-                }
+                if (!$test) {$conn->query($SQL2);}
             }
         }
         
