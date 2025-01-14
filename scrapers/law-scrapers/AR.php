@@ -511,7 +511,7 @@
                 if (!str_contains($out[$key], $delim)) {break;}//Breaks if delimiter not present
                 $out[$key+1] = '';
                 foreach (explode($delim, $out[$key]) as $word) {//Loops through the words and capitalizes if not in exceptions
-                    $out[$key+1] .= in_array($word, $capsLock) ? mb_strtoupper($word, $encoding).$delim:(in_array($word, $exceptions) ? $word.$delim:mb_strtoupper(substr($word, 0, 1), $encoding).mb_substr($word, 1, strlen($word)-1, $encoding).$delim);
+                    $out[$key+1] .= (in_array($word, $capsLock) ? mb_strtoupper($word, $encoding):(in_array($word, $exceptions) ? $word:mb_strtoupper(mb_substr($word, 0, 1, $encoding), $encoding).mb_substr($word, 1, strlen($word)-1, $encoding))).$delim;
                 }
                 $out[$key+1] = rtrim($out[$key+1], $delim);
             }
