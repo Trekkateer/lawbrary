@@ -1,5 +1,5 @@
 <html><body>
-    <?php //!!Too many different types and origins, program runs out of memory!!
+    <?php //!!Some of the pages are broken, program runs out of memory!!
         //Settings
         $test = true; $scraper = 'RO';
         $start = 4732; //Which page to start from
