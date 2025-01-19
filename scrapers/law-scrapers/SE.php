@@ -1,9 +1,9 @@
 <html><body>
     <?php
         //Settings
-        $test = true; $scraper = 'SE';
+        $test = false; $scraper = 'SE';
         $start = 0;//What page to start from
-        $limit = null;//Total number of pages desired. Set to null to get number automatically
+        $limit = NULL;//Total number of pages desired. Set to null to get number automatically
 
         //Opens the parser (HTML_DOM)
         include '../simple_html_dom.php'; // '../' refers to the parent directory
@@ -395,7 +395,6 @@
             'Specialskole'=>'Special School',
             'Stadsregister'=>'City Register',
             'Starkströms'=>'High Voltages',
-            'Statens bostadskreditnämnds '=>'The State Housing Credit Board',
             'Statsflygs'=>'State Aviation',
             'Statskalender'=>'State Calendar',
             'Steriliserings'=>'Sterilization',
@@ -494,6 +493,7 @@
 
             'Transportnämndens '=>'The Transport Board',
             'Socialstyrelsens '=>'The National Board of Health',
+            'Statens bostadskreditnämnds '=>'The State Housing Credit Board',
             'Statens förhandlingsnämnds '=>'The State Negotiation Board',
 
             'Statistiska centralbyråns '=>'The Central Bureau of Statistics',
@@ -585,7 +585,8 @@
                     $enactDate = $lastactDate = trim($status_dom->find('dd')[0]->plaintext ?? explode('-', $law['id'])[1].'-01-01');
                     $enforceDate = isset($law['summary']) && str_contains($law['summary'], 'Träder i kraft I:') ? explode('Träder i kraft I:', explode('/', trim($law['summary'], ' /'))[0])[1]:$enactDate;
                 $ID = $scraper.':'.strtoupper(str_replace('-', '', $law['id']));
-                //Gets the regime
+                //Gets the country and regime
+                $country = '["SE"]';
                 switch (true) {
                     case strtotime($enactDate) < strtotime('today'):
                         $regime = '{"sv":"Konungariket Sverige", "en":"The Kingdom of Sweden"}';
@@ -612,7 +613,7 @@
                     foreach ($topics as $key => $val) {
                         if (str_contains($typeLine, $key)) {
                             //Gets the topic and adds it to the memo
-                            $topicMemo[$typeLine] = $topic = '{"sv":"'.ucfirst(trim($key)).'", "en":"'.$val.'"}'; echo "ADDED: '".$typeLine."'=>'".$topic."'<br/>";
+                            $topicMemo[$typeLine] = $topic = '\'{"sv":"'.ucfirst(trim($key)).'", "en":"'.$val.'"}\''; echo "ADDED: '".$typeLine."'=>'".$topic."'<br/>";
                             //Changes the type
                             $type = ucfirst(trim(str_replace($key, '', $type), "\n "));
                             break;
@@ -622,7 +623,7 @@
                     foreach ($origins as $key => $val) {
                         if (str_contains($typeLine, $key)) {
                             //Gets the origin and adds it to the memo
-                            $originMemo[$typeLine] = $origin = '{"sv":"'.ucfirst(trim($key)).'", "en":"'.$val.'"}'; echo "ADDED: '".$typeLine."'=>'".$origin."'<br/>";
+                            $originMemo[$typeLine] = $origin = '\'{"sv":"'.ucfirst(trim($key)).'", "en":"'.$val.'"}\''; echo "ADDED: '".$typeLine."'=>'".$origin."'<br/>";
                             //Changes the type
                             $type = ucfirst(trim(str_replace($key, '', $type), "\n "));
                             break;
@@ -649,8 +650,8 @@
                 $PDF = isset($law['attachedFileList']['files'][0]['url']) ? '{"sv":"'.$PDF.'"}':$PDF;
 
                 //Creates SQL
-                $SQL2 = "INSERT INTO `laws".strtolower($scraper)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `regime`, `origin`, `summary`, `topic`, `type`, `status`, `source`, `PDF`) 
-                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$regime."', ".$origin.", ".$summary.", ".$topic.", '".$type."', '".$status."', '".$source."', ".$PDF.")"; echo $page.'. '.$SQL2.'<br/><br/>';
+                $SQL2 = "INSERT INTO `laws".strtolower($scraper)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `summary`, `topic`, `type`, `status`, `source`, `PDF`) 
+                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', ".$origin.", ".$summary.", ".$topic.", '".$type."', '".$status."', '".$source."', ".$PDF.")"; echo $page.'. '.$SQL2.'<br/><br/>';
                 if (!$test) {$conn->query($SQL2);}
             }
         }
