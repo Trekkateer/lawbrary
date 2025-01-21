@@ -4,16 +4,14 @@
         $test = true; $LBpage = 'UZ';
         $start = 0;//Which law to start from
         $step = 20;//How many laws there are on each page
-        $limit = 10;//Total number of pages desired.
+        $limit = null;//Total number of pages desired.
 
         //Opens the parser (HTML_DOM)
         include '../../simple_html_dom.php'; // '../' refers to the parent directory
         $html_dom = new simple_html_dom();
 
         //Connects to the Law database
-        $username="u9vdpg8vw9h2e";
-        $password="f1x.A1pgN[BwX4[t";
-        $database="dbpsjng5amkbcj";
+        $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
         $conn = new mysqli("localhost", $username, $password, $database);
         $conn->select_db($database) or die("Unable to select database");
 
@@ -51,12 +49,12 @@
             return $outputNum;
         };
 
-        //Gets the types
+        //Translates the types
         $typesAndOrigins = array(
-            "O‘zbekiston Respublikasi Qonuni, " => ["Law", ["en"=>"The Parliament of Uzbekistan", "uz"=>"Oliy Majlis"]],
-            "O‘zbekiston Respublikasining Qonuni, " => ["Law", ["en"=>"The Parliament of Uzbekistan", "uz"=>"Oliy Majlis"]],
+            "O‘zbekiston Respublikasi Qonuni, " => ["Act", ["en"=>"The Parliament of Uzbekistan", "uz"=>"Oliy Majlis"]],
+            "O‘zbekiston Respublikasining Qonuni, " => ["Act", ["en"=>"The Parliament of Uzbekistan", "uz"=>"Oliy Majlis"]],
         );
-        $sanitizeTypes = array(
+        $sanitizeTypeLine = array(
             "O‘zbekiston Respublikasi " => "",
 
             "Ekologiya, atrof-muhitni muhofaza qilish va iqlim o‘zgarishi vazirligi" => "Ekologiya atrof-muhitni muhofaza qilish va iqlim o‘zgarishi vazirligi",
@@ -70,57 +68,97 @@
             ' buyrug‘i, ' => 'Order',
             ' farmoyishi, ' => 'Order',
         );
+        $sanitizeOrigin = array(
+            "agentligining" => "agentligi",
+            "boshqaruvining" => "boshqaruvi",
+            "departamentining" => "departamenti",
+            "direktorining" => "direktori",
+            "komissiyasining" => "komissiyasi",
+            "Mahkamasining" => "Mahkamasi",
+            "Plenumining" => "Plenumi",
+            "Prezidentining" => "Prezident",
+            "prokuraturasining" => "prokuraturasi",
+            "qo‘mitasining" => "qo‘mitasi",
+            "qo‘mondonining" => "qo‘mondoni",
+            "raisining" => "raisi",
+            "vazirining" => "vaziri",
+            "vazirligining" => "vazirligi",
+        );
+        //Translates the origins
         $origins = array(
-            "Korrupsiyaga qarshi kurashish agentligi" => ["en"=>"The Anti-Corruption Agency", "uz"=>"Korrupsiyaga qarshi kurashish agentligi"],
-            "Vazirlar Mahkamasi huzuridagi O‘zbekiston Texnik jihatdan tartibga solish agentligining" => ["en"=>"The Agency for Technological Regulation under the Cabinet of Ministers", "uz"=>"Vazirlar Mahkamasi huzuridagi O‘zbekiston Texnik jihatdan tartibga solish agentligi"],
+            "Korrupsiyaga qarshi kurashish agentligi" => "The Anti-Corruption Agency",
+            "Istiqbolli loyihalar milliy agentligi" => "The National Agency of Prospective Projects",
 
-            "Markaziy banki boshqaruvining" => ["en"=>"The Board of the Central Bank", "uz"=>"Markaziy banki boshqaruvi"],
+            "Markaziy banki boshqaruvi" => "The Board of the Central Bank",
 
-            "Vazirlar Mahkamasining" => ["en"=>"The Cabinet of Ministers", "uz"=>"Vazirlar Mahkamasi"],
+            "Vazirlar Mahkamasi" => "The Cabinet of Ministers",
+            "Vazirlar Mahkamasi huzuridagi O‘zbekiston texnik jihatdan tartibga solish agentligi" => "The Agency for Technological Regulation under the Cabinet of Ministers",
+            "Vazirlar Mahkamasi huzuridagi O‘zbekiston Texnik jihatdan tartibga solish agentligi" => "The Agency for Technological Regulation under the Cabenet of Ministers",
 
-            "Davlat xavfsizlik xizmati raisining" => ["en"=>"The Chairman of the State Security Service", "uz"=>"Davlat xavfsizlik xizmati raisi"],
+            "Davlat xavfsizlik xizmati raisi" => "The Chairman of the State Security Service",
 
-            "Raqobatni rivojlantirish va iste’molchilar huquqlarini himoya qilish qo‘mitasining" => ["en"=>"The Competition Development and Consumer Protection Committee", "uz"=>"Raqobatni rivojlantirish va iste’molchilar huquqlarini himoya qilish qo‘mitasi"],
-            "Vazirlar Mahkamasi huzuridagi Soliq qo‘mitasi" => ["en"=>"The Tax Committee under the Cabinet of Ministers", "uz"=>"Vazirlar Mahkamasi huzuridagi Soliq qo‘mitasi"],
-            "Vazirlar Mahkamasi huzuridagi Soliq qo‘mitasining" => ["en"=>"The Tax Committee under the Cabinet of Ministers", "uz"=>"Vazirlar Mahkamasi huzuridagi Soliq qo‘mitasi"],
-            "Din ishlari bo‘yicha qo‘mitasining" => ["en"=>"The Committee on Religious Affairs", "uz"=>"Din ishlari bo‘yicha qo‘mitasi"],
+            "Raqobatni rivojlantirish va iste’molchilar huquqlarini himoya qilish qo‘mitasi" => "The Competition Development and Consumer Protection Committee",
+            "Vazirlar Mahkamasi huzuridagi Soliq qo‘mitasi" => "The Tax Committee under the Cabinet of Ministers",
+            "Iqtisodiyot va moliya vazirligi Soliq qo‘mitasi" => "The Tax Committee of the Ministry of Economy and Finance",
+            "Din ishlari bo‘yicha qo‘mitasi" => "The Committee on Religious Affairs",
 
-            "Markaziy saylov komissiyasining" => ["en"=>"The Central Election Commission", "uz"=>"Markaziy Saylov komissiyasi"],
-            "Markaziy Saylov komissiyasining" => ["en"=>"The Central Election Commission", "uz"=>"Markaziy Saylov komissiyasi"],
+            "Milliy gvardiyasi qo‘mondoni" => "The Commander of the National Guard",
+            "Milliy Gvardiyasi qo‘mondoni" => "The Commander of the National Guard",
 
-            "Bosh prokuraturasi huzuridagi Iqtisodiy jinoyatlarga qarshi kurashish departamentining" => ["en"=>"The Department for Combating Economic Crimes under the Prosecutor General's Office", "uz"=>"Bosh prokuraturasi huzuridagi Iqtisodiy jinoyatlarga qarshi kurashish departamenti"],
+            "Markaziy saylov komissiyasi" => "The Central Election Commission",
+            "Markaziy Saylov komissiyasi" => "The Central Election Commission",
 
-            "Korrupsiyaga qarshi kurashish agentligi direktorining"          => ["en"=>"The Director of the Anti-Corruption Agency", "uz"=>"Korrupsiyaga qarshi kurashish agentligi direktori"],
-            "Prezidenti huzuridagi davlat xizmatini rivojlantirish agentligi direktorining" => ["en"=>"The Director of the State Services Development Agency under the President", "uz"=>"Prezidenti huzuridagi davlat xizmatini rivojlantirish agentligi direktori"],
-            "Prezidenti huzuridagi Ijtimoiy himoya milliy agentligi direktorining" => ["en"=>"The Director of the National Agency for Social Protection under the President", "uz"=>"Prezidenti huzuridagi Ijtimoiy himoya milliy agentligi direktori"],
-            "Istiqbolli loyihalar milliy agentligi direktorining"                => ["en"=>"The Director of the National Agency for Project Management", "uz"=>"Istiqbolli loyihalar milliy agentligi direktori"],
-            "Prezidenti huzuridagi Statistika agentligi direktorining" => ["en"=>"The Director of the State Statistics Agency under the President", "uz"=>"Prezidenti huzuridagi Statistika agentligi direktori"],
+            "Bosh prokuraturasi huzuridagi Iqtisodiy jinoyatlarga qarshi kurashish departamenti" => "The Department for Combating Economic Crimes under the Prosecutor General's Office",
 
-            "Qishloq xo‘jaligi vazirining"                      => ["en"=>"The Minister of Agriculture", "uz"=>"Qishloq xo‘jaligi vaziri"],
-            "qishloq xo‘jaligi vazirining"                      => ["en"=>"The Minister of Agriculture", "uz"=>"Qishloq xo‘jaligi vaziri"],
-            "Iqtisodiyot va moliya vazirining"                  => ["en"=>"The Minister of Economy and Finance", "uz"=>"Iqtisodiyot va moliya vaziri"],
-            "iqtisodiyot va moliya vazirining"                  => ["en"=>"The Minister of Economy and Finance", "uz"=>"Iqtisodiyot va moliya vaziri"],
-            "Raqamli texnologiyalar vazirining"                 => ["en"=>"The Minister of Digital Development", "uz"=>"Raqamli texnologiyalar vaziri"],
-            "sog‘liqni saqlash vazirining"                      => ["en"=>"The Minister of Health", "uz"=>"Sog‘liqni saqlash vaziri"],
-            "Ichki ishlar vazirining"                           => ["en"=>"The Minister of Internal Affairs", "uz"=>"Ichki ishlar vaziri"],
-            "ichki ishlar vazirining"                           => ["en"=>"The Minister of Internal Affairs", "uz"=>"Ichki ishlar vaziri"],
-            "adliya vazirining"                                 => ["en"=>"The Minister of Justice", "uz"=>"Adliya vaziri"],
-            "kambag‘allikni qisqartirish va bandlik vazirining" => ["en"=>"The Minister of Poverty Reduction and Employment", "uz"=>"Kambag‘allikni qisqartirish va bandlik vaziri"],
+            "Korrupsiyaga qarshi kurashish agentligi direktori"                => "The Director of the Anti-Corruption Agency",
+            "Prezidenti huzuridagi davlat xizmatini rivojlantirish agentligi direktori" => "The Director of the State Services Development Agency under the President",
+            "Transport vazirligi huzuridagi fuqaro aviatsiyasi agentligi direktori" => "The Director of the Agency for Civil Aviation at the Ministry of Transport",
+            "Prezidenti huzuridagi Ijtimoiy himoya milliy agentligi direktori" => "The Director of the National Agency for Social Protection under the President",
+            "Istiqbolli loyihalar milliy agentligi direktori"                  => "The Director of the National Agency for Project Management",
+            "Prezidenti huzuridagi Statistika agentligi direktori"             => "The Director of the State Statistics Agency under the President",
+            "Vazirlar Mahkamasi huzuridagi O‘zbekiston texnik jihatdan tartibga solish agentligi direktori" => "The Director of the Uzbek Agency for Technological Regulation under the Cabinet of Ministers",
 
-            "Ekologiya atrof-muhitni muhofaza qilish va iqlim o‘zgarishi vazirligi" => ["en"=>"The Ministry of Ecology, Environment and Climate Change", "uz"=>"Ekologiya atrof-muhitni muhofaza qilish va iqlim o‘zgarishi vazirligi"],
-            "Iqtisodiyot va moliya vazirligi"                   => ["en"=>"The Ministry of Economy and Finance", "uz"=>"Iqtisodiyot va moliya vazirligi"],
-            "Iqtisodiyot va Moliya vazirligi"                   => ["en"=>"The Ministry of Economy and Finance", "uz"=>"Iqtisodiyot va moliya vazirligi"],
-            "Sog‘liqni saqlash vazirligi"                       => ["en"=>"The Ministry of Health", "uz"=>"Sog‘liqni saqlash vazirligi"],
-            "Oliy ta’lim fan va innovatsiyalar vazirligi"       => ["en"=>"The Ministry of Higher Education, Science and Innovation", "uz"=>"Oliy ta’lim fan va innovatsiyalar vazirligi"],
-            "Kambag‘allikni qisqartirish va bandlik vazirligining" => ["en"=>"The Ministry of Poverty Reduction and Employment", "uz"=>"Kambag‘allikni qisqartirish va bandlik vazirligi"],
+            "Milliy gvardiyasi" => "The National Guard",
 
-            "Bosh prokuraturasining" => ["en"=>"The Office of the Prosecutor General", "uz"=>"Bosh prokuraturasi"],
+            "Qishloq xo‘jaligi vaziri"                      => "The Minister of Agriculture",
+            "Iqtisodiyot va moliya vaziri"                  => "The Minister of Economy and Finance",
+            "Ekologiya va atrof-muhitni muhofaza qilish va iqlim o‘zgarishi vaziri" => "The Minister of Ecology, Environmental Protection and Climate Change",
+            "Favqulodda vaziyatlar vaziri"                  => "The Minister of Emergency Situations",
+            "Mudofaa vaziri"                                => "The Minister of Defense",
+            "Raqamli texnologiyalar vaziri"                 => "The Minister of Digital Development",
+            "Sog‘liqni saqlash vaziri"                      => "The Minister of Health",
+            "Tashqi ishlar vaziri"                          => "The Minister of Foreign Affairs",
+            "Ichki ishlar vaziri"                           => "The Minister of Internal Affairs",
+            "Adliya vaziri"                                 => "The Minister of Justice",
+            "Kambag‘allikni qisqartirish va bandlik vaziri" => "The Minister of Poverty Reduction and Employment",
+            "Fan va innovatsiyalar vaziri"                  => "The Ministry of Science and Innovation",
+            "Sport vaziri"                                  => "The Minister of Sports",
 
-            "Prezidentining" => ["en"=>"The President", "uz"=>"Prezident"]
+            "Qishloq xo‘jaligi vazirligi"                      => "The Ministry of Agriculture",
+            "Mudofaa vazirligi"                                => "The Ministry of Defence",
+            "Ekologiya atrof-muhitni muhofaza qilish va iqlim o‘zgarishi vazirligi" => "The Ministry of Ecology, Environment and Climate Change",
+            "Iqtisodiyot va moliya vazirligi"                  => "The Ministry of Economy and Finance",
+            "Iqtisodiyot va Moliya vazirligi"                  => "The Ministry of Economy and Finance",
+            "Favqulodda vaziyatlar vazirligi"                  => "The Ministry of Emergency Situations",
+            "Energetika vazirligi"                             => "The Ministry of Energy",
+            "Sog‘liqni saqlash vazirligi"                      => "The Ministry of Health",
+            "Oliy ta’lim fan va innovatsiyalar vazirligi"      => "The Ministry of Higher Education, Science and Innovation",
+            "Ichki ishlar vazirligi"                           => "The Ministry of Internal Affairs",
+            "Adliya vazirligi"                                 => "The Ministry of Justice",
+            "Kambag‘allikni qisqartirish va bandlik vazirligi" => "The Ministry of Poverty Reduction and Employment",
+
+            "Oliy sudi Plenumi" => "The Plenum of the Supreme Court",
+            "Oliy Sudi Plenumi" => "The Plenum of the Supreme Court",
+
+            "Bosh prokuraturasi" => "The Office of the Prosecutor General",
+
+            "Prezident" => "The President",
+
+            "Davlat xavfsizlik xizmati" => "The State Security Service"
         );
 
         //Gets the years
-        $yearAbbreations = array(
+        $yearWords = array(
             'uz'=>' yilda',
             'ru'=>' г.',
             'en'=>' г.'
@@ -130,7 +168,7 @@
         foreach (array('uz'=>4/*, 'ru'=>1, 'en'=>3*/) as $lang => $langCode) {
             //Gets the limit
             $html_dom->load($HTTP_Call('https://lex.uz/'.$lang.'/search/nat?lang='.$langCode, '00'));
-            $limit = $limit ?? ceil((int)preg_replace('/[A-Za-z]/', '', $html_dom->find('div.refind__result-export__title.mb-3')[0]->plaintext)/$step);
+            $limit = $limit ?? ceil((int)preg_replace('/[^0-9]/', '', $html_dom->find('div.refind__result-export__title.mb-3')[0]->plaintext)/$step);
 
             //Loops through the pages
             for ($page = $start; $page <= $limit; $page++) {
@@ -139,35 +177,36 @@
                 $laws = $html_dom->find('div.dd-table__main')[0]->find('tr.dd-table__main-item');
                 foreach($laws as $law) {
                     //Gets values
-                    $enactDate = date('Y-m-d', strtotime(end(explode(', ', explode($yearAbbreations[$lang], $law->find('span.badge.badge-pill.badge-nine')[0]->plaintext)[0])))); $enforceDate = $enactDate; $lastactDate = $enactDate;
+                    $enactDate = $enforceDate = $lastactDate = date('Y-m-d', strtotime(end(explode(', ', explode($yearWords[$lang], $law->find('span.badge.badge-pill.badge-nine')[0]->plaintext)[0]))));
                     $ID = $LBpage.':'.strtr(end(explode(' ', $law->find('span.badge.badge-pill.badge-nine')[0]->plaintext)), array('-'=>'', '’'=>'', '‘'=>''));
                     $name = $law->find('div.dd-table__main-left-desc')[0]->find('a.lx_link')[0]->plaintext;
                     $country = '["UZ"]';
                     //Gets the regime
-                    if (strtotime($enactDate) < strtotime('1991-08-31')) $regime = 'The Uzbek SSR'; else $regime = 'The Republic of Uzbekistan';
+                    if (strtotime($enactDate) < strtotime('1991-08-31')) $regime = '{"uz":"O’zbekiston SSR", "en":"The Uzbek SSR"}';
+                        else $regime = '{"uz":"O’zbekiston Respublikasi", "en":"The Republic of Uzbekistan"}';
                     //Gets the type and origin
-                    $typeLine = explode(end(explode(', ', explode($yearAbbreations[$lang], $law->find('span.badge.badge-pill.badge-nine')[0]->plaintext)[0])), $law->find('span.badge.badge-pill.badge-nine')[0]->plaintext)[0];
+                    $typeLine = explode(end(explode(', ', explode($yearWords[$lang], $law->find('span.badge.badge-pill.badge-nine')[0]->plaintext)[0])), $law->find('span.badge.badge-pill.badge-nine')[0]->plaintext)[0];
                     if (in_array($typeLine, array_keys($typesAndOrigins))) {
                         $type = $typesAndOrigins[$typeLine][0];
                         $origin = array($typesAndOrigins[$typeLine][1]);
                     } else {
-                        $typeLine = str_replace(array_keys($sanitizeTypes), array_values($sanitizeTypes), $typeLine);
+                        $typeLine = str_replace(array_keys($sanitizeTypeLine), array_values($sanitizeTypeLine), $typeLine);
                         foreach ($types as $UZtype => $ENtype) {if (str_contains($typeLine, $UZtype)) {$type = $ENtype; $typeLine = explode($UZtype, $typeLine)[0]; break;}}
                         $origin = [];
                         if (in_array($typeLine, array_keys($origins))) {
-                            $origin[] = $origins[$typeLine];
+                            $origin = ["uz"=>$typeLine, "en"=>$origins[$typeLine]];
                         } else {
                             foreach(explode(', ', $typeLine) as $originUZ) {
-                                $origin[] = $origins[$originUZ];
+                                $originUZ = str_replace(array_keys($sanitizeOrigin), array_values($sanitizeOrigin), $originUZ);
+                                $origin[] = ["uz"=>ucfirst($originUZ), "en"=>$origins[ucfirst($originUZ)]];
                             }
                         }
                     }
                     $origin = json_encode($origin, JSON_UNESCAPED_UNICODE);
                     //Gets the rest of the values
-                    if (str_contains('Amend', $name) || str_contains('amend', $name)) $isAmend = 1; else $isAmend = 0;
                     $status = 'Valid';
                     $source = 'https://lex.uz/'.$lang.'/docs/'.explode('/-', $law->find('div.dd-table__main-left-desc')[0]->find('a.lx_link')[0]->href)[1];
-                    $PDF = '{"uz":"https://lex.uz/pdffile/'.explode('/-', $law->find('div.dd-table__main-left-desc')[0]->find('a.lx_link')[0]->href)[1].'"}';
+                    $PDF = 'https://lex.uz/pdffile/'.explode('/-', $law->find('div.dd-table__main-left-desc')[0]->find('a.lx_link')[0]->href)[1];
 
                     //Makes sure there are no quotes in the title
                     strtr($name, array("'" => "’", ' "'=>' “', '"' => "”"));
@@ -194,25 +233,24 @@
                         //JSONifies the name and href
                         $name = '{"'.$lang.'":"'.$name.'"}';
                         $source = '{"'.$lang.'":"'.$source.'"}';
+                        $PDF = '{"uz":"'.$PDF.'"}';
 
                         //Creates SQL
-                        $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `isAmend`, `status`, `source`, `PDF`)
-                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$origin."', '".$type."', ".$isAmend.", '".$status."', '".$source."', '".$PDF."')";
+                        $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `status`, `source`, `PDF`)
+                                VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', '".$origin."', '".$type."', ".$status."', '".$source."', '".$PDF."')";
                     }
 
                     //Makes the query
-                    echo $law->find('span.dd-table__main-item_number')[0]->plaintext.'. '.$SQL2.'<br/>';
+                    echo 'p'.$page.': '.$law->find('span.dd-table__main-item_number')[0]->plaintext.' '.$SQL2.'<br/>';
                     if (!$test) {$conn->query($SQL2);}
                 }
             }
         }
 
         //Connects to the content database
-        $username="ug0iy8zo9nryq";
-        $password="T_1&x+$|*N6F";
-        $database="dbupm726ysc0bg";
-        $conn2 = new mysqli("localhost", $username, $password, $database);
-        $conn2->select_db($database) or die("Unable to select database");
+        $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
+        $conn2 = new mysqli("localhost", $username2, $password2, $database2);
+        $conn2->select_db($database2) or die("Unable to select database");
 
         //Updates the date on the countries table
         $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$LBpage."'"; echo '<br/><br/>'.$SQL3;
