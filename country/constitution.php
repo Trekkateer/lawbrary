@@ -1,14 +1,12 @@
 <html>
 <head>
-    <?php
-        include('../lbheads/country.php')
-    ?>
+    <?php /*Imports the head*/ include('../lbheads/country.php');?>
 </head>
 <body>
     <div id="centerdiv">
         <?php //Fetches the laws
-            $sql = "SELECT * FROM `constitutions` WHERE `country`='".$ID."'";
-            $result = $conn->query($sql);
+            $SQL = "SELECT * FROM `constitutions` WHERE `country`='".$ID."'";
+            $result = $conn->query($SQL);
 
             if ($result->num_rows > 0) {
                 //Outputs data
@@ -21,20 +19,14 @@
                             <p>Unable to display PDF file. <a href="'.$src.'" target="blank">Download</a> instead.</p>
                         </object>';
                     } else {//In case there is no translation available
-                        $engLink = '<a href="//en.'.$basedomain.$path.'">English</a>';
-                        echo strtr($translations["NOCONST"], array('[engLink]'=>$engLink));
+                        $enLink = '<a href="//en.'.$basedomain.$path.'">English</a>';
+                        echo str_replace('$enLink', $enLink, $translations["NOCONST"]);
                     }
                 }
             }
         ?>
     </div>
-
-    <?php
-        include('../lbbodies/country.php')
-    ?>
-
-    <?php //Closes the connection to database
-        $conn->close();
-    ?>
+    <?php /*Imports the body*/ include('../lbbodies/country.php');?>
+    <?php /*Closes the connection to database*/ $conn->close();?>
 </body>
 </html>

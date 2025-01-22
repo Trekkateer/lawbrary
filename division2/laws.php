@@ -1,21 +1,19 @@
 <html>
 <head>
-    <?php
-        include('../lbheads/division.php')
-    ?>
+    <?php /*Imports the head*/ include('../lbheads/division.php');?>
 </head>
 <body>
     <div id="centerdiv">
         <div id="contentdiv">
             <?php //Fetches the laws
-                $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-                $result = $conn->query($sql);
+                $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+                $result = $conn->query($SQL);
 
                 if ($result->num_rows > 0) {
                     //Outputs data
                     while ($row = $result->fetch_assoc()) {
-                        $sql2 = "SELECT * FROM `laws` WHERE `country`='".$ID."'";
-                        $result2 = $conn->query($sql2);
+                        $SQL2 = "SELECT * FROM `laws` WHERE `country`='".$ID."'";
+                        $result2 = $conn->query($SQL2);
 
                         if ($result2->num_rows > 0) {
                             //Tells us the number of rows
@@ -23,8 +21,8 @@
 
                             //Outputs data
                             $loadLaws = function($offset = 0) use ($conn, $row, $ID, $lang) {
-                                $sql3 = "SELECT * FROM `laws` WHERE `country`='".$ID."'";// ORDER BY `laws`.`enactDate` DESC";
-                                $result3 = $conn->query($sql3);
+                                $SQL3 = "SELECT * FROM `laws` WHERE `country`='".$ID."'";// ORDER BY `laws`.`enactDate` DESC";
+                                $result3 = $conn->query($SQL3);
                                 //Outputs data
                                 while ($row3 = $result3->fetch_assoc()) {
                                     //Creates container div, number and date
@@ -42,17 +40,11 @@
                             $loadLaws();
                         }
                     }
-                } else {echo strtr($translations[4], array('[name]'=>$name));}
+                } else {echo str_replace('$name', $name, $translations["NOLAWS"]);}
             ?>
         </div>
     </div>
-
-    <?php
-        include('../lbbodies/division.php')
-    ?>
-
-    <?php //Closes the connection to database
-        $conn->close();
-    ?>
+    <?php /*Imports the body*/ include('../lbbodies/division.php');?>
+    <?php /*Closes the DB connection*/ $conn->close();?>
 </body>
 </html>

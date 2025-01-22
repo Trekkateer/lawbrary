@@ -23,10 +23,7 @@
     }
     ?>
     <?php //Gets language and treaty name
-    $username="ug0iy8zo9nryq";
-    $password="T_1&x+$|*N6F";
-    $database="dbupm726ysc0bg";
-
+    $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
     $conn = new mysqli("localhost", $username, $password, $database);
     $conn->select_db($database) or die("Unable to select database");
     
@@ -81,8 +78,8 @@
                                 $result2 = $conn->query($sql2);
                                 while ($row2 = $result2->fetch_assoc()) {
                                     if (isset(json_decode($row2['name'], true)[$lang][0])) {
-                                        $memberName = json_decode($row2['name'], true)[$lang][0];
-                                    } else {$memberName = json_decode($row2['name'], true)["en"][0];}
+                                        $memberName = json_decode($row2['name'], true)[$lang];
+                                    } else {$memberName = json_decode($row2['name'], true)["en"];}
                                     $memberType = "division";
                                 }
                             }
@@ -152,13 +149,12 @@
             if ($homesite) {echo "<a id='official-website' href='".$homesite."' target='blank'>Official Website</a>";}
             ?>
         </div>
+
+        <!--Searchbar-->
+        <?php include 'searchbar.php';?>
         
-        <?php //Searchbar
-        require('searchbar.php');
-        
-        //Closes the connection to database
-        $conn->close();
-        ?>
+        <!--Closes the connection-->
+        <?php $conn->close();?>
     </div>
 </body>
 </html>
