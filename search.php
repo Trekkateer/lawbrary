@@ -144,7 +144,7 @@
                         } else {echo "<a href='/treaty.php?id=".strtolower($row['ID'])."&doc=laws'>".$name."</a><br>";}
                     }
                 }
-            } if ($params['type'] === "global" || $params['type'] === "laws") {
+            } if ($params['type'] === "global" || $params['type'] === "law") {
                 $sql = "SELECT * FROM `laws` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
                 $result = $conn->query($sql);
 
