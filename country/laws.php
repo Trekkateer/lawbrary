@@ -49,7 +49,7 @@
                             echo '<a class="lawlink" href="/law.php?id='.$row3['ID'].'" target="_blank">'.$lawName.'</a>';
                             echo '</p></div>';
                         }
-                    } else {echo strtr($translations[3], array('[name]'=>$name));}
+                    } else {echo strtr($translations["NOLAWS"], array('[name]'=>$name));}
                 }
             }
         ?>

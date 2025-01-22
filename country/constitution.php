@@ -22,7 +22,7 @@
                         </object>';
                     } else {//In case there is no translation available
                         $engLink = '<a href="//en.'.$basedomain.$path.'">English</a>';
-                        echo strtr($translations[5], array('[engLink]'=>$engLink));
+                        echo strtr($translations["NOCONST"], array('[engLink]'=>$engLink));
                     }
                 }
             }

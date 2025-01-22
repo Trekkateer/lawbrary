@@ -1,5 +1,5 @@
 <div id="search-form" lang="en">
-    <input id="searchbar" type="search" placeholder=<?php echo '"'.$translations[0].'"';?>>
+    <input id="searchbar" type="search" placeholder=<?php echo '"'.$translations["SEARCH"].'"';?>>
     <select id="type-selector">
         <option value="global"></option>
         <option value="country">Country</option>

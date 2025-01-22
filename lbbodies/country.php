@@ -80,7 +80,7 @@
                 } else {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 }
-                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.strtr($translations[1], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.strtr($translations["MAPOF"], array('[name]'=>$name)).'">';
             }
         }
     }
@@ -241,7 +241,7 @@
     <div id="title-div">
         <div id="title-text">
             <h1 id="title" style="margin: 0px;">
-                <?php /*Country Flag*/ echo '<img height=21.5px id="title-flag" src='.$flagSrc.' alt="'.strtr($translations[2], array('[name]'=>$name)).'"/>';?>
+                <?php /*Country Flag*/ echo '<img height=21.5px id="title-flag" src='.$flagSrc.'/>';?>
                 <?php /*Country Name*/ echo $name ?>
             </h1><br/><br/><br/>
 
@@ -266,9 +266,9 @@
     <!--Navbar-->
     <div id="navbar">
         <ul id="navlist">
-            <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations[5];?></a></li>
-            <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations[7];?></a></li>
-            <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations[8];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations["OVIEW"];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations["CONST"];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations["LAWS"];?></a></li>
         </ul>
     </div>
 </div>
