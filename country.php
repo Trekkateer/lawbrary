@@ -1,8 +1,6 @@
 <html>
 <head>
-    <?php 
-        require 'lbheads/country.php'
-    ?>
+    <?php /*Imports the head*/ require 'lbheads/country.php'?>
 </head>
 <body>
     <div id="centerdiv">
@@ -13,20 +11,15 @@
             if ($result->num_rows > 0) {
                 //Outputs data
                 while ($row = $result->fetch_assoc()) {
-                    if (isset(json_decode($row['overview'], true)[$lang])) {
-                        
+                    $overview = json_decode($row["overview"], true);
+                    if (isset($overview[$lang])) {
+                        echo '<p id="overview">'.$overview[$lang].'</p>';
                     } else {}
                 }
             }
         ?>
     </div>
-
-    <?php
-        require 'lbbodies/country.php';
-    ?>
-
-    <?php //Closes the database connection
-        $conn->close();
-    ?>
+    <?php /*Imports the body*/ require 'lbbodies/country.php';?>
+    <?php /*Closes the DB connection*/ $conn->close();?>
 </body>
 </html>

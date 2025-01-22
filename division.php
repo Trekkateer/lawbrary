@@ -1,16 +1,9 @@
 <html>
 <head>
-    <?php
-        require 'lbheads/division.php';
-    ?>
+    <?php /*Imports the head*/ require 'lbheads/division.php';?>
 </head>
 <body>
-    <?php
-        require 'lbbodies/division.php';
-    ?>
-
-    <?php //Closes the database connection
-        $conn->close();
-    ?>
+    <?php /*Imports the body*/ require 'lbbodies/division.php';?>
+    <?php /*Closes the DB connection*/ $conn->close();?>
 </body>
 </html>

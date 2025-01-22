@@ -1,18 +1,9 @@
 <html>
 <head>
-    <?php
-        require 'lbheads/division2.php';
-    ?>
+    <?php /*Imports the head*/ require 'lbheads/division2.php';?>
 </head>
 <body>
-    <div id="centerdiv"></div>
-
-    <?php 
-        require 'lbbodies/division2.php';
-    ?>
-
-    <?php //Closes the connection to database
-        $conn->close();
-    ?>
+    <?php /*Imports the body*/ require 'lbbodies/division2.php';?>
+    <?php /*Closes the DB connection*/ $conn->close();?>
 </body>
 </html>
