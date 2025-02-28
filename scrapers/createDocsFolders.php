@@ -10,12 +10,11 @@
     while ($row = $result->fetch_assoc()) {
         //Creates a folder for each country
         $destination = '../documents/'.$row['ID'];
-        if (!file_exists($destination)) mkdir($destination);
+        mkdir($destination);
 
-        //Creates a folder for every language
+        //Creates a folder for every language in that country
         foreach (json_decode($row['langs'], true)['Display'] as $language) {
-            $destination .= '/'.$language;
-            if (!file_exists($destination)) mkdir($destination);
+            if (!file_exists($destination.'/'.$language)) mkdir($destination.'/'.$language);
         }
     }
 
