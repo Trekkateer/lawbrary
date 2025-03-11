@@ -26,10 +26,12 @@
 
                 //Creates new tables
                 $SQL3 = "CREATE TABLE IF NOT EXISTS `".$row['ID']."` (
-                    `enactDate` date NOT NULL,
-                    `enforceDate` date NOT NULL,
-                    `lastactDate` date NOT NULL,
+                    `draftDate` date,
+                    `enactDate` date,
+                    `enforceDate` date,
+                    `lastactDate` date,
                     `endDate` date,
+                    `saveDate` date NOT NULL,
                     `ID` text NOT NULL,
                     `name` text NOT NULL,
                     `country` text NOT NULL,
