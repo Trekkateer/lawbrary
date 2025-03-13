@@ -1,6 +1,7 @@
 <?php
     //This script scrapes the ISO 639-2 language codes from Wikipedia and the names from the Library of Congress
     //I wrote it in about 5 hours. One of my quickest times yet. Very proud of it.
+    //NOTE: Will overwrite the altonym field
 
     //The SETTINGS
     $test = true;
