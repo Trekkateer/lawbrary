@@ -3,7 +3,7 @@
     //I wrote it in about 5 hours. One of my quickest times yet. Very proud of it.
 
     //The SETTINGS
-    $test = false;
+    $test = true;
 
     //Connects to the Lawbrary database
     $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
@@ -78,7 +78,7 @@
     //Organizes the table alphabetically by the English name
     //If the name has a space, it is sorted by the last word followed by the first. Otherwise, the regular name is used
     $SQL1 = "CREATE TABLE `languages2` LIKE `languages`";
-    $SQL2 = "INSERT INTO languages2 SELECT * FROM languages ORDER BY TRIM('\"' FROM IF(`name` LIKE '% %', CONCAT(SUBSTRING_INDEX(name->'$.en', ' ', -1), ' ', SUBSTRING_INDEX(name->'$.en', ' ', 1)), name->'$.en'))";
+    $SQL2 = "INSERT INTO languages2 SELECT * FROM languages ORDER BY TRIM('\"' FROM IF(`name`->'$.en' LIKE '% %', CONCAT(SUBSTRING_INDEX(`name`->'$.en', ' ', -1), ' ', SUBSTRING_INDEX(`name`->'$.en', ' ', 1)), `name`->'$.en'))";
     $SQL3 = "DROP TABLE `languages`;";
     $SQL4 = "ALTER TABLE `languages2` RENAME TO `languages`;";
     echo "<br/>------------------------------<br/>Alphabetizing the table<br/>------------------------------<br/>".$SQL1."<br/>".$SQL2."<br/>".$SQL3."<br/>".$SQL4."<br/>";
