@@ -124,6 +124,17 @@
         }
     }
 
+    //Organizes the tables alphabetically by the English name
+    //If the name has a space, it is sorted by the last word followed by the first. Otherwise, the regular name is used
+    foreach (array('countries', 'divisions', 'divisions2') as $table) {
+        $SQL1 = "CREATE TABLE `".$table."Temp` LIKE `".$table."`";
+        $SQL2 = "INSERT INTO `".$table."Temp` SELECT * FROM `".$table."` ORDER BY TRIM('\"' FROM IF(`name`->'$.en' LIKE '% %', CONCAT(SUBSTRING_INDEX(`name`->'$.en', ' ', -1), ' ', SUBSTRING_INDEX(`name`->'$.en', ' ', 1)), `name`->'$.en'))";
+        $SQL3 = "DROP TABLE `".$table."`;";
+        $SQL4 = "ALTER TABLE `".$table."Temp` RENAME TO `".$table."`;";
+        echo "<br/>------------------------------<br/>Alphabetizing ".$table."<br/>------------------------------<br/>".$SQL1."<br/>".$SQL2."<br/>".$SQL3."<br/>".$SQL4."<br/>";
+        if (!$test) {$conn->query($SQL1); $conn->query($SQL2); $conn->query($SQL3); $conn->query($SQL4);}
+    }
+
     //Closes connection
     $conn->close();
 ?>
