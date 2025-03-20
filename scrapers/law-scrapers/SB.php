@@ -20,16 +20,18 @@
         if (!$test) {$conn->query($SQL1);}
 
         //Properly capitalizes the name
-        function capitalize_title($string='', $delimiters=array()) {
+        $exceptions = array('of', 'and', 'the');
+        function ucwordsexcept($string, $delims=' ') {
+            global $exceptions;
             $string = strtolower($string);
-            foreach ($delimiters as $delimiter) {
-                $temp = explode($delimiter, $string);
+            foreach (str_split($delims) as $delim) {
+                $temp = explode($delim, $string);
                     array_walk($temp, function (&$value) {
-                        if ($value !== 'of' && $value !== 'and' && $value !== 'the') {
+                        if (!in_array($value, $exceptions)) {
                             $value = ucfirst($value);
                         }
                     });
-                $string = implode($delimiter, $temp);
+                $string = implode($delim, $temp);
             }
             return $string;
         }
@@ -60,7 +62,7 @@
                 $enactDate = preg_replace('/[A-Za-z]/', '', explode('/', $law->href)[4]) === '' ? end(explode(' ', strtr($law->plaintext, $sanitizeName))).'-01-01':explode('/', $law->href)[4].'-01'; $enforceDate = $enactDate; $lastactDate = $enforceDate;
                 $ID = $country.'-'.$page.$lawNum;
                 $regime = 'The Solomon Islands';
-                $name = capitalize_title(strtr($law->plaintext, $sanitizeName), array(' ', '('));
+                $name = ucwordsexcept(strtr($law->plaintext, $sanitizeName), array(' ('));
                 $type = 'Act';
                     if (str_contains($name, 'Amendment')) {$type = 'Amendment to '.$type;}
                 $status = 'Valid';
