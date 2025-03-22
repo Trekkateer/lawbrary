@@ -1,11 +1,11 @@
 <html><body>
     <?php //!! Exceeds the Xampp time limit for executions, and runs out of memory
         //Settings
-        $test = false; $LBpage = 'VN';
-        $start = ["vi"=>0, "en"=>0];//Which page to start from
-        $step  = 50;//How many laws there are on each page
-        $limit = ["vi"=>5635, "en"=>NULL];//How many pages there are
-                        //After page 5635, there is no valid ID
+        $test = true; $scraper = 'VN';
+        $start = ["vi"=>0, "en"=>0]; //Which page to start from
+        $step  = 50; //How many laws there are on each page
+        $limit = ["vi"=>5635, "en"=>NULL]; //How many pages there are
+                                          //After page 5635, there is no valid ID
 
         //Opens the parser (HTML_DOM)
         include '../../simple_html_dom.php';
@@ -21,12 +21,12 @@
         $conn2->select_db($database2) or die("Unable to select content database");
 
         //Clears the table(s)
-        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($LBpage)."`"; echo $SQL1.'<br/><br/>';
+        $SQL1 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`".strtolower($scraper)."`"; echo $SQL1.'<br/>';
         if (!$test) {$conn->query($SQL1);}
-        $SQL10 = "SELECT `ID` FROM `dbupm726ysc0bg`.`divisions` WHERE `parent` = '".$LBpage."'";
+        $SQL10 = "SELECT `ID` FROM `dbupm726ysc0bg`.`divisions` WHERE `parent` = '".$scraper."'";
         $result10 = $conn2->query($SQL10);
         while ($row10 = $result10->fetch_assoc()) {
-            $SQL11 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`laws".strtolower($row10['ID'])."`"; echo $SQL11.'<br/><br/>';
+            $SQL11 = "TRUNCATE TABLE `dbpsjng5amkbcj`.`".strtolower($row10['ID'])."`"; echo $SQL11.'<br/>';
             if (!$test) {$conn->query($SQL11);}
         }
 
@@ -827,7 +827,7 @@
             $laws = $html_dom->find('div.block-content')[0]->find('article.doc-article');
             foreach ($laws as $law) {
                 //Resets LBpage
-                $LBpage = "VN";
+                $LBpage = $scraper;
                 //Gets the values
                 $enactDate = $enforceDate = date('Y-m-d', strtotime(str_replace('/', '-', $law->find('div.doc-clumn2')[0]->find('div.post-meta-doc')[0]->find('div.doc-dmy')[0]->find('span.w-doc-dmy2')[0]->plaintext)));
                     $lastactDate = date('Y-m-d', strtotime(str_replace('/', '-', end($law->find('div.doc-clumn2')[0]->find('div.post-meta-doc')[0]->find('div.doc-dmy.m-hide'))->find('span.w-doc-dmy2')[0]->plaintext)));
@@ -857,7 +857,7 @@
                     if (str_contains($nameLine, $originKey)) {
                         $nameLine = str_replace($originKey, '', $nameLine);
                         $LBpage = $originVal[1][0];
-                        if ($originVal[1][1] && (str_starts_with($nameLine, 'Hiệp định') || str_starts_with($nameLine, 'Thoả thuận'))) {$country[] = $originVal[1][1];}
+                        if (isset($originVal[1][1]) && (str_starts_with($nameLine, 'Hiệp định') || str_starts_with($nameLine, 'Thoả thuận'))) {$country[] = $originVal[1][1];}
                         $origin[] = $originVal[0];
                     }
                 }
@@ -890,8 +890,8 @@
                 $source = '{"'.$lang.'":"'.$source.'"}';
 
                 //Creates SQL
-                $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `isAmend`, `status`, `topic`, `source`)
-                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', ".$origin.", '".$type."', ".$isAmend.", '".$status."', ".$topic.", '".$source."')";
+                $SQL2 = "INSERT INTO `".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `origin`, `type`, `status`, `topic`, `source`)
+                        VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', '".$country."', '".$regime."', ".$origin.", '".$type.", '".$status."', ".$topic.", '".$source."')";
 
                 //Executes the SQL
                 echo 'p.'.$page.':'.$law->find('div.doc-clumn1')[0]->find('span.doc-number')[0]->plaintext.' '.$SQL2.'<br/>';
@@ -943,7 +943,7 @@
                 if (str_contains($name, "'")) {$name = str_replace("'", "’", $name);}
 
                 //Creates SQL
-                $SQL = "SELECT * FROM `laws".strtolower($LBpage)."` WHERE `ID`='".$ID."'";
+                $SQL = "SELECT * FROM `".strtolower($LBpage)."` WHERE `ID`='".$ID."'";
                 $result = $conn->query($SQL);
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -957,7 +957,7 @@
                         $compoundedSource[$lang] = $source;
                         $source = json_encode($compoundedSource, JSON_UNESCAPED_UNICODE);
 
-                        $SQL2 = "UPDATE `laws".strtolower($LBpage)."` SET `name`='".$name."', `source`='".$source."' WHERE `ID`='".$ID."'";
+                        $SQL2 = "UPDATE `".strtolower($LBpage)."` SET `name`='".$name."', `source`='".$source."' WHERE `ID`='".$ID."'";
                     }
                 } else {
                     //JSONifies the name and href
@@ -965,8 +965,8 @@
                     $source = '{"'.$lang.'":"'.$source.'"}';
 
                     //Creates SQL
-                    $SQL2 = "INSERT INTO `laws".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `isAmend`, `status`, `source`)
-                            VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', ".$country."', '".$regime."', '".$type."', ".$isAmend.", '".$status."', '".$source."')";
+                    $SQL2 = "INSERT INTO `".strtolower($LBpage)."`(`enactDate`, `enforceDate`, `lastactDate`, `ID`, `name`, `country`, `regime`, `type`, `status`, `source`)
+                            VALUES ('".$enactDate."', '".$enforceDate."', '".$lastactDate."', '".$ID."', '".$name."', ".$country."', '".$regime."', '".$type."', ".$status."', '".$source."')";
                 }
 
                 //Executes the SQL
@@ -976,7 +976,7 @@
         }
 
         //Updates the date on the countries table
-        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$LBpage."'"; echo '<br/><br/>'.$SQL3;
+        $SQL3 = "UPDATE `countries` SET `lawsUpdated`='".date('Y-m-d')."' WHERE `ID`='".$scraper."'"; echo '<br/><br/>'.$SQL3;
         if (!$test) {$conn2->query($SQL3);}
     ?>
 </body></html>
