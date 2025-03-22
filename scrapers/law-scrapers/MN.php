@@ -92,29 +92,27 @@
                             $regime = '{"mn":"Их Монгол Улс", "en":"The Mongol Empire"}'; break;
                     }
                     $publisher = '{"en":"The Unified Legal Information System","mn":"Эрх зүйн мэдээллийн нэгдсэн систем"}';
-                    //Gets the ID
-                    $ID = $scraper.':'.explode('lawId=', $law->find('div[data-block="title"]', 0)->find('a', 0)->href)[1];
-                    //Gets the name
-                    $name = array($lang => trim($law->find('div[data-block="title"]', 0)->find('a.act-name', 0)->plaintext));
-                    if ($law->find('div[data-block="title"]', 0)->find('a[title^="Орчуулга: "]', 0)) {//TODO: Find a way to get the English name
-                        $name['en'] = trim($law->find('div[data-block="title"]', 0)->find('a[title^="Орчуулга: "]', 0)->href);
-                    }
                     //Gets the rest of the values
+                    $ID = $scraper.':'.explode('lawId=', $law->find('div[data-block="title"]', 0)->find('a', 0)->href)[1];
+                    $name = array($lang => trim($law->find('div[data-block="title"]', 0)->find('a.act-name', 0)->plaintext));
                     $origin = $typeInfo[1];
-                    $status = $law->find('div[data-block="inactive"]', 0)->class === 'fa fa-check' ? 'Valid':'Invalid';
-                    $source = $law->find('div[data-block="title"]', 0)->find('a.act-name', 0)->href;
+                    $status = ($law->find('div[data-block="inactive"]', 0) ?? $law->find('div[data-block="isvalid"]', 0))->class === 'fa fa-check' ? 'Valid':'Invalid'; //TODO: Find a way to get the topic
+                    $source = array($lang => $law->find('div[data-block="title"]', 0)->find('a.act-name', 0)->href);
+                    /*if ($law->find('div[data-block="title"]', 0)->find('a[title^="Орчуулга: "]', 0)) {//TODO: Find a way to get the English name as well
+                        $name['en'] = trim($law->find('div[data-block="title"]', 0)->find('a[title^="Орчуулга: "]', 0)->href);
+                    }*/
 
                     //Makes sure there are no quotes in the title
                     $name = array_map(function ($item) {return strtr($item, ["'" => "ꞌ"]);}, $name);
 
                     //JSONifies the values
                     $name = json_encode($name, JSON_UNESCAPED_UNICODE);
-                    $source = '{"'.$lang.'":"'.$source.'"}';
-                    $PDF = '{"'.$lang.'":"'.$source.'"}';
+                    $source = json_encode($source, JSON_UNESCAPED_UNICODE);
                     
                     //Inserts the new laws
-                    $SQL2 = "INSERT INTO `".strtolower($scraper)."`(`enactDate`, `enforceDate`, `savedDate`, `ID`, `name`, `country`, `regime`, `origin`, `publisher`, `type`, `status`, `source`) 
-                                VALUES ('".$enactDate."', '".$enforceDate."', '".date('Y-m-d')."', '".$ID."', '".$name."', '".'["MN"]'."', '".$regime."', ".$origin.", '".$publisher."', '".$type."', '".$status."', '".$source."')"; echo $SQL2.'<br/>';
+                    $SQL2 = "INSERT INTO `".strtolower($scraper)."`(`enactDate`, `enforceDate`, `saveDate`, `ID`, `name`, `country`, `regime`, `origin`, `publisher`, `type`, `status`, `source`) 
+                                VALUES ('".$enactDate."', '".$enforceDate."', '".date('Y-m-d')."', '".$ID."', '".$name."', '".'["MN"]'."', '".$regime."', ".$origin.", '".$publisher."', '".$type."', '".$status."', '".$source."')";
+                    echo 't'.$typeInfo[0][0].'p'.$page.': '.$SQL2.'<br/>';
                     if (!$test) {$conn->query($SQL2);}
                 }
             }
