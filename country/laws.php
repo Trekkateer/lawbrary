@@ -20,7 +20,7 @@
             if ($result->num_rows > 0) {
                 //Outputs data
                 while ($row = $result->fetch_assoc()) {
-                    $SQL2 = "SELECT * FROM `laws".strtolower($ID)."` ORDER BY `laws".strtolower($ID)."`.`enactDate` DESC";
+                    $SQL2 = "SELECT * FROM `".strtolower($ID)."` ORDER BY `enactDate` DESC";
                     $result2 = $conn2->query($SQL2);
 
                     if ($result2->num_rows > 0) {
@@ -31,7 +31,7 @@
 
                         //Creates buttons to select different laws
                         //echo '<p class="blue_sm_11" onclick="">next</p>';
-                        $SQL3 = "SELECT * FROM `laws".strtolower($ID)."` ORDER BY `laws".strtolower($ID)."`.`enactDate` DESC LIMIT 50 OFFSET ".($page-1)*50;
+                        $SQL3 = "SELECT * FROM `".strtolower($ID)."` ORDER BY `enactDate` DESC LIMIT 50 OFFSET ".($page-1)*50;
                         $result3 = $conn2->query($SQL3);
                         //Outputs data
                         while ($row3 = $result3->fetch_assoc()) {

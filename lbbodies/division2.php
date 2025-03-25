@@ -113,7 +113,7 @@
                     }
                 }
             }
-            echo '<a class="treaty" href="/treaty.php?id='.$row['ID'].'&doc=laws">'.json_decode($row['name'], true)[$lang].$memberType.'</a><br>';
+            echo '<a class="orgLink" href="/organization.php?id='.$row['ID'].'&doc=laws">'.json_decode($row['name'], true)[$lang].$memberType.'</a><br>';
         }
     }
     ?>

@@ -1,7 +1,7 @@
 <div id="leftdiv">
     <?php
-    $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         // output countries data
@@ -80,7 +80,7 @@
                 } else {
                     $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
                 }
-                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.strtr($translations["MAPOF"], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.str_replace('$name', $name, $translations["MAPOF"]).'">';
             }
         }
     }
@@ -88,8 +88,8 @@
     <map name="Map"></map>
 
     <?php //Territorial Dispute Disclaimer
-    $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         //Output data of each row
@@ -103,9 +103,9 @@
                         if ($index === 0) {$echoString = $echoString.$name.' ';}
                         $echoString = $echoString.$key;
                         foreach ($val as $key2 => $val2) {
-                            //Converts ISOs to Names
-                            $sql2 = "SELECT * FROM `countries` WHERE `ID`='".$val2."'";
-                            $result2 = $conn->query($sql2);
+                            //Gets names based on ISO code
+                            $SQL2 = "SELECT * FROM `countries` WHERE `ID`='".$val2."'";
+                            $result2 = $conn->query($SQL2);
 
                             if ($result2->num_rows > 0) {
                                 //Output data of each row
@@ -134,8 +134,8 @@
     ?>
 
     <?php //List of divisions
-    $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         //Output data of each row
@@ -146,8 +146,8 @@
                     if ($val) {
                         echo '<h2>'.$childType.'</h2>';
                         foreach ($val as $value) {
-                            $sql2 = "SELECT * FROM `divisions` WHERE `ID`='".$value."'";
-                            $result2 = $conn->query($sql2);
+                            $SQL2 = "SELECT * FROM `divisions` WHERE `ID`='".$value."'";
+                            $result2 = $conn->query($SQL2);
                             if ($result2->num_rows > 0) {
                                 while ($row2 = $result2->fetch_assoc()) {
                                     if (isset(json_decode($row2['name'], true)[$lang])) {
@@ -169,8 +169,8 @@
 
 <div id="rightdiv">
     <?php //Outputs the country type
-        $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-        $result = $conn->query($sql);
+        $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+        $result = $conn->query($SQL);
 
         if ($result->num_rows > 0) {
             // output data of each row
@@ -182,9 +182,25 @@
         }
     ?>
 
+    <?php //Outputs the country's languages
+        echo '<h2>Languages</h2>';
+        foreach($languages as $languageType => $languageIDs) {
+            if ($languageType !== "Display") {
+                echo '<h3>'.$languageType.' languages</h3><ul>';
+                foreach($languageIDs as $language) {
+                    $SQL = "SELECT * FROM `languages` WHERE `ID`='".$language."'";
+                    $result = $conn->query($SQL);
+                    $result = $result->fetch_assoc();
+                    echo '<li>'.json_decode($result["name"], true)[$lang].'</li><br>';
+                }
+                echo '</ul>';
+            }
+        }
+    ?>
+
     <?php //Loads organizations
-    $sql = "SELECT * FROM `organizations` WHERE `children`->'$.Members' LIKE '%\"".$ID."\"%'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `organizations` WHERE `children`->'$.Members' LIKE '%\"".$ID."\"%'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         echo '<h2 id="organizationsHeading">Organizations</h2>';
@@ -198,11 +214,11 @@
                     }
                 }
             }
-            //Gets the name of the treaty
+            //Gets the name of the treaty/organization
             if (isset(json_decode($row['name'], true)[$lang])) {
                 $treatyName = json_decode($row['name'], true)[$lang];
             } else {$treatyName = json_decode($row['name'], true)['en'];}
-            echo '<a class="treaty" href="/treaty.php?id='.strtolower($row['ID']).'">'.$treatyName.$memberType.'</a><br>';
+            echo '<a class="orgLink" href="/organization.php?id='.strtolower($row['ID']).'">'.$treatyName.$memberType.'</a><br>';
         }
     }
     ?>
@@ -213,20 +229,26 @@
     <a id="logo" href="/"><img src="/images/favicon64.png" width="40px"></img></a>
     <div id="language-div">
         <?php //Language flag
-            echo '<img id="language-flag" height="32px" src="/images/languageFlags/'.$lang.'.png">'
+            //Gets the language data
+            $SQL = "SELECT * FROM `languages` WHERE `ID`='".$lang."'";
+            $result = $conn->query($SQL)->fetch_assoc();
+
+            //Displays the language flag
+            if ($result['hasFlag']) {
+                echo '<img id="language-flag" height="32px" src="/images/languageFlags/'.$lang.'.png">';
+            }
         ?>
         <select id="language-selector" onchange="langChange(document.getElementById('language-selector').value)">
             <?php //Language selector
-            $sql = "SELECT * FROM `languages` WHERE `dispIn`->'$.countries' LIKE '%\"".$ID."\"%' OR `dispIn`->'$.countries' LIKE '%\"GLOBAL\"%'";
-            $result = $conn->query($sql);
+                foreach ($languages["Display"] as $language) {
+                    //Gets the language data
+                    $SQL = "SELECT * FROM `languages` WHERE `ID`='".$language."'";
+                    $result = $conn->query($SQL)->fetch_assoc();
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $langID = json_decode($row['ID'], true)['alpha2'] ?? json_decode($row['ID'], true)['alpha3'];
-                    $selected = $langID === $lang ? 'selected':'';
-                    echo '<option value="'.$langID.'"'.$selected.'>'.$row['name'].'</option>';
+                    //Outputs the selector
+                    $selected = $language === $lang ? ' selected':'';
+                    echo '<option value="'.$language.'"'.$selected.'>'.json_decode($result['name'], true)[$language].'</option>';
                 }
-            }
             ?>
         </select>
         <?php //Creates onchange parameter
@@ -241,13 +263,29 @@
     <div id="title-div">
         <div id="title-text">
             <h1 id="title" style="margin: 0px;">
-                <?php /*Country Flag*/ echo '<img height=21.5px id="title-flag" src='.$flagSrc.'/>';?>
+                <?php //Creates the country's flag
+                    $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+                    $result = $conn->query($SQL);
+
+                    if ($result->fetch_assoc()['hasFlag']) {//Outputs the flag
+                        if ($ID === 'DANISH-REALM') {
+                            $flagSrc='https://flagpedia.net/data/flags/w580/dk.webp';
+                        } else if ($ID === 'KOSOVO') {
+                            $flagSrc='https://flagpedia.net/data/flags/w580/xk.webp';
+                        } else if ($ID === 'PS-WEST-BANK') {
+                            $flagSrc='https://flagpedia.net/data/flags/w580/ps.webp';
+                        } else {$flagSrc='https://flagpedia.net/data/flags/w580/'.strtolower($ID).'.webp';}
+                    }
+                    echo '<img height=21.5px id="title-flag" src='.$flagSrc.'/>';
+                ?>
                 <?php /*Country Name*/ echo $name ?>
             </h1><br/><br/><br/>
 
             <?php //Creates link to source website
-                $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-                $homesites = $conn->query($sql)->fetch_assoc()['source'];
+                $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+                $result = $conn->query($SQL);
+                
+                $homesites = $result->fetch_assoc()['source'];
                 if ($homesites) {
                     //Gets the link base on language
                     foreach (json_decode($homesites, true) as $siteNum => $homesite) {

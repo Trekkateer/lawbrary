@@ -8,8 +8,8 @@
         <select id="language-selector" onchange="langChange(document.getElementById('language-selector').value)">
             <?php
             //Language selector
-            $sql = "SELECT * FROM `languages` WHERE `dispIn`->'$.divisions' LIKE '%\"".$ID."\"%' OR `dispIn`->'$.divisions' LIKE '%\"GLOBAL\"%'";
-            $result = $conn->query($sql);
+            $SQL = "SELECT * FROM `languages` WHERE `dispIn`->'$.divisions' LIKE '%\"".$ID."\"%' OR `dispIn`->'$.divisions' LIKE '%\"GLOBAL\"%'";
+            $result = $conn->query($SQL);
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
@@ -33,8 +33,8 @@
         <?php /*Country Name*/ echo '<h1 id="country-name" style="margin: 0px;">'.$name.'</h1>';?>
 
         <?php //Creates link to source website
-            $sql = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-            $homesite = $conn->query($sql)->fetch_assoc()['source'];
+            $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
+            $homesite = $conn->query($SQL)->fetch_assoc()['source'];
             if ($homesite) {
                 //Gets the link base on language
                 $homesite = json_decode($homesite, true)[$lang] ?? json_decode($homesite, true)['en'] ?? array_values(json_decode($homesite, true))[0];
@@ -52,8 +52,8 @@
 
 <div id="leftdiv">
     <?php
-    $sql = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         // output data of each row
@@ -108,8 +108,8 @@
     <map name="Map"></map>
 
     <?php //List of divisions
-    $sql = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         //Output data of each row
@@ -120,8 +120,8 @@
                     if ($val) {
                         echo '<h2>'.$key.'</h2>';
                         foreach ($val as $value) {
-                            $sql2 = "SELECT * FROM `divisions2` WHERE `ID`='".$value."'";
-                            $result2 = $conn->query($sql2);
+                            $SQL2 = "SELECT * FROM `divisions2` WHERE `ID`='".$value."'";
+                            $result2 = $conn->query($SQL2);
                             if ($result2->num_rows > 0) {
                                 while ($row2 = $result2->fetch_assoc()) {
                                     $divisionName = json_decode($row2['name'], true)[$lang];
@@ -141,8 +141,8 @@
 
 <div id="rightdiv">
     <?php //Gets the flag
-    $sql = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         // output data of each row
@@ -157,8 +157,8 @@
             }
             
             //Displays the type of division
-            $sqlPar = "SELECT * FROM `countries` WHERE `ID`='".$row['parent']."'";
-            $resultPar = $conn->query($sqlPar);
+            $SQLPar = "SELECT * FROM `countries` WHERE `ID`='".$row['parent']."'";
+            $resultPar = $conn->query($SQLPar);
             if ($resultPar->num_rows > 0) {
                 // output data of each row
                 while($rowPar = $resultPar->fetch_assoc()) {
@@ -177,8 +177,8 @@
     ?>
 
     <?php
-    $sql = "SELECT * FROM `organizations` WHERE `children`->'$.Members' LIKE '%\"".$ID."\"%'";
-    $result = $conn->query($sql);
+    $SQL = "SELECT * FROM `organizations` WHERE `children`->'$.Members' LIKE '%\"".$ID."\"%'";
+    $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
         echo '<h2 id="organizationsHeading">Organizations</h2>';
@@ -193,7 +193,7 @@
                     }
                 }
             }
-            echo '<a class="treaty" href="/treaty.php?id='.strtolower($row['ID']).'">'.json_decode($row['name'], true)[$lang].$memberType.'</a><br>';
+            echo '<a class="orgLink" href="/organization.php?id='.strtolower($row['ID']).'">'.json_decode($row['name'], true)[$lang].$memberType.'</a><br>';
         }
     }
     ?>

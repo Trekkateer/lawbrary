@@ -5,7 +5,7 @@
 <body>
     <div id="centerdiv">
         <?php //Fetches the laws
-            $sql = "SELECT * FROM `countries` WHERE `id`='".$ID."'";
+            $sql = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
@@ -14,7 +14,7 @@
                     $overview = json_decode($row["overview"], true);
                     if (isset($overview[$lang])) {
                         echo '<p id="overview">'.$overview[$lang].'</p>';
-                    } else {}
+                    }
                 }
             }
         ?>
