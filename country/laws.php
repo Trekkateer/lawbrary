@@ -9,11 +9,6 @@
 <body>
     <div id="centerdiv">
         <?php //Fetches the laws
-            //Connects to the Law database
-            $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
-            $conn2 = new mysqli("localhost", $username, $password, $database);
-            $conn2->select_db($database) or die("Unable to select database");
-
             $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
             $result = $conn->query($SQL);
 

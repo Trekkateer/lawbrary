@@ -1,55 +1,3 @@
-<div id="topdiv">
-    <!--Lawbrary logo-->
-    <a id="logo" href="/"><img src="/images/favicon64.png" width="40px"></img></a>
-    <div id="language-div">
-    <?php //Language flag
-            echo '<img id="language-flag" height="32px" src="images/languageFlags/'.$lang.'.png">'
-        ?>
-        <select id="language-selector" onchange="langChange(document.getElementById('language-selector').value)">
-            <?php
-            //Language selector
-            $SQL = "SELECT * FROM `languages` WHERE `dispIn`->'$.divisions' LIKE '%\"".$ID."\"%' OR `dispIn`->'$.divisions' LIKE '%\"GLOBAL\"%'";
-            $result = $conn->query($SQL);
-
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $langID = json_decode($row['ID'], true)['alpha2'] ?? json_decode($row['ID'], true)['alpha3'];
-                    $selected = $langID === $lang ? 'selected':'';
-                    echo '<option value="'.$langID.'"'.$selected.'>'.$row['name'].'</option>';
-                }
-            }
-            ?>
-        </select>
-        <?php //Creates onchange parameter
-        echo '<script>
-            function langChange (newLang) {
-                window.location.replace("//"+newLang+".'.$basedomain.$path.'")
-            };
-        </script>';
-        ?>
-    </div>
-
-    <div id='title'>
-        <?php /*Country Name*/ echo '<h1 id="country-name" style="margin: 0px;">'.$name.'</h1>';?>
-
-        <?php //Creates link to source website
-            $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-            $homesite = $conn->query($SQL)->fetch_assoc()['source'];
-            if ($homesite) {
-                //Gets the link base on language
-                $homesite = json_decode($homesite, true)[$lang] ?? json_decode($homesite, true)['en'] ?? array_values(json_decode($homesite, true))[0];
-                foreach ($homesite as $siteNum => $siteRef) {
-                    echo '<a id="source-website'.$siteNum.'" class="title" href="'.$siteRef.'" target="blank">'.$translations[1].'</a><br/>';
-                }
-            }
-        ?>
-    </div>
-    
-    <?php //Searchbar
-    require('searchbar.php');
-    ?>
-</div>
-
 <div id="leftdiv">
     <?php
     $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
@@ -177,7 +125,7 @@
     ?>
 
     <?php
-    $SQL = "SELECT * FROM `organizations` WHERE `children`->'$.Members' LIKE '%\"".$ID."\"%'";
+    $SQL = "SELECT * FROM `organizations` WHERE JSON_EXTRACT(`children`, '$.Members') LIKE '%\"".$ID."\"%'";
     $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
@@ -196,5 +144,55 @@
             echo '<a class="orgLink" href="/organization.php?id='.strtolower($row['ID']).'">'.json_decode($row['name'], true)[$lang].$memberType.'</a><br>';
         }
     }
+    ?>
+</div>
+
+<div id="topdiv">
+    <!--Lawbrary logo-->
+    <a id="logo" href="/"><img src="/images/favicon64.png" width="40px"></img></a>
+    <div id="language-div">
+        <?php //Language flag
+            echo '<img id="language-flag" height="32px" src="images/languageFlags/'.$lang.'.png">'
+        ?>
+        <select id="language-selector" onchange="langChange(document.getElementById('language-selector').value)">
+            <?php //Language selector
+                foreach ($languages["Display"] as $language) {
+                    //Gets the language data
+                    $SQL = "SELECT * FROM `languages` WHERE `ID`='".$language."'";
+                    $result = $conn->query($SQL)->fetch_assoc();
+
+                    //Outputs the selector
+                    $selected = $language === $lang ? ' selected':'';
+                    echo '<option value="'.$language.'"'.$selected.'>'.json_decode($result['name'], true)[$language].'</option>';
+                }
+            ?>
+        </select>
+        <?php //Creates onchange parameter
+        echo '<script>
+            function langChange (newLang) {
+                window.location.replace("//"+newLang+".'.$basedomain.$path.'")
+            };
+        </script>';
+        ?>
+    </div>
+
+    <div id='title'>
+        <?php /*Country Name*/ echo '<h1 id="country-name" style="margin: 0px;">'.$name.'</h1>';?>
+
+        <?php //Creates link to source website
+            $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
+            $homesite = $conn->query($SQL)->fetch_assoc()['source'];
+            if ($homesite) {
+                //Gets the link base on language
+                $homesite = json_decode($homesite, true)[$lang] ?? json_decode($homesite, true)['en'] ?? array_values(json_decode($homesite, true))[0];
+                foreach ($homesite as $siteNum => $siteRef) {
+                    echo '<a id="source-website'.$siteNum.'" class="title" href="'.$siteRef.'" target="blank">'.$translations[1].'</a><br/>';
+                }
+            }
+        ?>
+    </div>
+    
+    <?php //Searchbar
+    require('searchbar.php');
     ?>
 </div>

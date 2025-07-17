@@ -199,7 +199,7 @@
     ?>
 
     <?php //Loads organizations
-    $SQL = "SELECT * FROM `organizations` WHERE `children`->'$.Members' LIKE '%\"".$ID."\"%'";
+    $SQL = "SELECT * FROM `organizations` WHERE JSON_EXTRACT(`children`, '$.Members') LIKE '%\"".$ID."\"%'";
     $result = $conn->query($SQL);
 
     if ($result->num_rows > 0) {
