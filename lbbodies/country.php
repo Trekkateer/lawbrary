@@ -8,29 +8,25 @@
         while ($row = $result->fetch_assoc()) {
             if ($row['hasMap']) {
                 //Pathname needs the English version
-                $pathName = explode(' ', strtolower(json_decode($row['name'], true)['en']));
-                $dashedURLName = '';
-                for ($i=0; $i<count($pathName); $i++) {//Replaces spaces with dashes
-                    $dashedURLName = $dashedURLName.$pathName[$i].'-';
-                } $dashedURLName = substr($dashedURLName, 0, strlen($dashedURLName)-1);
+                $dashedName = strtr(strtolower(json_decode($row['name'], true)['en']), ' ', '-');
                 if ($row['type'] === 'US State') {
                     if ($ID === 'US-DE' || $ID === 'US-NH' || $ID === 'US-RI' || $ID === 'US-VT') {
-                        $src='usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
+                        $src='usa/state/'.$dashedName.'/map-of-'.$dashedName.'.jpg';
                     } else {
-                        $src='usa/state/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
+                        $src='usa/state/'.$dashedName.'/map-of-'.$dashedName.'-max.jpg';
                     }
                 } elseif ($row['type'] === 'US Capital') {
-                    $src='usa/city/'.$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
+                    $src='usa/city/'.$dashedName.'/map-of-'.$dashedName.'-max.jpg';
                 } elseif ($row['type'] === 'British Kingdom') {
-                    $src='uk/'.$dashedURLName.'/administrative-divisions-map-of-'.$dashedURLName.'-max.jpg';
+                    $src='uk/'.$dashedName.'/administrative-divisions-map-of-'.$dashedName.'-max.jpg';
                 } elseif ($ID === 'AE') {
                     $src='uae/map-of-uae.jpg';
                 } elseif ($ID === 'AL' || $ID === 'AR' || $ID === 'BZ' || $ID === 'HR' || $ID === 'IE' || $ID === 'IL' || $ID === 'FI' || $ID === 'HI' || $ID === 'JP' || $ID === 'LI' || $ID === 'LU' || $ID === 'ME' || $ID === 'MZ' || $ID === 'NZ' || $ID === 'PT' || $ID === 'TH' || $ID === 'TN' || $ID === 'KR' || $ID === 'VN') {
-                    $src=$dashedURLName.'/map-of-'.$dashedURLName.'.jpg';
+                    $src=$dashedName.'/map-of-'.$dashedName.'.jpg';
                 } elseif ($ID === 'AU') {
-                    $src=$dashedURLName.'/'.$dashedURLName.'-map-2-max.jpg';
+                    $src=$dashedName.'/'.$dashedName.'-map-2-max.jpg';
                 } elseif ($ID === 'AT') {
-                    $src=$dashedURLName.'/'.$dashedURLName.'-map-max.jpg';
+                    $src=$dashedName.'/'.$dashedName.'-map-max.jpg';
                 } elseif ($ID === 'BS') {
                     $src='bahamas/map-of-bahamas-max.jpg';
                 } elseif ($ID === 'CD') {
@@ -62,7 +58,7 @@
                 } elseif ($ID === 'PH') {
                     $src='philippines/map-of-philippines.jpg';
                 } elseif ($ID === 'SE') {
-                    $src=$dashedURLName.'/political-map-of-'.$dashedURLName.'.jpg';
+                    $src=$dashedName.'/political-map-of-'.$dashedName.'.jpg';
                 } elseif ($ID === 'ST') {
                     $src='sao-tome-and-principe/map-of-sao-tome-and-principe-max.jpg';
                 } elseif ($ID === 'SC') {
@@ -78,7 +74,7 @@
                 } elseif ($ID === 'US') {
                     $src='usa/us-map-max.jpg';
                 } else {
-                    $src=$dashedURLName.'/map-of-'.$dashedURLName.'-max.jpg';
+                    $src=$dashedName.'/map-of-'.$dashedName.'-max.jpg';
                 }
                 echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.str_replace('$name', $name, $translations["MAPOF"]).'">';
             }

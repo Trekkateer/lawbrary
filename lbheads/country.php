@@ -19,10 +19,12 @@
     //Sets ID
     $ID = strtoupper($params['id']);
 ?>
-<?php //Connects to the Countries database
+<?php //Sets up SQL connections
+    //Connects to the Countries database
     $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
     $conn = new mysqli("localhost", $username, $password, $database);
     $conn->select_db($database) or die("Unable to select database");
+    $conn->query("SET NAMES 'utf8'");
 
     //Connects to the Law database
     $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";

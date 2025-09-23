@@ -145,7 +145,7 @@
                     }
                 }
             } if ($params['type'] === "global" || $params['type'] === "law") {
-                $sql = "SELECT * FROM `laws` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
+                $sql = "SELECT * FROM `".strtolower($country)."` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
                 $result = $conn->query($sql);
 
                 if ($result->num_rows > 0) {

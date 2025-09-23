@@ -29,14 +29,11 @@
         $country = explode('-', $params['id'])[0];
     ?>
     <?php //Redirects if the law is not local
-        $username="u9vdpg8vw9h2e";
-        $password="f1x.A1pgN[BwX4[t";
-        $database="dbpsjng5amkbcj";
-
+        $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
         $conn = new mysqli("localhost", $username, $password, $database);
         $conn->select_db($database) or die("Unable to select database");
 
-        $sql = "SELECT * FROM `laws".strtolower($country)."` WHERE `ID`='".$ID."'";
+        $sql = "SELECT * FROM `".strtolower($country)."` WHERE `ID`='".$ID."'";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {

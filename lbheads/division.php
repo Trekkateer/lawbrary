@@ -1,4 +1,3 @@
-<meta charset="utf-8">
 <?php //Some functions we will need
     function console_log($output, $with_script_tags = true) {
         $js_code = 'console.log('.json_encode($output, JSON_HEX_TAG).');';
@@ -19,11 +18,19 @@
     //Sets ID
     $ID = strtoupper($params['id']);
 ?>
-<?php //Gets language and country name
+<?php //Sets up SQL connections
+    //Connects to the content database
     $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
     $conn = new mysqli("localhost", $username, $password, $database);
     $conn->select_db($database) or die("Unable to select database");
+    $conn->query("SET NAMES 'utf8'");
 
+    //Connects to the Law database
+    $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
+    $conn2 = new mysqli("localhost", $username, $password, $database);
+    $conn2->select_db($database) or die("Unable to select database");
+?>
+<?php //Gets language and name
     $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
     $result = $conn->query($SQL);
 

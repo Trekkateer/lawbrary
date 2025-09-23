@@ -12,7 +12,7 @@
                 if ($result->num_rows > 0) {
                     //Outputs data
                     while ($row = $result->fetch_assoc()) {
-                        $SQL2 = "SELECT * FROM `laws` WHERE `country`='".$ID."'";
+                        $SQL2 = "SELECT * FROM `".strtolower($country)."` WHERE `country`='".$ID."'";
                         $result2 = $conn->query($SQL2);
 
                         if ($result2->num_rows > 0) {
@@ -21,7 +21,7 @@
 
                             //Outputs data
                             $loadLaws = function($offset = 0) use ($conn, $row, $ID, $lang) {
-                                $SQL3 = "SELECT * FROM `laws` WHERE `country`='".$ID."'";// ORDER BY `laws`.`enactDate` DESC";
+                                $SQL3 = "SELECT * FROM `".strtolower($country)."` WHERE `country`='".$ID."'";// ORDER BY `".strtolower($country)."`.`enactDate` DESC";
                                 $result3 = $conn->query($SQL3);
                                 //Outputs data
                                 while ($row3 = $result3->fetch_assoc()) {
