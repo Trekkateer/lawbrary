@@ -48,7 +48,7 @@
                 } else {
                     $src='https://ontheworldmap.com/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
                 }
-                echo '<img id="mapImg" width="294px" src="'.$src.'" usemap="#Map" alt="'.strtr($translations[2], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" width="294px" src="'.$src.'" usemap="#Map" alt="'.strtr($translations["MAPOF"], array('[name]'=>$name)).'">';
             }
         }
     }
@@ -101,7 +101,7 @@
                 } else {
                     $src='https://flagpedia.net/data/flags/w580/'.strtolower($params['id']).'.webp';
                 }
-                echo '<img id="flag" height="150px" src='.$src.' alt="'.strtr($translations[3], array('[name]'=>$name)).'">';
+                echo '<img id="flag" height="150px" src='.$src.' alt="'.strtr($translations["OVIEW"], array('[name]'=>$name)).'">';
             }
             
             //Displays the type of division
@@ -186,7 +186,7 @@
                 //Gets the link base on language
                 $homesite = json_decode($homesite, true)[$lang] ?? json_decode($homesite, true)['en'] ?? array_values(json_decode($homesite, true))[0];
                 foreach ($homesite as $siteNum => $siteRef) {
-                    echo '<a id="source-website'.$siteNum.'" class="title" href="'.$siteRef.'" target="blank">'.$translations[1].'</a><br/>';
+                    echo '<a id="source-website'.$siteNum.'" class="title" href="'.$siteRef.'" target="blank">'.explode('/', $homesite)[2].'</a><br/>';
                 }
             }
         ?>

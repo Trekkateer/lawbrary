@@ -13,7 +13,7 @@
             exit('<script>window.location.replace("'.$destination.'");</script>');
         }
     ?>
-    <?php //Gets the url params
+    <?php //Gets the url params, redirects if they are missing
         $path = $_SERVER['REQUEST_URI'];
         if (isset(explode('?', $path)[1])) {
             parse_str(parse_url($path)['query'], $params);
@@ -26,15 +26,15 @@
 
         //Sets ID and country
         $ID = strtoupper($params['id']);
-        $country = explode('-', $params['id'])[0];
+        $country = explode(':', $params['id'])[0];
     ?>
     <?php //Redirects if the law is not local
         $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
         $conn = new mysqli("localhost", $username, $password, $database);
         $conn->select_db($database) or die("Unable to select database");
 
-        $sql = "SELECT * FROM `".strtolower($country)."` WHERE `ID`='".$ID."'";
-        $result = $conn->query($sql);
+        $SQL = "SELECT * FROM `".strtolower($country)."` WHERE `ID`='".$ID."'";
+        $result = $conn->query($SQL);
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {

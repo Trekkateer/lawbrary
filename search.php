@@ -4,37 +4,50 @@
     <title>Lawbrary | All the world's laws in one place</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <?php
-    function console_log($output, $with_script_tags = true) {
-        $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . ');';
-        if ($with_script_tags) {
-            $js_code = '<script>' . $js_code . '</script>';
+        function console_log($output, $with_script_tags = true) {
+            $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . ');';
+            if ($with_script_tags) {
+                $js_code = '<script>' . $js_code . '</script>';
+            }
+            echo $js_code;
         }
-        echo $js_code;
-    }
-    function redirect($destination) {
-        exit ("<script>window.location.replace('".$destination."');</script>");
-    }
+        function redirect($destination) {
+            exit ("<script>window.location.replace('".$destination."');</script>");
+        }
     ?>
     <?php //Gets URL Parameters
-    $url = $_SERVER['REQUEST_URI'];
-    if (isset(explode('?', $url)[1])) {parse_str(parse_url($url)['query'], $params);}
-    //Replaces "%20" with space and redirects if q is not set
-    if (isset($params['q'])) {
-        $params['q'] = str_replace("%20", " ", $params['q']);
-    } else {
-        redirect('search.php?q=&type='.$params['type']);
-    }
-    //Redirects if type is not set
-    if (!isset($params['type'])) {
-        redirect('search.php?q='.$params['q'].'&type=global');
-    }
+        $url = $_SERVER['REQUEST_URI'];
+        if (isset(explode('?', $url)[1])) {parse_str(parse_url($url)['query'], $params);}
+        //Replaces "%20" with space and redirects if q is not set
+        if (isset($params['q'])) {
+            $params['q'] = str_replace("%20", " ", $params['q']);
+        } else {
+            redirect('search.php?q=&type='.$params['type']);
+        }
+        //Redirects if type is not set
+        if (!isset($params['type'])) {
+            redirect('search.php?q='.$params['q'].'&type=global');
+        }
     ?>
     <?php //Gets language
-    $domain = $_SERVER['HTTP_HOST'];
-    $basedomain = 'l'.explode('.l', $domain)[1]; //Using '.l' instead of '.' allows for testing with localhost
-    $subdomain = explode('.l', $domain)[0]; //Determines the language we're using
-    //Makes sure that the language is used by the country
-    if (strlen($subdomain) === 2) {$lang = $subdomain;}
+        $domain = $_SERVER['HTTP_HOST'];
+        $basedomain = 'l'.explode('.l', $domain)[1]; //Using '.l' instead of '.' allows for testing with localhost
+        $subdomain = explode('.l', $domain)[0]; //Determines the language we're using
+        //Makes sure that the language is used by the country
+        if (strlen($subdomain) === 2) {$lang = $subdomain;}
+    ?>
+    <?php //Gets translations for text on the website
+        //Connects to the content database
+        $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
+        $conn2 = new mysqli("localhost", $username2, $password2, $database2);
+        $conn2->select_db($database2) or die("Unable to select database");
+
+        $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
+        $result = $conn2->query($SQL2);
+        if ($result->num_rows > 0) {
+            //Gets the translations
+            $translations = json_decode($result->fetch_assoc()['translations'], true);
+        }
     ?>
     <style>
         h2 {

@@ -51,14 +51,11 @@
     } else {redirect('errors/404.php');}
 ?>
 <?php //Gets translations for text on the website
-    $SQL2 = 'SELECT * FROM `languages` WHERE `ID` LIKE \'%"'.$lang.'"%\'';
+    $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
     $result = $conn->query($SQL2);
-
     if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            //Lets the translations
-            $translations = json_decode($row['translations'], true);
-        }
+        //Gets the translations
+        $translations = json_decode($result->fetch_assoc()['translations'], true);
     }
 ?>
 <?php /*Creates title*/echo '<title>'.$name.' - Lawbrary</title>';?>

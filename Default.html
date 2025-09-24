@@ -22,21 +22,16 @@
     } else {redirect('//en.'.$basedomain);}
     ?>
     <?php //Gets translations for text on the website
-        $username="ug0iy8zo9nryq";
-        $password="T_1&x+$|*N6F";
-        $database="dbupm726ysc0bg";
+        //Connects to the content database
+        $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
+        $conn2 = new mysqli("localhost", $username2, $password2, $database2);
+        $conn2->select_db($database2) or die("Unable to select database");
 
-        $conn = new mysqli("localhost", $username, $password, $database);
-        $conn->select_db($database) or die("Unable to select database");
-
-        $sql2 = 'SELECT * FROM `languages` WHERE `ID` LIKE \'%"'.$lang.'"%\'';
-        $result = $conn->query($sql2);
-    
+        $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
+        $result = $conn2->query($SQL2);
         if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                //Lets the translations
-                $translations = json_decode($row['translations'], true);
-            }
+            //Gets the translations
+            $translations = json_decode($result->fetch_assoc()['translations'], true);
         }
     ?>
     <title>Lawbrary | All the world's laws in one place</title>
