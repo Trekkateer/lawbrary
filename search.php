@@ -116,7 +116,7 @@
 
         if ($params['q']) { echo "<h1>Search results for '".$params['q']."'</h1>";
             if ($params['type'] === "global" || $params['type'] === "country") {
-                $sql = "SELECT * FROM `countries` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
+                $sql = "SELECT * FROM `countries` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
                 $result = $conn2->query($sql);
                 if ($result->num_rows > 0) {
                     echo "<h2>Countries</h2>";
@@ -128,7 +128,7 @@
                     }
                 }
             } if ($params['type'] === "global" || $params['type'] === "division") {
-                $sql = "SELECT * FROM `divisions` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
+                $sql = "SELECT * FROM `divisions` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
                 $result = $conn2->query($sql);
 
                 if ($result->num_rows > 0) {
@@ -141,7 +141,7 @@
                     }
                 }
             } if ($params['type'] === "global" || $params['type'] === "organization") {
-                $sql = "SELECT * FROM `organizations` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
+                $sql = "SELECT * FROM `organizations` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
                 $result = $conn2->query($sql);
 
                 if ($result->num_rows > 0) {
@@ -154,7 +154,7 @@
                     }
                 }
             }/* if ($params['type'] === "global" || $params['type'] === "law") {
-                $sql = "SELECT * FROM `".strtolower($country)."` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
+                $sql = "SELECT * FROM `".strtolower($country)."` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
                 $result = $conn->query($sql);
 
                 if ($result->num_rows > 0) {
