@@ -15,7 +15,7 @@
             exit ("<script>window.location.replace('".$destination."');</script>");
         }
     ?>
-    <?php //Gets URL Parameters
+    <?php //Gets URL Parameters and makes sure they are valid
         $url = $_SERVER['REQUEST_URI'];
         if (isset(explode('?', $url)[1])) {parse_str(parse_url($url)['query'], $params);}
         //Replaces "%20" with space and redirects if q is not set
@@ -41,6 +41,7 @@
         $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
         $conn2 = new mysqli("localhost", $username2, $password2, $database2);
         $conn2->select_db($database2) or die("Unable to select database");
+        $conn2->query("SET NAMES 'utf8'");
 
         $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
         $result = $conn2->query($SQL2);
@@ -50,7 +51,7 @@
         }
     ?>
     <style>
-        h2 {
+        h1, h2 {
             color: brown;
         }
 
@@ -108,21 +109,18 @@
 
     <div id="results">
     <?php //Search Results
-        $username="ug0iy8zo9nryq";
-        $password="T_1&x+$|*N6F";
-        $database="dbupm726ysc0bg";
-
+        //Connects to the Law database
+        $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
         $conn = new mysqli("localhost", $username, $password, $database);
         $conn->select_db($database) or die("Unable to select database");
-        
-        if ($params['q']) {
+
+        if ($params['q']) { echo "<h1>Search results for '".$params['q']."'</h1>";
             if ($params['type'] === "global" || $params['type'] === "country") {
                 $sql = "SELECT * FROM `countries` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
-                $result = $conn->query($sql);
+                $result = $conn2->query($sql);
                 if ($result->num_rows > 0) {
                     echo "<h2>Countries</h2>";
                     while ($row = $result->fetch_assoc()) {
-                        //The ?? operator is a shorter way of writing 'isset'
                         $name = json_decode($row["name"], true)[$lang] ?? json_decode($row["name"], true)['en'];
                         if (strtoupper($params['q']) === strtoupper($name) || strtoupper($params['q']) === $row['ID']) {
                             redirect('/country.php?id='.strtolower($row['ID']));
@@ -131,12 +129,11 @@
                 }
             } if ($params['type'] === "global" || $params['type'] === "division") {
                 $sql = "SELECT * FROM `divisions` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
-                $result = $conn->query($sql);
+                $result = $conn2->query($sql);
 
                 if ($result->num_rows > 0) {
                     echo "<h2>Divisions</h2>";
                     while ($row = $result->fetch_assoc()) {
-                        //The ?? operator is a shorter way of writing 'isset'
                         $name = json_decode($row["name"], true)[$lang] ?? json_decode($row["name"], true)['en'];
                         if (strtoupper($params['q']) === strtoupper($name) || strtoupper($params['q']) === $row['ID']) {
                             redirect('/division.php?id='.strtolower($row['ID']));
@@ -145,33 +142,31 @@
                 }
             } if ($params['type'] === "global" || $params['type'] === "organization") {
                 $sql = "SELECT * FROM `organizations` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
-                $result = $conn->query($sql);
+                $result = $conn2->query($sql);
 
                 if ($result->num_rows > 0) {
                     echo "<h2>Organizations</h2>";
                     while ($row = $result->fetch_assoc()) {
-                        //The ?? operator is a shorter way of writing 'isset'
                         $name = json_decode($row["name"], true)[$lang] ?? json_decode($row["name"], true)['en'];
                         if (strtoupper($params['q']) === strtoupper($name) || strtoupper($params['q']) === $row['ID']) {
                             redirect('/treaty.php?id='.strtolower($row['ID']));
                         } else {echo "<a href='/treaty.php?id=".strtolower($row['ID'])."&doc=laws'>".$name."</a><br>";}
                     }
                 }
-            } if ($params['type'] === "global" || $params['type'] === "law") {
+            }/* if ($params['type'] === "global" || $params['type'] === "law") {
                 $sql = "SELECT * FROM `".strtolower($country)."` WHERE `name` LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
                 $result = $conn->query($sql);
 
                 if ($result->num_rows > 0) {
                     echo "<h2>Laws</h2>";
                     while ($row = $result->fetch_assoc()) {
-                        //The ?? operator is a shorter way of writing 'isset'
                         $name = json_decode($row["name"], true)[$lang] ?? json_decode($row["name"], true)[array_keys(json_decode($row["name"], true))[0]];
                         if (strtoupper($params['q']) === strtoupper($name) || strtoupper($params['q']) === $row['ID']) {
                             redirect('/law.php?id='.strtolower($row['ID']));
                         } else {echo "<a href='/law.php?id=".strtolower($row['ID'])."'>".$name."</a><br>";}
                     }
                 }
-            }
+            }*/
         }
     ?>
     </div>
