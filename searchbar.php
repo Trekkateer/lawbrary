@@ -9,27 +9,26 @@
     </select>
     <select id="country-selector">
         <option value="WW" lang="en">🌍 Globe</option>
-        <?php
-        $username="ug0iy8zo9nryq";
-        $password="T_1&x+$|*N6F";
-        $database="dbupm726ysc0bg";
+        <?php //Gets the list of countries with flags
+            //Connects to the content database
+            $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
+            $conn = new mysqli("localhost", $username, $password, $database);
+            $conn->select_db($database) or die("Unable to select database");
+            $conn->query("SET NAMES 'utf8'");
 
-        $conn = new mysqli("localhost", $username, $password, $database);
-        $conn->select_db($database) or die("Unable to select database");
+            $sql = "SELECT * FROM `countries` WHERE 1";
+            $result = $conn->query($sql);
 
-        $sql = "SELECT * FROM `countries` WHERE 1";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            // output countries data
-            while($row = $result->fetch_assoc()) {
-                $names = json_decode($row["name"], true);
-                $emoji = $row["emoji"];
-                if ($names[$lang]) {
-                    echo "<option value='".$row['ID']."' lang='".$lang."'>".$emoji.' '.$names[$lang]."</option>";
-                } else {echo "<option value='".$row['ID']."' lang='".$lang."'>".$emoji.' '.$names["en"]."</option>";}
+            if ($result->num_rows > 0) {
+                // output countries data
+                while($row = $result->fetch_assoc()) {
+                    $names = json_decode($row["name"], true);
+                    $emoji = $row["emoji"];
+                    if ($names[$lang]) {
+                        echo "<option value='".$row['ID']."' lang='".$lang."'>".$emoji.' '.$names[$lang]."</option>";
+                    } else {echo "<option value='".$row['ID']."' lang='".$lang."'>".$emoji.' '.$names["en"]."</option>";}
+                }
             }
-        }
         ?>
     </select>
 

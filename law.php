@@ -29,6 +29,7 @@
         $country = explode(':', $params['id'])[0];
     ?>
     <?php //Redirects if the law is not local
+        //Connects to the law database
         $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
         $conn = new mysqli("localhost", $username, $password, $database);
         $conn->select_db($database) or die("Unable to select database");
