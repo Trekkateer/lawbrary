@@ -4,6 +4,6 @@
 </head>
 <body>
     <?php /*Imports the body*/ require 'lbbodies/division.php';?>
-    <?php /*Closes the DB connection*/ $conn->close();?>
+    <?php /*Closes the DB connection*/ $lawConn->close();?>
 </body>
 </html>

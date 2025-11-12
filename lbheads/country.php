@@ -22,18 +22,18 @@
 <?php //Sets up SQL connections
     //Connects to the Countries database
     $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
-    $conn = new mysqli("localhost", $username, $password, $database);
-    $conn->select_db($database) or die("Unable to select database");
-    $conn->query("SET NAMES 'utf8'");
+    $dataConn = new mysqli("localhost", $username, $password, $database);
+    $dataConn->select_db($database) or die("Unable to select database");
+    $dataConn->query("SET NAMES 'utf8'");
 
     //Connects to the Law database
     $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
-    $conn2 = new mysqli("localhost", $username, $password, $database);
-    $conn2->select_db($database) or die("Unable to select database");
+    $lawConn = new mysqli("localhost", $username, $password, $database);
+    $lawConn->select_db($database) or die("Unable to select database");
 ?>
 <?php //Gets language and name
     $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             //Gets Local
@@ -54,7 +54,7 @@
 ?>
 <?php //Gets translations for text on the website
     $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
-    $result = $conn->query($SQL2);
+    $result = $dataConn->query($SQL2);
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -66,6 +66,7 @@
 <?php /*Creates title*/ echo '<title>'.$name.' - Lawbrary</title>';?>
 <link rel="icon" type="image/x-icon" href="/images/favicon.ico"></link><!--Favicon-->
 <link rel="stylesheet" type="text/css" href="/styles/country_style.css"></link><!--CSS Stylesheet-->
+<link href="https://fonts.cdnfonts.com/css/literata" rel="stylesheet"><!--Literata font-->
 <style>
     /*Adds icon to external links*/
     a[target="_blank"]::after {
@@ -173,7 +174,7 @@
         text-align: center;
         position: absolute;
         width: 45%;
-        left: 50%; top: 135px;
+        left: 50%; top: 130px;
         transform: translate(-50%, 0%);
     } .lawlink {word-wrap: normal;}
 

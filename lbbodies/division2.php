@@ -10,7 +10,7 @@
             <?php
             //Language selector
             $sql = "SELECT * FROM `languages` WHERE `dispIn`->'$.divisions2' LIKE '%\"".$ID."\"%' OR `dispIn`->'$.divisions2' LIKE '%\"GLOBAL\"%'";
-            $result = $conn->query($sql);
+            $result = $dataConn->query($sql);
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
@@ -35,7 +35,7 @@
 
         <?php //Queries database and creates anchor tag
         $sql = "SELECT `homesite` FROM `divisions2` WHERE `ID`='".$ID."'";
-        $homesite = $conn->query($sql)->fetch_assoc()['homesite'];
+        $homesite = $dataConn->query($sql)->fetch_assoc()['homesite'];
         if ($homesite) {echo '<a id="official-website" href="'.$homesite.'" target="blank">Official Website</a>';}
         ?>
     </div>
@@ -48,7 +48,7 @@
 <div id="leftdiv">
     <?php
     $sql = "SELECT * FROM `divisions2` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $result = $dataConn->query($sql);
 
     if ($result->num_rows > 0) {
         // output data of each row
@@ -72,7 +72,7 @@
 <div id="rightdiv">
     <?php
     $sql = "SELECT * FROM `divisions2` WHERE `ID`='".$ID."'";
-    $result = $conn->query($sql);
+    $result = $dataConn->query($sql);
 
     if ($result->num_rows > 0) {
         // output data of each row
@@ -84,7 +84,7 @@
             
             //Displays the type of division
             $sqlPar = "SELECT * FROM `countries` WHERE `ID`='".substr($row['parent'], 0, 2)."'";
-            $resultPar = $conn->query($sqlPar);
+            $resultPar = $dataConn->query($sqlPar);
             if ($resultPar->num_rows > 0) {
                 // output data of each row
                 while($rowPar = $resultPar->fetch_assoc()) {
@@ -98,7 +98,7 @@
 
     <?php
     $sql = "SELECT * FROM `organizations` WHERE `children`->'$.Members' LIKE '%\"".$ID."\"%'";
-    $result = $conn->query($sql);
+    $result = $dataConn->query($sql);
 
     if ($result->num_rows > 0) {
         echo '<h2 id="organizationsHeading">organizations</h2>';

@@ -7,22 +7,22 @@
         <div id="contentdiv">
             <?php //Fetches the laws
                 $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-                $result = $conn->query($SQL);
+                $result = $lawConn->query($SQL);
 
                 if ($result->num_rows > 0) {
                     //Outputs data
                     while ($row = $result->fetch_assoc()) {
                         $SQL2 = "SELECT * FROM `".strtolower($country)."` WHERE `country`='".$ID."'";
-                        $result2 = $conn->query($SQL2);
+                        $result2 = $lawConn->query($SQL2);
 
                         if ($result2->num_rows > 0) {
                             //Tells us the number of rows
                             echo '<p id=rowCounter>'.$result2->num_rows.' results — Database last updated '.date('d M Y', strtotime($row["lawsUpdated"])).'</p>';
 
                             //Outputs data
-                            $loadLaws = function($offset = 0) use ($conn, $row, $ID, $lang) {
+                            $loadLaws = function($offset = 0) use ($lawConn, $row, $ID, $lang) {
                                 $SQL3 = "SELECT * FROM `".strtolower($country)."` WHERE `country`='".$ID."'";// ORDER BY `".strtolower($country)."`.`enactDate` DESC";
-                                $result3 = $conn->query($SQL3);
+                                $result3 = $lawConn->query($SQL3);
                                 //Outputs data
                                 while ($row3 = $result3->fetch_assoc()) {
                                     //Creates container div, number and date
@@ -45,6 +45,6 @@
         </div>
     </div>
     <?php /*Imports the body*/ include('../lbbodies/division.php');?>
-    <?php /*Closes the connection to database*/ $conn->close();?>
+    <?php /*Closes the connection to database*/ $lawConn->close();?>
 </body>
 </html>

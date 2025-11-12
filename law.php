@@ -31,11 +31,11 @@
     <?php //Redirects if the law is not local
         //Connects to the law database
         $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
-        $conn = new mysqli("localhost", $username, $password, $database);
-        $conn->select_db($database) or die("Unable to select database");
+        $lawConn = new mysqli("localhost", $username, $password, $database);
+        $lawConn->select_db($database) or die("Unable to select database");
 
         $SQL = "SELECT * FROM `".strtolower($country)."` WHERE `ID`='".$ID."'";
-        $result = $conn->query($SQL);
+        $result = $lawConn->query($SQL);
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {

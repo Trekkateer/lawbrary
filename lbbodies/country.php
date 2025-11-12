@@ -1,7 +1,7 @@
 <div id="leftdiv">
     <?php
     $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         // output countries data
@@ -23,6 +23,8 @@
                     $src='uae/map-of-uae.jpg';
                 } elseif ($ID === 'AL' || $ID === 'AR' || $ID === 'BZ' || $ID === 'HR' || $ID === 'IE' || $ID === 'IL' || $ID === 'FI' || $ID === 'HI' || $ID === 'JP' || $ID === 'LI' || $ID === 'LU' || $ID === 'ME' || $ID === 'MZ' || $ID === 'NZ' || $ID === 'PT' || $ID === 'TH' || $ID === 'TN' || $ID === 'KR' || $ID === 'VN') {
                     $src=$dashedName.'/map-of-'.$dashedName.'.jpg';
+                } else if ($ID === 'AQ') {
+                    $src='https://ontheworldmap.com/'.$dashedURL2Name.'/'.$dashedURL2Name.'-map-with-country-claims-max.jpg';
                 } elseif ($ID === 'AU') {
                     $src=$dashedName.'/'.$dashedName.'-map-2-max.jpg';
                 } elseif ($ID === 'AT') {
@@ -85,7 +87,7 @@
 
     <?php //Territorial Dispute Disclaimer
     $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         //Output data of each row
@@ -101,7 +103,7 @@
                         foreach ($val as $key2 => $val2) {
                             //Gets names based on ISO code
                             $SQL2 = "SELECT * FROM `countries` WHERE `ID`='".$val2."'";
-                            $result2 = $conn->query($SQL2);
+                            $result2 = $dataConn->query($SQL2);
 
                             if ($result2->num_rows > 0) {
                                 //Output data of each row
@@ -131,7 +133,7 @@
 
     <?php //List of divisions
     $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         //Output data of each row
@@ -143,7 +145,7 @@
                         echo '<h2>'.$childType.'</h2>';
                         foreach ($val as $value) {
                             $SQL2 = "SELECT * FROM `divisions` WHERE `ID`='".$value."'";
-                            $result2 = $conn->query($SQL2);
+                            $result2 = $dataConn->query($SQL2);
                             if ($result2->num_rows > 0) {
                                 while ($row2 = $result2->fetch_assoc()) {
                                     if (isset(json_decode($row2['name'], true)[$lang])) {
@@ -166,7 +168,7 @@
 <div id="rightdiv">
     <?php //Outputs the country type
         $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-        $result = $conn->query($SQL);
+        $result = $dataConn->query($SQL);
 
         if ($result->num_rows > 0) {
             // output data of each row
@@ -185,7 +187,7 @@
                 echo '<h3>'.$languageType.' languages</h3><ul>';
                 foreach($languageIDs as $language) {
                     $SQL = "SELECT * FROM `languages` WHERE `ID`='".$language."'";
-                    $result = $conn->query($SQL);
+                    $result = $dataConn->query($SQL);
                     $result = $result->fetch_assoc();
                     echo '<li>'.json_decode($result["name"], true)[$lang].'</li><br>';
                 }
@@ -196,7 +198,7 @@
 
     <?php //Loads organizations
     $SQL = "SELECT * FROM `organizations` WHERE JSON_EXTRACT(`children`, '$.Members') LIKE '%\"".$ID."\"%'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         echo '<h2 id="organizationsHeading">Organizations</h2>';
@@ -227,7 +229,7 @@
         <?php //Language flag
             //Gets the language data
             $SQL = "SELECT * FROM `languages` WHERE `ID`='".$lang."'";
-            $result = $conn->query($SQL)->fetch_assoc();
+            $result = $dataConn->query($SQL)->fetch_assoc();
 
             //Displays the language flag
             if ($result['hasFlag']) {
@@ -239,7 +241,7 @@
                 foreach ($languages["Display"] as $language) {
                     //Gets the language data
                     $SQL = "SELECT * FROM `languages` WHERE `ID`='".$language."'";
-                    $result = $conn->query($SQL)->fetch_assoc();
+                    $result = $dataConn->query($SQL)->fetch_assoc();
 
                     //Outputs the selector
                     $selected = $language === $lang ? ' selected':'';
@@ -258,10 +260,10 @@
 
     <div id="title-div">
         <div id="title-text">
-            <h1 id="title" style="margin: 0px;">
+            <h1 id="title" style="margin: 0px; font-family: 'Literata', serif; font-weight: bold;">
                 <?php //Creates the country's flag
                     $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-                    $result = $conn->query($SQL);
+                    $result = $dataConn->query($SQL);
 
                     if ($result->fetch_assoc()['hasFlag']) {//Outputs the flag
                         if ($ID === 'DANISH-REALM') {
@@ -279,7 +281,7 @@
 
             <?php //Creates link to source website
                 $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
-                $result = $conn->query($SQL);
+                $result = $dataConn->query($SQL);
                 
                 $homesites = $result->fetch_assoc()['source'];
                 if ($homesites) {
@@ -294,15 +296,16 @@
         </div>
     </div>
     
-    <!--Gets the searchbar-->
-    <?php include __DIR__.'/../searchbar.php';?>
-    
     <!--Navbar-->
     <div id="navbar">
-        <ul id="navlist">
+        <ul id="navlist" style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
             <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations["OVIEW"];?></a></li>
             <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations["CONST"];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country/case-laws.php?id='.$ID.'>'.$translations["CASE LAWS"];?></a></li>
             <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations["LAWS"];?></a></li>
         </ul>
     </div>
+    
+    <!--Gets the searchbar-->
+    <?php include __DIR__.'/../searchbar.php';?>
 </div>

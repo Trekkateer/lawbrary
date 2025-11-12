@@ -21,11 +21,11 @@
 ?>
 <?php //Gets language and country name
     $username="ug0iy8zo9nryq";  $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
-    $conn = new mysqli("localhost", $username, $password, $database);
-    $conn->select_db($database) or die("Unable to select database");
+    $dataConn = new mysqli("localhost", $username, $password, $database);
+    $dataConn->select_db($database) or die("Unable to select database");
     
     $SQL = "SELECT * FROM `divisions2` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -45,7 +45,7 @@
 ?>
 <?php //Gets translations for text on the website
     $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
-    $result = $conn->query($SQL2);
+    $result = $dataConn->query($SQL2);
     if ($result->num_rows > 0) {
         //Gets the translations
         $translations = json_decode($result->fetch_assoc()['translations'], true);
@@ -54,3 +54,4 @@
 <?php /*Creates title*/echo '<title>'.$name.' - Lawbrary</title>';?>
 <link rel="icon" type="image/x-icon" href="images/favicon.ico"></link><!--Favicon-->
 <link rel="stylesheet" type="text/css" href="styles/country_style.css"></link><!--CSS Stylesheet-->
+<link href="https://fonts.cdnfonts.com/css/literata" rel="stylesheet"><!--Literata font-->

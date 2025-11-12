@@ -24,11 +24,11 @@
     ?>
     <?php //Gets language and treaty name
     $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
-    $conn = new mysqli("localhost", $username, $password, $database);
-    $conn->select_db($database) or die("Unable to select database");
+    $lawConn = new mysqli("localhost", $username, $password, $database);
+    $lawConn->select_db($database) or die("Unable to select database");
     
     $sql = "SELECT * FROM `organizations` WHERE `ID`='".strtoupper($params['id'])."'";
-    $result = $conn->query($sql);
+    $result = $lawConn->query($sql);
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -54,7 +54,7 @@
     <div id="leftdiv">
         <?php
         $sql = "SELECT * FROM `organizations` WHERE `ID`='".strtoupper($params['id'])."'";
-        $result = $conn->query($sql);
+        $result = $lawConn->query($sql);
 
         if ($result->num_rows > 0) {
             //Output data of each row
@@ -65,7 +65,7 @@
                         echo "<h2>".$key."</h2>";
                         foreach ($val as $value) {
                             $sql2 = "SELECT * FROM `countries` WHERE `ID`='".$value."'";
-                            $result2 = $conn->query($sql2);
+                            $result2 = $lawConn->query($sql2);
                             if ($result2->num_rows > 0) {
                                 while ($row2 = $result2->fetch_assoc()) {
                                     if (isset(json_decode($row2['name'], true)[$lang])) {
@@ -75,7 +75,7 @@
                                 }
                             } else {
                                 $sql2 = "SELECT * FROM `divisions` WHERE `ID`='".$value."'";
-                                $result2 = $conn->query($sql2);
+                                $result2 = $lawConn->query($sql2);
                                 while ($row2 = $result2->fetch_assoc()) {
                                     if (isset(json_decode($row2['name'], true)[$lang][0])) {
                                         $memberName = json_decode($row2['name'], true)[$lang];
@@ -98,7 +98,7 @@
     <div id="rightdiv">
         <?php
         $sql = "SELECT * FROM `organizations` WHERE `ID`='".strtoupper($params['id'])."'";
-        $result = $conn->query($sql);
+        $result = $lawConn->query($sql);
 
         if ($result->num_rows > 0) {
             // output data of each row
@@ -122,10 +122,10 @@
                 <?php
                 //Language selector
                 $sql = "SELECT * FROM `organizations` WHERE `ID`='".strtoupper($params['id'])."'";
-                $names = json_decode($conn->query($sql)->fetch_assoc()['name'], true);
+                $names = json_decode($lawConn->query($sql)->fetch_assoc()['name'], true);
                 foreach ($names as $key => $val) {
                     $sql2 = "SELECT * FROM `languages` WHERE `ID`='".$key."'";
-                    $result = $conn->query($sql2)->fetch_assoc();
+                    $result = $lawConn->query($sql2)->fetch_assoc();
                     $selected = $result['ID'] === $lang ? "selected":"";
                     echo "<option value='".$result['ID']."'".$selected.">".$result['name']."</option>";
                 }
@@ -145,7 +145,7 @@
 
             <?php //Queries database and creates anchor tag
             $sql = "SELECT `homesite` FROM `organizations` WHERE `ID`='".strtoupper($params['id'])."'";
-            $homesite = $conn->query($sql)->fetch_assoc()["homesite"];
+            $homesite = $lawConn->query($sql)->fetch_assoc()["homesite"];
             if ($homesite) {echo "<a id='official-website' href='".$homesite."' target='blank'>Official Website</a>";}
             ?>
         </div>
@@ -154,7 +154,7 @@
         <?php include 'searchbar.php';?>
         
         <!--Closes the connection-->
-        <?php $conn->close();?>
+        <?php $lawConn->close();?>
     </div>
 </body>
 </html>

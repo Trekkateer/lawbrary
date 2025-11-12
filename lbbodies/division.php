@@ -1,7 +1,7 @@
 <div id="leftdiv">
     <?php
     $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         // output data of each row
@@ -13,42 +13,38 @@
                 for ($i=0; $i<count($pathName); $i++) {//Replaces spaces with dashes
                     $dashedURL2Name = $dashedURL2Name.$pathName[$i].'-';
                 } $dashedURL2Name = substr($dashedURL2Name, 0, strlen($dashedURL2Name)-1);
-                if ($row['parent'] === 'US' && json_decode($row['type'], true)['en'] === 'State') {
-                    if ($params['id'] === 'US-DE' || $params['id'] === 'US-NH' || $params['id'] === 'US-RI' || $params['id'] === 'US-VT') {
-                        $src='https://ontheworldmap.com/usa/state/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
-                    } else {
-                        $src='https://ontheworldmap.com/usa/state/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
-                    }
-                } else if ($row['parent'] === 'GB' && json_decode($row['type'], true)['en'] === 'Country') {
-                    $src='https://ontheworldmap.com/uk/'.$dashedURL2Name.'/administrative-divisions-map-of-'.$dashedURL2Name.'-max.jpg';
-                } else if ($params['id'] === 'AE') {
-                    $src='https://ontheworldmap.com/uae/map-of-uae.jpg';
-                } else if ($params['id'] === 'DK' ||  $params['id'] === 'hi') {
-                    $src='https://ontheworldmap.com/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
-                } else if ($params['id'] === 'AQ') {
-                    $src='https://ontheworldmap.com/'.$dashedURL2Name.'/'.$dashedURL2Name.'-map-with-country-claims-max.jpg';
-                } else if ($params['id'] === 'AU') {
-                    $src='https://ontheworldmap.com/'.$dashedURL2Name.'/'.$dashedURL2Name.'-map-2-max.jpg';
-                } else if ($params['id'] === 'AT') {
-                    $src='https://ontheworldmap.com/'.$dashedURL2Name.'/'.$dashedURL2Name.'-map-max.jpg';
-                } else if ($params['id'] === 'BL') {
-                    $src='https://ontheworldmap.com/st-barts/map-of-st-barts-max.jpg';
-                } else if ($params['id'] === 'CW') {
-                    $src='https://ontheworldmap.com/curacao/map-of-curacao-max.jpg';
-                } else if ($params['id'] === 'NF') {
-                    $src='https://ontheworldmap.com/norfolk/map-of-'.$dashedURL2Name.'-max.jpg';
-                } else if ($params['id'] === 'RE') {
-                    $src='https://ontheworldmap.com/reunion/map-of-reunion-max.jpg';
-                } else if ($params['id'] === 'TC') {
-                    $src='https://ontheworldmap.com/turks-and-caicos/map-of-turks-and-caicos-max.jpg';
-                } else if ($params['id'] === 'VI') {
-                    $src='https://ontheworldmap.com/virgin-islands-us/map-of-us-virgin-islands-max.jpg';
-                } else if ($params['id'] === 'VG') {
-                    $src='https://ontheworldmap.com/virgin-islands-british/map-of-british-virgin-islands-max.jpg';
+                if ($row['parent'] === 'US') {
+                    if (json_decode($row['type'], true)['en'] === 'State') {
+                        if ($ID === 'US-DE' || $ID === 'US-NH' || $ID === 'US-RI' || $ID === 'US-VT') {
+                            $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
+                        } else {
+                            $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
+                        }
+                    } else if ($ID === 'VI') {
+                        $path='virgin-islands-us/map-of-us-virgin-islands-max.jpg';
+                    } 
+                } else if ($row['parent'] === 'GB') {
+                    if (json_decode($row['type'], true)['en'] === 'Country') {
+                        $path=$dashedURL2Name.'/administrative-divisions-map-of-'.$dashedURL2Name.'-max.jpg';
+                    } else if ($ID === 'VG') {
+                        $path='virgin-islands-british/map-of-british-virgin-islands-max.jpg';
+                    } else if ($ID === 'TC') {
+                        $path='turks-and-caicos/map-of-turks-and-caicos-max.jpg';
+                    } 
+                } else if ($ID === 'DK') {
+                    $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
+                } else if ($ID === 'BL') {
+                    $path='st-barts/map-of-st-barts-max.jpg';
+                } else if ($ID === 'CW') {
+                    $path='curacao/map-of-curacao-max.jpg';
+                } else if ($ID === 'NF') {
+                    $path='norfolk/map-of-'.$dashedURL2Name.'-max.jpg';
+                } else if ($ID === 'RE') {
+                    $path='reunion/map-of-reunion-max.jpg';
                 } else {
-                    $src='https://ontheworldmap.com/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
+                    $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
                 }
-                echo '<img id="mapImg" width="294px" src="'.$src.'" usemap="#Map" alt="'.strtr($translations["MAPOF"], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" width="294px" src=https://ontheworldmap.com/"'.$path.'" usemap="#Map" alt="'.strtr($translations["MAPOF"], array('[name]'=>$name)).'">';
             }
         }
     }
@@ -57,7 +53,7 @@
 
     <?php //List of divisions
     $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         //Output data of each row
@@ -69,7 +65,7 @@
                         echo '<h2>'.$key.'</h2>';
                         foreach ($val as $value) {
                             $SQL2 = "SELECT * FROM `divisions2` WHERE `ID`='".$value."'";
-                            $result2 = $conn->query($SQL2);
+                            $result2 = $dataConn->query($SQL2);
                             if ($result2->num_rows > 0) {
                                 while ($row2 = $result2->fetch_assoc()) {
                                     $divisionName = json_decode($row2['name'], true)[$lang];
@@ -90,23 +86,23 @@
 <div id="rightdiv">
     <?php //Gets the flag
     $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         // output data of each row
         while($row = $result->fetch_assoc()) {
             if ($row['hasFlag']) {
                 if ($row['parent'] === 'US' && json_decode($row['type'], true)['en'] === 'State') {//If it's a US state
-                    $src='https://flagpedia.net/data/us/w580/'.strtolower(substr($params['id'], 3, 5)).'.webp';
+                    $src='https://flagpedia.net/data/us/w580/'.strtolower(substr($ID, 3, 5)).'.webp';
                 } else {
-                    $src='https://flagpedia.net/data/flags/w580/'.strtolower($params['id']).'.webp';
+                    $src='https://flagpedia.net/data/flags/w580/'.strtolower($ID).'.webp';
                 }
                 echo '<img id="flag" height="150px" src='.$src.' alt="'.strtr($translations["OVIEW"], array('[name]'=>$name)).'">';
             }
             
             //Displays the type of division
             $SQLPar = "SELECT * FROM `countries` WHERE `ID`='".$row['parent']."'";
-            $resultPar = $conn->query($SQLPar);
+            $resultPar = $dataConn->query($SQLPar);
             if ($resultPar->num_rows > 0) {
                 // output data of each row
                 while($rowPar = $resultPar->fetch_assoc()) {
@@ -126,7 +122,7 @@
 
     <?php
     $SQL = "SELECT * FROM `organizations` WHERE JSON_EXTRACT(`children`, '$.Members') LIKE '%\"".$ID."\"%'";
-    $result = $conn->query($SQL);
+    $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         echo '<h2 id="organizationsHeading">Organizations</h2>';
@@ -159,7 +155,7 @@
                 foreach ($languages["Display"] as $language) {
                     //Gets the language data
                     $SQL = "SELECT * FROM `languages` WHERE `ID`='".$language."'";
-                    $result = $conn->query($SQL)->fetch_assoc();
+                    $result = $dataConn->query($SQL)->fetch_assoc();
 
                     //Outputs the selector
                     $selected = $language === $lang ? ' selected':'';
@@ -181,7 +177,7 @@
 
         <?php //Creates link to source website
             $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-            $homesite = $conn->query($SQL)->fetch_assoc()['source'];
+            $homesite = $dataConn->query($SQL)->fetch_assoc()['source'];
             if ($homesite) {
                 //Gets the link base on language
                 $homesite = json_decode($homesite, true)[$lang] ?? json_decode($homesite, true)['en'] ?? array_values(json_decode($homesite, true))[0];

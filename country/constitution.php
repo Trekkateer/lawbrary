@@ -6,7 +6,7 @@
     <div id="centerdiv">
         <?php //Fetches the laws
             $SQL = "SELECT * FROM `".$ID."` WHERE `type`='constitution'";
-            $result = $conn2->query($SQL);
+            $result = $lawConn->query($SQL);
 
             if ($result->num_rows > 0) {
                 //Outputs data
@@ -25,6 +25,6 @@
         ?>
     </div>
     <?php /*Imports the body*/ include('../lbbodies/country.php');?>
-    <?php /*Closes the connection to database*/ $conn2->close();?>
+    <?php /*Closes the connection to database*/ $lawConn->close();?>
 </body>
 </html>

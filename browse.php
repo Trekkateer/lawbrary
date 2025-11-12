@@ -29,11 +29,11 @@
     <?php //Gets translations for text on the website
         //Connects to the content database
         $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
-        $conn2 = new mysqli("localhost", $username2, $password2, $database2);
-        $conn2->select_db($database2) or die("Unable to select database");
+        $dataConn = new mysqli("localhost", $username2, $password2, $database2);
+        $dataConn->select_db($database2) or die("Unable to select database");
 
         $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
-        $result = $conn2->query($SQL2);
+        $result = $dataConn->query($SQL2);
         if ($result->num_rows > 0) {
             //Gets the translations
             $translations = json_decode($result->fetch_assoc()['translations'], true);
@@ -42,8 +42,8 @@
     <?php //Database connections
         //Connects to the law database
         $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
-        $conn = new mysqli("localhost", $username, $password, $database);
-        $conn->select_db($database) or die("Unable to select database");
+        $lawConn = new mysqli("localhost", $username, $password, $database);
+        $lawConn->select_db($database) or die("Unable to select database");
     ?>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico"></link>
 
@@ -182,7 +182,7 @@
             <?php //Language flag
                 //Gets the language data
                 $SQL = "SELECT * FROM `languages` WHERE `ID`='".$lang."'";
-                $result = $conn2->query($SQL)->fetch_assoc();
+                $result = $dataConn->query($SQL)->fetch_assoc();
 
                 //Displays the language flag
                 if ($result['hasFlag']) {
@@ -194,7 +194,7 @@
                     foreach ($languages["Display"] as $language) {
                         //Gets the language data
                         $SQL = "SELECT * FROM `languages` WHERE `ID`='".$language."'";
-                        $result = $conn->query($SQL)->fetch_assoc();
+                        $result = $lawConn->query($SQL)->fetch_assoc();
 
                         //Outputs the selector
                         $selected = $language === $lang ? ' selected':'';

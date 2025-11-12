@@ -7,7 +7,7 @@
         <div id="contentdiv">
             <?php //Fetches the laws
                 $SQL = "SELECT * FROM `constitutions` WHERE `country`='".$ID."'";
-                $result = $conn->query($SQL);
+                $result = $lawConn->query($SQL);
 
                 if ($result->num_rows > 0) {
                     //Outputs data
@@ -30,6 +30,6 @@
     </div>
 
     <?php /*Imports the body*/ include('../lbbodies/division.php');?>
-    <?php /*Closes the DB connection*/ $conn->close();?>
+    <?php /*Closes the DB connection*/ $lawConn->close();?>
 </body>
 </html>

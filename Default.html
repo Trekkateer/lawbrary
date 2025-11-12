@@ -24,11 +24,11 @@
     <?php //Gets translations for text on the website
         //Connects to the content database
         $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
-        $conn2 = new mysqli("localhost", $username2, $password2, $database2);
-        $conn2->select_db($database2) or die("Unable to select database");
+        $dataConn = new mysqli("localhost", $username2, $password2, $database2);
+        $dataConn->select_db($database2) or die("Unable to select database");
 
         $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
-        $result = $conn2->query($SQL2);
+        $result = $dataConn->query($SQL2);
         if ($result->num_rows > 0) {
             //Gets the translations
             $translations = json_decode($result->fetch_assoc()['translations'], true);

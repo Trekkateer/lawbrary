@@ -40,12 +40,12 @@
     <?php //Gets translations for text on the website
         //Connects to the content database
         $username2="ug0iy8zo9nryq"; $password2="T_1&x+$|*N6F"; $database2="dbupm726ysc0bg";
-        $conn2 = new mysqli("localhost", $username2, $password2, $database2);
-        $conn2->select_db($database2) or die("Unable to select database");
-        $conn2->query("SET NAMES 'utf8'");
+        $dataConn = new mysqli("localhost", $username2, $password2, $database2);
+        $dataConn->select_db($database2) or die("Unable to select database");
+        $dataConn->query("SET NAMES 'utf8'");
 
         $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
-        $result = $conn2->query($SQL2);
+        $result = $dataConn->query($SQL2);
         if ($result->num_rows > 0) {
             //Gets the translations
             $translations = json_decode($result->fetch_assoc()['translations'], true);
@@ -112,13 +112,13 @@
     <?php //Search Results
         //Connects to the Law database
         $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
-        $conn = new mysqli("localhost", $username, $password, $database);
-        $conn->select_db($database) or die("Unable to select database");
+        $lawConn = new mysqli("localhost", $username, $password, $database);
+        $lawConn->select_db($database) or die("Unable to select database");
 
         if ($params['q']) { echo "<h1>Search results for '".$params['q']."'</h1>";
             if ($params['type'] === "global" || $params['type'] === "country") {
                 $sql = "SELECT * FROM `countries` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
-                $result = $conn2->query($sql);
+                $result = $dataConn->query($sql);
                 if ($result->num_rows > 0) {
                     echo "<h2>Countries</h2>";
                     while ($row = $result->fetch_assoc()) {
@@ -130,7 +130,7 @@
                 }
             } if ($params['type'] === "global" || $params['type'] === "division") {
                 $sql = "SELECT * FROM `divisions` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
-                $result = $conn2->query($sql);
+                $result = $dataConn->query($sql);
 
                 if ($result->num_rows > 0) {
                     echo "<h2>Divisions</h2>";
@@ -143,7 +143,7 @@
                 }
             } if ($params['type'] === "global" || $params['type'] === "organization") {
                 $sql = "SELECT * FROM `organizations` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
-                $result = $conn2->query($sql);
+                $result = $dataConn->query($sql);
 
                 if ($result->num_rows > 0) {
                     echo "<h2>Organizations</h2>";
@@ -156,7 +156,7 @@
                 }
             }/* if ($params['type'] === "global" || $params['type'] === "law") {
                 $sql = "SELECT * FROM `".strtolower($country)."` WHERE JSON_EXTRACT(`name`, '$.".$lang."') LIKE '%".$params['q']."%' OR `ID`='".strtoupper($params['q'])."'";
-                $result = $conn->query($sql);
+                $result = $lawConn->query($sql);
 
                 if ($result->num_rows > 0) {
                     echo "<h2>Laws</h2>";

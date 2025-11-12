@@ -12,12 +12,12 @@
         <?php //Gets the list of countries with flags
             //Connects to the content database
             $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
-            $conn = new mysqli("localhost", $username, $password, $database);
-            $conn->select_db($database) or die("Unable to select database");
-            $conn->query("SET NAMES 'utf8'");
+            $dataConn = new mysqli("localhost", $username, $password, $database);
+            $dataConn->select_db($database) or die("Unable to select database");
+            $dataConn->query("SET NAMES 'utf8'");
 
             $sql = "SELECT * FROM `countries` WHERE 1";
-            $result = $conn->query($sql);
+            $result = $dataConn->query($sql);
 
             if ($result->num_rows > 0) {
                 // output countries data
