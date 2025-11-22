@@ -68,7 +68,7 @@
                         echo '</div>';
                     } else {
                         echo '<div style="border: 1px solid gray; border-radius: 5px; top: 130px; width: 435px; margin: auto;">
-                                <p id=rowCounter style="text-align: center;">'.str_replace('$name', $name, $translations["NO_LAWS"]).'</p>
+                                <p id=rowCounter style="text-align: center;">'.str_replace('[name]', $name, $translations["NO_LAWS"]).'</p>
                               </div>';
                     }
                 }

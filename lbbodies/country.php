@@ -78,7 +78,7 @@
                 } else {
                     $src=$dashedName.'/map-of-'.$dashedName.'-max.jpg';
                 }
-                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.str_replace('$name', $name, $translations["MAP_OF"]).'">';
+                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.str_replace('[name]', $name, $translations["MAP_OF"]).'">';
             }
         }
     }
