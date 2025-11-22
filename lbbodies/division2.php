@@ -4,7 +4,7 @@
     <a id="logo" href="/"><img src="/images/favicon64.png" width="40px"></img></a>
     <div id="language-div">
     <?php //Language flag
-            echo '<img id="language-flag" height="32px" src="images/languageFlags/'.$lang.'.png">'
+            echo '<img id="language-flag" height="32px" src="images/langs/'.$lang.'.png">'
         ?>
         <select id="language-selector" onchange="langChange(document.getElementById('language-selector').value)">
             <?php

@@ -186,7 +186,7 @@
 
                 //Displays the language flag
                 if ($result['hasFlag']) {
-                    echo '<img id="language-flag" height="32px" src="/images/languageFlags/'.$lang.'.png">';
+                    echo '<img id="language-flag" height="32px" src="/images/langs/'.$lang.'.png">';
                 }
             ?>
             <select id="language-selector" onchange="langChange(document.getElementById('language-selector').value)">

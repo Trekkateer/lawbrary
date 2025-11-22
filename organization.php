@@ -116,7 +116,7 @@
     <div id="topdiv">
         <div id="language-div">
             <?php //Language flag
-            echo "<img id='language-flag' height='32px' src='images/languageFlags/".$lang.".png'>"
+            echo "<img id='language-flag' height='32px' src='images/langs/".$lang.".png'>"
             ?>
             <select id="language-selector" onchange="langChange()">
                 <?php
