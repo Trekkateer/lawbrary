@@ -21,7 +21,7 @@
                             </object>';
                         } else {//In case there is no translation available
                             $enLink = '<a href="//en.'.$basedomain.$path.'">English</a>';
-                            echo str_replace('$enLink', $enLink, $translations["NOCONST"]);
+                            echo str_replace('$enLink', $enLink, $translations["NO_CONST"]);
                         }
                     }
                 }

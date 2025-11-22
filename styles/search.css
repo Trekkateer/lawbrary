@@ -1,0 +1,11 @@
+input[type="search"]:focus {
+    outline: none;
+    box-shadow: none;
+
+}
+
+input[type="text"]:focus-visible {
+  outline: 3px solid Highlight;     /* or custom color */
+  outline-offset: 2px;
+  /* or use box-shadow: 0 0 0 3px rgba(37,99,235,0.5); */
+}

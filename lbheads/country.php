@@ -20,16 +20,16 @@
     $ID = strtoupper($params['id']);
 ?>
 <?php //Sets up SQL connections
+    //Connects to the Law database
+    $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
+    $lawConn = new mysqli("localhost", $username, $password, $database);
+    $lawConn->select_db($database) or die("Unable to select database");
+
     //Connects to the Countries database
     $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
     $dataConn = new mysqli("localhost", $username, $password, $database);
     $dataConn->select_db($database) or die("Unable to select database");
     $dataConn->query("SET NAMES 'utf8'");
-
-    //Connects to the Law database
-    $username="u9vdpg8vw9h2e"; $password="f1x.A1pgN[BwX4[t"; $database="dbpsjng5amkbcj";
-    $lawConn = new mysqli("localhost", $username, $password, $database);
-    $lawConn->select_db($database) or die("Unable to select database");
 ?>
 <?php //Gets language and name
     $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
@@ -53,25 +53,36 @@
     } else {redirect('errors/404.php');}
 ?>
 <?php //Gets translations for text on the website
-    $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
+    $SQL2 = 'SELECT * FROM `translations` WHERE `ID`="'.$lang.'"';
     $result = $dataConn->query($SQL2);
 
+    //Makes sure the language is on our table
     if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            //Lets the translations
-            $translations = json_decode($row['translations'], true);
-        }
+        //Gets the translations
+        $translations = array_slice($result->fetch_assoc(), 1); //Removes the ID column
     }
 ?>
 <?php /*Creates title*/ echo '<title>'.$name.' - Lawbrary</title>';?>
 <link rel="icon" type="image/x-icon" href="/images/favicon.ico"></link><!--Favicon-->
-<link rel="stylesheet" type="text/css" href="/styles/country_style.css"></link><!--CSS Stylesheet-->
+<link rel="stylesheet" type="text/css" href="/styles/country.css"></link><!--CSS Stylesheet-->
 <link href="https://fonts.cdnfonts.com/css/literata" rel="stylesheet"><!--Literata font-->
 <style>
     /*Adds icon to external links*/
     a[target="_blank"]::after {
         content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
         margin: 0 3px 0 5px;
+    }
+
+    input:not(:focus-visible) {
+        outline: none;
+        border: none;   
+        box-shadow: none;
+    }
+
+    input:focus-visible {
+        outline: 2px solid brown;
+        outline-offset: 2px;
+        border-radius: 2px;
     }
 
     #topdiv {

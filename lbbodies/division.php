@@ -44,7 +44,7 @@
                 } else {
                     $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
                 }
-                echo '<img id="mapImg" width="294px" src=https://ontheworldmap.com/"'.$path.'" usemap="#Map" alt="'.strtr($translations["MAPOF"], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" width="294px" src=https://ontheworldmap.com/"'.$path.'" usemap="#Map" alt="'.strtr($translations["MAP_OF"], array('[name]'=>$name)).'">';
             }
         }
     }
@@ -97,7 +97,7 @@
                 } else {
                     $src='https://flagpedia.net/data/flags/w580/'.strtolower($ID).'.webp';
                 }
-                echo '<img id="flag" height="150px" src='.$src.' alt="'.strtr($translations["OVIEW"], array('[name]'=>$name)).'">';
+                echo '<img id="flag" height="150px" src='.$src.' alt="'.strtr($translations["OVERVIEW"], array('[name]'=>$name)).'">';
             }
             
             //Displays the type of division

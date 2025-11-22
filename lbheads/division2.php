@@ -48,10 +48,10 @@
     $result = $dataConn->query($SQL2);
     if ($result->num_rows > 0) {
         //Gets the translations
-        $translations = json_decode($result->fetch_assoc()['translations'], true);
+        $translations = array_slice($result->fetch_assoc(), 1); //Removes the ID column
     }
 ?>
 <?php /*Creates title*/echo '<title>'.$name.' - Lawbrary</title>';?>
 <link rel="icon" type="image/x-icon" href="images/favicon.ico"></link><!--Favicon-->
-<link rel="stylesheet" type="text/css" href="styles/country_style.css"></link><!--CSS Stylesheet-->
+<link rel="stylesheet" type="text/css" href="styles/country.css"></link><!--CSS Stylesheet-->
 <link href="https://fonts.cdnfonts.com/css/literata" rel="stylesheet"><!--Literata font-->

@@ -48,7 +48,7 @@
     ?>
     <?php /*Creates title*/echo "<title>".$name." - Lawbrary</title>";?>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico"></link><!--Favicon-->
-    <link rel="stylesheet" type="text/css" href="styles/country_style.css"></link><!--CSS Stylesheet-->
+    <link rel="stylesheet" type="text/css" href="styles/country.css"></link><!--CSS Stylesheet-->
 </head>
 <body>
     <div id="leftdiv">

@@ -1,5 +1,5 @@
 <div id="search-form" lang="en">
-    <input id="searchbar" type="search" placeholder=<?php echo '"'.$translations["SEARCH"].'"';?>>
+    <input id="searchbar" type="search" autocomplete="off" placeholder=<?php echo '"'.$translations["SEARCH"].'"';?> style="user-select: none;">
     <select id="type-selector">
         <option value="global"></option>
         <option value="country">Country</option>

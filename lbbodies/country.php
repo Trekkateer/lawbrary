@@ -78,7 +78,7 @@
                 } else {
                     $src=$dashedName.'/map-of-'.$dashedName.'-max.jpg';
                 }
-                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.str_replace('$name', $name, $translations["MAPOF"]).'">';
+                echo '<img id="mapImg" src="https://ontheworldmap.com/'.$src.'" usemap="#Map" alt="'.str_replace('$name', $name, $translations["MAP_OF"]).'">';
             }
         }
     }
@@ -299,9 +299,9 @@
     <!--Navbar-->
     <div id="navbar">
         <ul id="navlist" style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
-            <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations["OVIEW"];?></a></li>
-            <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations["CONST"];?></a></li>
-            <li><a class="navlink" href=<?php echo '/country/case-laws.php?id='.$ID.'>'.$translations["CASE LAWS"];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations["OVERVIEW"];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations["CONSTITUTION"];?></a></li>
+            <li><a class="navlink" href=<?php echo '/country/case-laws.php?id='.$ID.'>'.$translations["CASE_LAWS"];?></a></li>
             <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations["LAWS"];?></a></li>
         </ul>
     </div>

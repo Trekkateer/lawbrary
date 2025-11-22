@@ -40,7 +40,7 @@
                             $loadLaws();
                         }
                     }
-                } else {echo str_replace('$name', $name, $translations["NOLAWS"]);}
+                } else {echo str_replace('$name', $name, $translations["NO_LAWS"]);}
             ?>
         </div>
     </div>
