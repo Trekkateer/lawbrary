@@ -195,6 +195,10 @@
         left: 87.5%; top: 125px;
     } #flag {
         width: 100%;
+    } #seal {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
     } #country-type {
         color: brown;
         font-family: garamond, serif;

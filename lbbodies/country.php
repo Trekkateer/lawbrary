@@ -166,6 +166,16 @@
 </div>
 
 <div id="rightdiv">
+    <?php //Gets the emblem of the country
+        $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
+        $result = $dataConn->query($SQL);
+
+        if ($result->fetch_assoc()['hasSeal']) {
+            $src='/images/seals/'.$ID.'.svg.png';
+            echo '<img id="seal" height="150px" src='.$src.' alt="'.strtr($translations["SEAL_OF"], array('[name]'=>$name)).'" style="align: center;">';
+        }
+    ?>
+
     <?php //Outputs the country type
         $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
         $result = $dataConn->query($SQL);

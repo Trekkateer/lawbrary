@@ -77,9 +77,9 @@
     if ($result->num_rows > 0) {
         // output data of each row
         while($row = $result->fetch_assoc()) {
-            if ($row['hasFlag']) {
-                $src='https://flagpedia.net/data/flags/w580/'.$params['id'].'.webp';
-                echo '<img id="flag" height="150px" src="'.$src.'" alt="Flag of '.$name.'">';
+            if ($row['hasSeal']) {
+                $src='/images/seals/'.$ID.'.svg.png';
+                echo '<img id="seal" height="150px" src='.$src.' alt="'.strtr($translations["SEAL_OF"], array('[name]'=>$name)).'" style="align: center;">';
             }
             
             //Displays the type of division

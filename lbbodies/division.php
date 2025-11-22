@@ -84,20 +84,16 @@
 </div>
 
 <div id="rightdiv">
-    <?php //Gets the flag
+    <?php //Gets the seal and type of division
     $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
     $result = $dataConn->query($SQL);
 
     if ($result->num_rows > 0) {
         // output data of each row
         while($row = $result->fetch_assoc()) {
-            if ($row['hasFlag']) {
-                if ($row['parent'] === 'US' && json_decode($row['type'], true)['en'] === 'State') {//If it's a US state
-                    $src='https://flagpedia.net/data/us/w580/'.strtolower(substr($ID, 3, 5)).'.webp';
-                } else {
-                    $src='https://flagpedia.net/data/flags/w580/'.strtolower($ID).'.webp';
-                }
-                echo '<img id="flag" height="150px" src='.$src.' alt="'.strtr($translations["OVERVIEW"], array('[name]'=>$name)).'">';
+            if ($row['hasSeal']) {
+                $src='/images/seals/'.$ID.'.svg.png';
+                echo '<img id="seal" height="150px" src='.$src.' alt="'.strtr($translations["SEAL_OF"], array('[name]'=>$name)).'" style="align: center;">';
             }
             
             //Displays the type of division
