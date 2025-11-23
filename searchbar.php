@@ -8,7 +8,7 @@
         <option value="law">Law</option>
     </select>
     <select id="country-selector">
-        <option value="WW" lang="en">🌍 Globe</option>
+        <option value="WW" lang="en">🌍 Global</option>
         <?php //Gets the list of countries with flags
             //Connects to the content database
             $username="ug0iy8zo9nryq"; $password="T_1&x+$|*N6F"; $database="dbupm726ysc0bg";
@@ -31,7 +31,6 @@
             }
         ?>
     </select>
-
     <script>
         document.getElementById('searchbar').onkeydown = function (e) {
             var q = this.value.toLowerCase();

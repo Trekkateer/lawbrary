@@ -47,8 +47,10 @@
     } else {redirect('errors/404.php');}
     ?>
     <?php /*Creates title*/echo "<title>".$name." - Lawbrary</title>";?>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico"></link><!--Favicon-->
-    <link rel="stylesheet" type="text/css" href="styles/country.css"></link><!--CSS Stylesheet-->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico"/><!--Favicon-->
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/literata"/><!--Literata font-->
+    <link rel="stylesheet" type="text/css" href="styles/country.css"/><!--CSS Stylesheet-->
+    <link rel="stylesheet" type="text/css" href="styles/searchbar.css"/>
 </head>
 <body>
     <div id="leftdiv">

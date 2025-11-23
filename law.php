@@ -56,7 +56,9 @@
             }
         } else {redirect('errors/404.php');}
     ?>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico"></link>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico"/><!--Favicon-->
+    <link rel="stylesheet" href="https://www.fonts.cdnfonts.com/css/literata"/><!--Literata font-->
+    <link rel="stylesheet" type="text/css" href="styles/searchbar.css"/>
 </head>
 <body>
 

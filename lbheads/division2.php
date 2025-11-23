@@ -44,7 +44,7 @@
     } else {redirect('errors/404.php');}
 ?>
 <?php //Gets translations for text on the website
-    $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
+    $SQL2 = 'SELECT * FROM `translations` WHERE `ID`="'.$lang.'"';
     $result = $dataConn->query($SQL2);
     if ($result->num_rows > 0) {
         //Gets the translations
@@ -52,6 +52,7 @@
     }
 ?>
 <?php /*Creates title*/echo '<title>'.$name.' - Lawbrary</title>';?>
-<link rel="icon" type="image/x-icon" href="images/favicon.ico"></link><!--Favicon-->
-<link rel="stylesheet" type="text/css" href="styles/country.css"></link><!--CSS Stylesheet-->
-<link href="https://fonts.cdnfonts.com/css/literata" rel="stylesheet"><!--Literata font-->
+<link rel="icon" type="image/x-icon" href="images/favicon.ico"/><!--Favicon-->
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/literata"/><!--Literata font-->
+<link rel="stylesheet" type="text/css" href="styles/country.css"/><!--CSS Stylesheet-->
+<link rel="stylesheet" type="text/css" href="styles/searchbar.css"/>

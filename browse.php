@@ -32,11 +32,11 @@
         $dataConn = new mysqli("localhost", $username2, $password2, $database2);
         $dataConn->select_db($database2) or die("Unable to select database");
 
-        $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
+        $SQL2 = 'SELECT * FROM `translations` WHERE `ID`="'.$lang.'"';
         $result = $dataConn->query($SQL2);
         if ($result->num_rows > 0) {
             //Gets the translations
-            $translations = json_decode($result->fetch_assoc()['translations'], true);
+            $translations = array_slice($result->fetch_assoc(), 1);
         }
     ?>
     <?php //Database connections
@@ -45,7 +45,8 @@
         $lawConn = new mysqli("localhost", $username, $password, $database);
         $lawConn->select_db($database) or die("Unable to select database");
     ?>
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico"></link>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico"/><!--Favicon-->
+    <link rel="stylesheet" href="https://www.fonts.cdnfonts.com/css/literata"/><!--Literata font-->
 
     <style> /* Adds icon to external links */
         a[target="_blank"]::after {

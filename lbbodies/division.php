@@ -16,16 +16,16 @@
                 if ($row['parent'] === 'US') {
                     if (json_decode($row['type'], true)['en'] === 'State') {
                         if ($ID === 'US-DE' || $ID === 'US-NH' || $ID === 'US-RI' || $ID === 'US-VT') {
-                            $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
+                            $path='usa/state/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
                         } else {
-                            $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
+                            $path='usa/state/'.$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
                         }
                     } else if ($ID === 'VI') {
                         $path='virgin-islands-us/map-of-us-virgin-islands-max.jpg';
                     } 
                 } else if ($row['parent'] === 'GB') {
                     if (json_decode($row['type'], true)['en'] === 'Country') {
-                        $path=$dashedURL2Name.'/administrative-divisions-map-of-'.$dashedURL2Name.'-max.jpg';
+                        $path='uk/'.$dashedURL2Name.'/administrative-divisions-map-of-'.$dashedURL2Name.'-max.jpg';
                     } else if ($ID === 'VG') {
                         $path='virgin-islands-british/map-of-british-virgin-islands-max.jpg';
                     } else if ($ID === 'TC') {
@@ -44,7 +44,7 @@
                 } else {
                     $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'-max.jpg';
                 }
-                echo '<img id="mapImg" width="294px" src=https://ontheworldmap.com/"'.$path.'" usemap="#Map" alt="'.strtr($translations["MAP_OF"], array('[name]'=>$name)).'">';
+                echo '<img id="mapImg" width="294px" src="https://ontheworldmap.com/'.$path.'" usemap="#Map" alt="'.strtr($translations["MAP_OF"], array('[name]'=>$name)).'">';
             }
         }
     }

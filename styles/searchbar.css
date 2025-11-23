@@ -1,0 +1,51 @@
+/* The style sheet for the search bar component used across the site */
+#search-form {
+  /*positioning*/
+  position: absolute;
+  width: 310px; height: 20px;
+  left: 86%; top: 50%;
+  transform: translate(-50%, -50%);
+} #searchbar {
+  /*positioning*/
+  position: absolute;
+  width: 175px; height: 32px;
+  left: 0%; top: 50%;
+  transform: translate(0%, -50%);
+  /*styling*/
+  border: 5px double brown;
+  font-size: 14px;
+} #type-selector {
+  /*positioning*/
+  position: absolute;
+  width: 80px; height: 32px;
+  left: 180px; top: 50%;
+  transform: translate(0%, -50%);
+  /*styling*/
+  border: 5px double brown;
+  font-size: 12px;
+} #country-selector {
+  /*positioning*/
+  position: absolute;
+  width: 45px; height: 32px;
+  right: 0%; top: 50%;
+  transform: translate(0%, -50%);
+  /*styling*/
+  border: 5px double brown;
+  font-size: 12px;
+}
+
+/* Search bar focus styles */
+input[type="search"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+input[type="search"]:focus-visible {
+    outline: 2px solid brown;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}

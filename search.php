@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <title>Lawbrary | All the world's laws in one place</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <?php
         function console_log($output, $with_script_tags = true) {
             $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . ');';
@@ -44,13 +43,16 @@
         $dataConn->select_db($database2) or die("Unable to select database");
         $dataConn->query("SET NAMES 'utf8'");
 
-        $SQL2 = 'SELECT * FROM `languages` WHERE `ID`="'.$lang.'"';
+        $SQL2 = 'SELECT * FROM `translations` WHERE `ID`="'.$lang.'"';
         $result = $dataConn->query($SQL2);
         if ($result->num_rows > 0) {
             //Gets the translations
-            $translations = json_decode($result->fetch_assoc()['translations'], true);
+            $translations = array_slice($result->fetch_assoc(), 1);
         }
     ?>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico"/><!--Favicon-->
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/literata"/><!--Literata font-->
+    <link rel="stylesheet" type="text/css" href="styles/searchbar.css"/>
     <style>
         h1, h2 {
             color: brown;
@@ -59,35 +61,47 @@
         #dashboard {
             position: sticky;
             width: 100%; height: 100px;
-        } #search-form {
+            background-color: silver;
+        }
+
+        /* Custom styling for the search bar. Making it much bigger */
+        #search-form {
+            /*positioning*/
             position: absolute;
             width: 620px; height: 44px;
             left: 50%; top: 50%;
-			transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
         } #searchbar {
+            /*positioning*/
             position: absolute;
             width: 350px; height: 44px;
             left: 0%; top: 50%;
-			transform: translate(0%, -50%);
+            transform: translate(0%, -50%);
+            /*styling*/
             border: 7.5px double brown;
             font-size: 25px;
             padding: 0px 3px;
         } #type-selector {
+            /*positioning*/
             position: absolute;
             width: 120px; height: 44px;
             left: 365px; top: 50%;
             transform: translate(0%, -50%);
+            /*styling*/
             border: 7.5px double brown;
             font-size: 16px;
         } #country-selector {
+            /*positioning*/
             position: absolute;
             width: 120px; height: 44px;
             right: 0%; top: 50%;
-			transform: translate(0%, -50%);
+            transform: translate(0%, -50%);
+            /*styling*/
             border: 7.5px double brown;
             font-size: 16px;
         }
 
+        /* Search Results */
         #results {
             position: absolute;
             left: 50%; top: 15%;
@@ -95,7 +109,6 @@
             width: 684px; height: 100px;
         }
     </style>
-    <!--link rel="stylesheet" type="text/css" href="styles/search_style.css"></link-->
 </head>
 <body style="background: lightgrey">
     <header id="dashboard">
