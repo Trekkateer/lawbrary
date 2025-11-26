@@ -36,12 +36,14 @@
     $result = $dataConn->query($SQL);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            //Gets Local
+            //Gets Locale
             $domain = $_SERVER['HTTP_HOST'];
             $basedomain = 'l'.explode('.l', $domain)[1]; //Using '.l' instead of '.' allows for testing with localhost
             $subdomain = explode('.l', $domain)[0]; //Determines which language we're using
+
             //Gets the country's languages
             $languages = json_decode($row['langs'], true);
+            $defaultLang = array_merge(array_values($languages))[0];
             //Makes sure that the language is used by the country
             if (in_array($subdomain, $languages["Display"])) {
                 $lang = $subdomain;
@@ -65,5 +67,6 @@
 <?php /*Creates title*/ echo '<title>'.$name.' - Lawbrary</title>';?>
 <link rel="icon" type="image/x-icon" href="/images/favicon.ico"/><!--Favicon-->
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/literata"/><!--Literata font-->
+<link rel="stylesheet" href="https://db.onlinewebfonts.com/c/fc49d0b7f0a8c3d2578f0471c2471739?family=Wilhelmina"/><!--Wilhelmina font-->
 <link rel="stylesheet" type="text/css" href="/styles/country.css"/><!--CSS Stylesheets-->
 <link rel="stylesheet" type="text/css" href="/styles/searchbar.css"/>

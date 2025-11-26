@@ -172,7 +172,7 @@
 
         if ($result->fetch_assoc()['hasSeal']) {
             $src='/images/seals/'.$ID.'.svg.png';
-            echo '<img id="seal" height="150px" src='.$src.' alt="'.strtr($translations["SEAL_OF"], array('[name]'=>$name)).'" style="align: center;">';
+            echo '<img id="seal" height="150px" src='.$src.' alt="'.strtr($translations["SEAL_OF"], array('[name]'=>$name)).'">';
         }
     ?>
 
@@ -270,7 +270,7 @@
 
     <div id="title-div">
         <div id="title-text">
-            <h1 id="title" style="margin: 0px; font-family: 'Literata', serif; font-weight: bold;">
+            <h1 id="title">
                 <?php //Creates the country's flag
                     $SQL = "SELECT * FROM `countries` WHERE `ID`='".$ID."'";
                     $result = $dataConn->query($SQL);
@@ -309,10 +309,10 @@
     <!--Navbar-->
     <div id="navbar">
         <ul id="navlist" style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
-            <li><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations["OVERVIEW"];?></a></li>
-            <li><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations["CONSTITUTION"];?></a></li>
-            <li><a class="navlink" href=<?php echo '/country/case-laws.php?id='.$ID.'>'.$translations["CASE_LAWS"];?></a></li>
-            <li><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations["LAWS"];?></a></li>
+            <li class="navbutton"><a class="navlink" href=<?php echo '/country.php?id='.$ID.'>'.$translations["OVERVIEW"];?></a></li>
+            <li class="navbutton"><a class="navlink" href=<?php echo '/country/constitution.php?id='.$ID.'>'.$translations["CONSTITUTION"];?></a></li>
+            <li class="navbutton"><a class="navlink" href=<?php echo '/country/case-laws.php?id='.$ID.'>'.$translations["CASE_LAWS"];?></a></li>
+            <li class="navbutton"><a class="navlink" href=<?php echo '/country/laws.php?id='.$ID.'>'.$translations["LAWS"];?></a></li>
         </ul>
     </div>
     

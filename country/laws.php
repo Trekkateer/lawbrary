@@ -42,10 +42,10 @@
 
                         //Pagination buttons
                         if ($page > 1) {
-                            echo '<a href="?id='.$ID.'&sort='.$sort.'&page='.($page - 1).'" style="margin-right: 5px; padding: 5px 10px; background-color: silver; text-decoration: none;color: black; border-radius: 3px;">< '.($page - 1).'</a>';
+                            echo '<a class="paginator" href="?id='.$ID.'&sort='.$sort.'&page='.($page - 1).'">< '.($page - 1).'</a>';
                         }
                         if ($page * 50 < $result2->num_rows) {
-                            echo '<a href="?id='.$ID.'&sort='.$sort.'&page='.($page + 1).'" style="margin-right: 5px; padding: 5px 10px; background-color: silver; text-decoration: none; color: black; border-radius: 3px;">'.($page + 1).' ></a>';
+                            echo '<a class="paginator" href="?id='.$ID.'&sort='.$sort.'&page='.($page + 1).'">'.($page + 1).' ></a>';
                         }
                         echo '</div></div>';
 
@@ -59,7 +59,7 @@
                                 echo '<div class="law"><p>'.$row3['enactDate'].': ';
 
                                 //Gets the name
-                                $lawName = json_decode($row3['name'], true)[$lang] ?? json_decode($row3['name'], true)[$row['defaultLang']];
+                                $lawName = json_decode($row3['name'], true)[$lang] ?? json_decode($row3['name'], true)[$defaultLang];
 
                                 //Creates the link and ends div
                                 echo '<a class="lawlink" href="/law.php?id='.$row3['ID'].'" target="_blank">'.$lawName.'</a>';

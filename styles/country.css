@@ -49,6 +49,9 @@ h1, h2, h3, h4, h5, h6 {
     position: absolute;
     left: 50%; top: 50%;
     transform: translate(-50%, -50%);
+    margin: 0px;
+    font-family: 'Literata', serif;
+    font-weight: bold;
 } #navbar {
     /*positioning*/
     position: relative;
@@ -96,15 +99,17 @@ h1, h2, h3, h4, h5, h6 {
     width: 45%;
     left: 50%; top: 130px;
     transform: translate(-50%, 0%);
-} li {
+} li.navbutton {
     float: left;
+} li.navbutton:hover {
+    color: darkgrey;
 } .navlink {
     display: block;
     color: brown;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-} li a:hover {background-color: silver;}
+}
 #lastUpdated {
     color: brown;
 }
@@ -113,6 +118,17 @@ h1, h2, h3, h4, h5, h6 {
     top: 10px;
     width: 500px;
 } .lawlink {word-wrap: normal;}
+.paginator {
+    margin-right: 5px;
+    padding: 5px 10px;
+    background-color: silver;
+    text-decoration: none;
+    color: black;
+    border-radius: 3px;
+}
+.paginator:hover {
+    background-color: darkgray;
+}
 
 #rightdiv {
     position: absolute;
