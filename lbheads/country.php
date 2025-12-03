@@ -43,11 +43,11 @@
 
             //Gets the country's languages
             $languages = json_decode($row['langs'], true);
-            $defaultLang = array_merge(array_values($languages))[0];
+            $defaultLang = $languages["Display"][0];
             //Makes sure that the language is used by the country
             if (in_array($subdomain, $languages["Display"])) {
                 $lang = $subdomain;
-            } else {redirect('//en.'.$basedomain.$path);}
+            } else {redirect('//'.$defaultLang.'.'.$basedomain.$path);}
 
             //Gets appropriate name
             $name = json_decode($row['name'], true)[$lang];

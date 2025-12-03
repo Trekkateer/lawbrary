@@ -26,11 +26,15 @@
                 } else if ($row['parent'] === 'GB') {
                     if (json_decode($row['type'], true)['en'] === 'Country') {
                         $path='uk/'.$dashedURL2Name.'/administrative-divisions-map-of-'.$dashedURL2Name.'-max.jpg';
+                    } else if ($ID === 'BM') {
+                        $path='bermuda/map-of-bermuda-max.jpg';
                     } else if ($ID === 'VG') {
                         $path='virgin-islands-british/map-of-british-virgin-islands-max.jpg';
                     } else if ($ID === 'TC') {
                         $path='turks-and-caicos/map-of-turks-and-caicos-max.jpg';
-                    } 
+                    } else if ($ID === 'FK') {
+                        $path='falkland-islands/map-of-falkland-islands-max.jpg';
+                    }
                 } else if ($ID === 'DK') {
                     $path=$dashedURL2Name.'/map-of-'.$dashedURL2Name.'.jpg';
                 } else if ($ID === 'BL') {
@@ -173,13 +177,14 @@
 
         <?php //Creates link to source website
             $SQL = "SELECT * FROM `divisions` WHERE `ID`='".$ID."'";
-            $homesite = $dataConn->query($SQL)->fetch_assoc()['source'];
-            if ($homesite) {
+            $homesites = $dataConn->query($SQL)->fetch_assoc()['source'];
+            if ($homesites) {
                 //Gets the link base on language
-                $homesite = json_decode($homesite, true)[$lang] ?? json_decode($homesite, true)['en'] ?? array_values(json_decode($homesite, true))[0];
-                foreach ($homesite as $siteNum => $siteRef) {
-                    echo '<a id="source-website'.$siteNum.'" class="title" href="'.$siteRef.'" target="blank">'.explode('/', $homesite)[2].'</a><br/>';
+                foreach (json_decode($homesites, true) as $siteNum => $homesite) {
+                    $homesite = $homesite[$lang] ?? $homesite[$defaultLang] ?? array_values($homesite)[0];
+                    echo '<a height=20px id="source-website-'.$siteNum.'" href="'.$homesite.'" target="_blank">'.explode('/', $homesite)[2].'</a>';
                 }
+                echo '<br/>';
             }
         ?>
     </div>

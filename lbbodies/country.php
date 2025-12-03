@@ -297,7 +297,7 @@
                 if ($homesites) {
                     //Gets the link base on language
                     foreach (json_decode($homesites, true) as $siteNum => $homesite) {
-                        $homesite = $homesite[$lang] ?? $homesite['en'] ?? array_values($homesite)[0];
+                        $homesite = $homesite[$lang] ?? $homesite[$defaultLang] ?? array_values($homesite)[0];
                         echo '<a height=20px id="source-website-'.$siteNum.'" href="'.$homesite.'" target="_blank">'.explode('/', $homesite)[2].'</a>';
                     }
                     echo '<br/>';

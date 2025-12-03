@@ -59,6 +59,7 @@
                                 echo '<div class="law"><p>'.$row3['enactDate'].': ';
 
                                 //Gets the name
+                                echo $defaultLang;
                                 $lawName = json_decode($row3['name'], true)[$lang] ?? json_decode($row3['name'], true)[$defaultLang];
 
                                 //Creates the link and ends div
