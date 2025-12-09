@@ -1,4 +1,11 @@
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="background: transparent;">
-    <path fill="brown" d="M 205 362 C 249 265 411 219 382 131 C 380 113 303 47 241 90 C 166 161 313 244 354 360 C 367 332 372 325 391 310 C 378 292 224 188 261 110 C 298 98 360 145 354 144 C 359 162 206 261 171 311 C 180 320 200 342 205 362 Z"></path>
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>Layer 1</title>
+  <path fill="#fff" stroke="#000" opacity="NaN" d="m-618,-79.66651c6,57 16,-11 16,-10.33349c0,-0.66651 60,28.33349 60,29" id="svg_3"/>
+  <path fill="#fff" stroke="#000" opacity="NaN" d="m32.99998,42.33348" id="svg_4"/>
+  <g stroke-width="0">
+   <path d="m74,293.14799c44,-97 206,-143 177,-231c-2,-18 -79,-84 -141,-41c-75,71 72,154 113,270c13,-28 18,-35 37,-50c-13,-18 -167,-122 -130,-200c37,-12 99,35 93,34c5,18 -148,117 -183,167c9,9 29,31 34,51z" fill="brown"/>
+  </g>
+ </g>
+
 </svg>

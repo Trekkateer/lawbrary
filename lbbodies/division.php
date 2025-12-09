@@ -145,7 +145,7 @@
 
 <div id="topdiv">
     <!--Lawbrary logo-->
-    <a id="logo" href="/"><img src="/images/favicon64.png" width="40px"></img></a>
+    <a id="logo" href="/"><img src="/images/logos/Graphic - Main Ribbon.svg" width="40px"></img></a>
     <div id="language-div">
         <?php //Language flag
             echo '<img id="language-flag" height="32px" src="images/langs/'.$lang.'.png">'
